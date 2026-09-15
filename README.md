@@ -72,7 +72,7 @@ Modul **Product** digunakan untuk mengelola data barang yang dijual di dalam apl
 | Delete | Menghapus data produk |
 
 **Penanggung Jawab:**  
-`-`
+`Jehezkiel Jefferson I`
 
 ---
 
@@ -95,7 +95,7 @@ Modul **Profile / User** digunakan untuk mengelola data dan personalisasi penggu
 | Delete | Menghapus data pengguna |
 
 **Penanggung Jawab:**  
-`-`
+`Rachelin Miyuki`
 
 ---
 
@@ -120,7 +120,7 @@ Modul **Cart** digunakan untuk mengelola barang yang ingin dibeli sebelum proses
 | Delete | Menghapus produk dari keranjang |
 
 **Penanggung Jawab:**  
-`-`
+`Rheza Abdilla`
 
 ---
 
@@ -145,7 +145,7 @@ Modul **Order / Transaction** digunakan untuk menangani proses pembelian dan tra
 | Delete | Membatalkan order atau transaksi |
 
 **Penanggung Jawab:**  
-`-`
+`Faris Salman Azhari`
 
 ---
 
@@ -165,13 +165,41 @@ Ulasan akan tersedia pada **menu profil** serta dapat diakses melalui **bar navi
 | Delete | Menghapus ulasan dan rating |
 
 **Penanggung Jawab:**  
-`-`
+`Alfan Kurnia Karim`
 
 ---
 
 ## Public API / Mock API
 
-<!-- Akan ditentukan kemudian. -->
+### RajaOngkir API
+
+SiBekas menggunakan **RajaOngkir API** untuk mendukung proses pengiriman barang antara penjual dan pembeli. API ini menyediakan data lokasi serta informasi ongkos kirim dari berbagai layanan ekspedisi di Indonesia.
+
+**Kegunaan:**
+
+- Mencari dan memvalidasi lokasi asal serta tujuan pengiriman.
+- Menghitung ongkos kirim berdasarkan lokasi, berat barang, dan kurir yang dipilih.
+- Menampilkan pilihan layanan kurir, biaya, dan estimasi waktu pengiriman pada proses checkout.
+- Membantu pembeli membandingkan opsi pengiriman sebelum membuat pesanan.
+
+Dokumentasi resmi: [RajaOngkir API](https://www.rajaongkir.com/docs/shipping-cost)
+
+### DummyJSON API
+
+SiBekas menggunakan **DummyJSON API** sebagai sumber data awal (*placeholder*) untuk katalog produk. Sebanyak minimal 50 data produk akan diambil dari endpoint produk DummyJSON, disesuaikan dengan skema data SiBekas, lalu di-*seed* dan disimpan ke database aplikasi sebelum situs web di-*deploy*.
+
+**Kegunaan:**
+
+- Menyediakan minimal 50 produk awal agar katalog tidak kosong saat aplikasi pertama kali dijalankan.
+- Menyediakan data contoh berupa nama, deskripsi, kategori, harga, rating, serta gambar produk.
+- Membantu pengembangan dan pengujian fitur katalog, pencarian, filter, pagination, dan detail produk.
+- Menjadi data *placeholder* sebelum tersedia cukup banyak listing asli dari mahasiswa UI.
+
+Endpoint yang digunakan: [`https://dummyjson.com/products?limit=50`](https://dummyjson.com/products?limit=50)
+
+Data dari DummyJSON hanya digunakan sebagai data awal. Operasi CRUD untuk listing produk, keranjang, transaksi, dan ulasan tetap dilakukan dan disimpan melalui database internal SiBekas.
+
+Dokumentasi resmi: [DummyJSON Products API](https://dummyjson.com/docs/products)
 
 ---
 
