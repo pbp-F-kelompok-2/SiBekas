@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module_name }} - SiBekas{% endblock %}
+
+{% block content %}
+<section class="placeholder">
+    <p class="eyebrow">Modul siap dikembangkan</p>
+    <h1>{{ module_name }}</h1>
+    <p>URL, template, dan konfigurasi app ini sudah terhubung ke proyek SiBekas.</p>
+    <a class="text-link" href="{% url 'home' %}">Kembali ke beranda</a>
+</section>
+{% endblock %}
