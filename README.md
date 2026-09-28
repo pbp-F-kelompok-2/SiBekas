@@ -10,6 +10,103 @@ SiBekas hadir untuk mendukung penggunaan kembali barang dan mendorong kebiasaan 
 
 ---
 
+## Menjalankan Project
+
+### Prasyarat
+
+- Python 3.12
+- Git
+
+### Setup pertama kali
+
+```powershell
+# Windows PowerShell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+Copy-Item .env.example .env
+python manage.py migrate
+python manage.py runserver
+```
+
+Jika Python Windows Anda berasal dari MSYS/UCRT dan virtual environment membuat
+folder `.venv/bin` (bukan `.venv/Scripts`), aktifkan dengan:
+
+```powershell
+.\.venv\bin\Activate.ps1
+```
+
+Untuk macOS atau Linux, aktifkan virtual environment dengan:
+
+```bash
+source .venv/bin/activate
+```
+
+Buka `http://127.0.0.1:8000/`. Endpoint `http://127.0.0.1:8000/health/`
+digunakan untuk memastikan aplikasi dan database siap.
+
+> Jangan commit `.env`, database lokal, atau virtual environment. Ketiganya sudah
+> dilindungi oleh `.gitignore`; bagikan perubahan konfigurasi melalui
+> `.env.example`.
+
+### Pemeriksaan sebelum push
+
+```bash
+python manage.py check
+python manage.py makemigrations --check --dry-run
+python manage.py test
+python manage.py collectstatic --noinput
+```
+
+## Struktur Project
+
+```text
+SiBekas/
+├── sibekas/          # settings, URL utama, ASGI, dan WSGI
+├── product/          # katalog, kategori, filter, dan detail produk
+├── profiles/         # data dan personalisasi pengguna
+├── cart/             # keranjang belanja
+├── order/            # checkout, pembayaran, dan transaksi
+├── review/           # rating dan ulasan
+├── static/           # aset CSS/JS/gambar sumber
+├── templates/        # template global
+├── tests/            # tes integrasi fondasi project
+├── .env.example      # contoh konfigurasi tanpa secret
+├── manage.py
+└── requirements.txt
+```
+
+Semua app utama telah didaftarkan di `INSTALLED_APPS` dan memiliki namespace URL
+sendiri:
+
+| App | URL awal | Namespace |
+|---|---|---|
+| Product | `/products/` | `product` |
+| Profile / User | `/profile/` | `profile` |
+| Cart | `/cart/` | `cart` |
+| Order / Transaction | `/orders/` | `order` |
+| Review | `/reviews/` | `review` |
+
+### Environment dan database
+
+Pengembangan lokal menggunakan SQLite secara default. Deployment dapat memakai
+PostgreSQL cukup dengan mengubah `DATABASE_URL`, tanpa mengubah `settings.py`.
+Server PostgreSQL perlu menyediakan library client `libpq` untuk driver `psycopg`.
+
+| Variabel | Kegunaan | Nilai lokal |
+|---|---|---|
+| `DJANGO_SECRET_KEY` | Kunci kriptografi Django | kunci development dari `.env.example` |
+| `DJANGO_DEBUG` | Mode debug | `True` |
+| `DJANGO_ALLOWED_HOSTS` | Host yang diizinkan, dipisahkan koma | `localhost,127.0.0.1` |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Origin HTTPS tepercaya, dipisahkan koma | kosong |
+| `DATABASE_URL` | Koneksi database | `sqlite:///db.sqlite3` |
+
+Saat deployment, gunakan `DJANGO_DEBUG=False`, secret key yang kuat, host/origin
+produksi, dan `DATABASE_URL` PostgreSQL dari penyedia hosting.
+
+---
+
 ## Anggota Kelompok
 
 | No. | Nama | NPM |

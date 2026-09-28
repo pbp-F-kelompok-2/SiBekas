@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}SiBekas - Marketplace Preloved UI{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Marketplace mahasiswa UI</p>
+    <h1>Barang lama,<br><span>cerita baru.</span></h1>
+    <p class="hero-copy">
+        Fondasi SiBekas sudah siap. Setiap tim dapat mengembangkan modulnya
+        tanpa mengubah konfigurasi inti proyek.
+    </p>
+    <a class="button" href="{% url 'product:index' %}">Jelajahi produk</a>
+</section>
+
+<section class="modules" aria-labelledby="modules-heading">
+    <h2 id="modules-heading">Modul utama</h2>
+    <div class="module-grid">
+        <a href="{% url 'product:index' %}">Product</a>
+        <a href="{% url 'profile:index' %}">Profile / User</a>
+        <a href="{% url 'cart:index' %}">Cart</a>
+        <a href="{% url 'order:index' %}">Order / Transaction</a>
+        <a href="{% url 'review:index' %}">Review</a>
+    </div>
+</section>
+{% endblock %}

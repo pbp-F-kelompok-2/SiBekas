@@ -1,0 +1,1 @@
+"""Product database migrations."""
