@@ -1,29 +1,56 @@
 {% load static %}
+
 <!doctype html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <meta name="description" content="Marketplace barang preloved untuk mahasiswa UI.">
-    <title>{% block title %}SiBekas{% endblock %}</title>
+
+    {% block meta %}
+    {% endblock %}
+
+    <title>
+        {% block title %}
+        SiBekas
+        {% endblock %}
+    </title>
+
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    {% block extra_css %}
+    {% endblock %}
 </head>
+
 <body>
-    <header class="site-header">
-        <nav class="container nav" aria-label="Navigasi utama">
-            <a class="brand" href="{% url 'home' %}">SiBekas</a>
-            <div class="nav-links">
-                <a href="{% url 'product:index' %}">Produk</a>
-                <a href="{% url 'cart:index' %}">Keranjang</a>
-                <a href="{% url 'order:index' %}">Pesanan</a>
-                <a href="{% url 'review:index' %}">Ulasan</a>
-                <a href="{% url 'profile:index' %}">Profil</a>
-            </div>
-        </nav>
-    </header>
-    <main class="container">
-        {% block content %}{% endblock %}
+
+    {% include "navbar.html" %}
+
+    {% if messages %}
+    <div class="container message-container" aria-live="polite">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags|default:'info' }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="container page-content">
+        {% block content %}
+        {% endblock %}
     </main>
-    <footer class="container footer">SiBekas - barang lama, cerita baru.</footer>
+
+    {% include "footer.html" %}
+
+    <script src="{% static 'js/navbar.js' %}"></script>
+
+    {% block extra_js %}
+    {% endblock %}
+
 </body>
+
 </html>
