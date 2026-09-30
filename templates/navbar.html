@@ -1,0 +1,68 @@
+{% load static %}
+
+<header class="site-header">
+    <nav class="container nav" aria-label="Navigasi utama">
+
+        <a class="brand" href="{% url 'home' %}">
+            <span class="brand-mark">SB</span>
+            <span>SiBekas</span>
+        </a>
+
+        <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Buka menu navigasi" aria-expanded="false"
+            aria-controls="nav-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="nav-menu" id="nav-menu">
+
+            <div class="nav-links">
+                <a href="{% url 'home' %}">
+                    Beranda
+                </a>
+
+                <a href="{% url 'product:index' %}">
+                    Produk
+                </a>
+
+                <a href="{% url 'cart:index' %}">
+                    Keranjang
+                </a>
+
+                <a href="{% url 'order:index' %}">
+                    Pesanan
+                </a>
+
+                <a href="{% url 'review:index' %}">
+                    Ulasan
+                </a>
+
+                <a href="{% url 'profile:index' %}">
+                    Profil
+                </a>
+            </div>
+
+            <div class="nav-account">
+                {% if user.is_authenticated %}
+                <span class="nav-user">
+                    {{ user.username }}
+                </span>
+
+                <a class="nav-account-link" href="{% url 'profile:index' %}">
+                    Profil
+                </a>
+                {% else %}
+                <span class="nav-guest">
+                    Guest
+                </span>
+
+                <a class="nav-account-link" href="{% url 'profile:index' %}">
+                    Masuk
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </nav>
+</header>

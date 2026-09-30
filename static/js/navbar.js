@@ -1,0 +1,22 @@
+const navToggle =
+    document.getElementById("nav-toggle");
+
+const navMenu =
+    document.getElementById("nav-menu");
+
+if (navToggle && navMenu) {
+    navToggle.addEventListener(
+        "click",
+        function () {
+            const isOpen =
+                navMenu.classList.toggle(
+                    "nav-menu-open"
+                );
+
+            navToggle.setAttribute(
+                "aria-expanded",
+                String(isOpen)
+            );
+        }
+    );
+}

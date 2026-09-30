@@ -1,0 +1,45 @@
+<footer class="site-footer">
+    <div class="container footer-content">
+
+        <div>
+            <a class="footer-brand" href="{% url 'home' %}">
+                <span class="brand-mark">SB</span>
+                <span>SiBekas</span>
+            </a>
+
+            <p class="footer-copy">
+                Marketplace barang preloved untuk mahasiswa UI.
+            </p>
+        </div>
+
+        <nav class="footer-links" aria-label="Navigasi footer">
+            <a href="{% url 'product:index' %}">
+                Produk
+            </a>
+
+            <a href="{% url 'cart:index' %}">
+                Keranjang
+            </a>
+
+            <a href="{% url 'order:index' %}">
+                Pesanan
+            </a>
+
+            <a href="{% url 'review:index' %}">
+                Ulasan
+            </a>
+
+            <a href="{% url 'profile:index' %}">
+                Profil
+            </a>
+        </nav>
+
+    </div>
+
+    <div class="container footer-bottom">
+        <p>
+            © 2026 SiBekas.
+            Barang lama, cerita baru.
+        </p>
+    </div>
+</footer>
