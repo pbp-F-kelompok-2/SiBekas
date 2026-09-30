@@ -424,6 +424,88 @@
     color: var(--muted);
 }
 
+.cart-page svg {
+    stroke-width: 1.8;
+}
+
+.cart-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cart-remove svg {
+    width: 16px;
+    height: 16px;
+}
+
+.unavailable-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.unavailable-remove svg {
+    width: 17px;
+    height: 17px;
+}
+
+.quantity-control button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-control button svg {
+    width: 15px;
+    height: 15px;
+}
+
+.cart-empty-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: var(--space-2);
+
+    border-radius: var(--radius-base);
+
+    background: var(--color-accent);
+    color: var(--color-primary);
+}
+
+.cart-empty-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.section-title-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.checkout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+.checkout-button svg {
+    width: 17px;
+    height: 17px;
+}
+
 
 @media (max-width: 850px) {
 

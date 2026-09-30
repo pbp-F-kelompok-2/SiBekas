@@ -6,10 +6,7 @@ Keranjang - SiBekas
 {% endblock %}
 
 {% block extra_css %}
-<link
-    rel="stylesheet"
-    href="{% static 'css/cart.css' %}"
->
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -83,46 +80,27 @@ Keranjang - SiBekas
 
                             <div class="cart-item-bottom">
 
-                                <form
-                                    method="post"
-                                    action="{% url 'cart:update_item' item.id %}"
-                                    class="quantity-control"
-                                >
+                                <form method="post" action="{% url 'cart:update_item' item.id %}"
+                                    class="quantity-control">
                                     {% csrf_token %}
 
-                                    <button
-                                        type="submit"
-                                        name="action"
-                                        value="decrease"
-                                        aria-label="Kurangi jumlah"
-                                    >
-                                        −
+                                    <button type="submit" name="action" value="decrease" aria-label="Kurangi jumlah">
+                                        <i data-lucide="minus"></i>
                                     </button>
 
                                     <span>
                                         {{ item.quantity }}
                                     </span>
 
-                                    <button
-                                        type="submit"
-                                        name="action"
-                                        value="increase"
-                                        aria-label="Tambah jumlah"
-                                    >
-                                        +
+                                    <button type="submit" name="action" value="increase" aria-label="Tambah jumlah">
+                                        <i data-lucide="plus"></i>
                                     </button>
                                 </form>
 
-                                <form
-                                    method="post"
-                                    action="{% url 'cart:remove_item' item.id %}"
-                                >
+                                <form method="post" action="{% url 'cart:remove_item' item.id %}">
                                     {% csrf_token %}
 
-                                    <button
-                                        type="submit"
-                                        class="cart-remove"
-                                    >
+                                    <button type="submit" class="cart-remove">
                                         Hapus
                                     </button>
                                 </form>
@@ -158,6 +136,7 @@ Keranjang - SiBekas
                 <div class="cart-section-heading">
                     <div>
                         <h2>
+                            <i data-lucide="circle-alert"></i>
                             Tidak tersedia
                         </h2>
 
@@ -201,18 +180,11 @@ Keranjang - SiBekas
 
                         </div>
 
-                        <form
-                            method="post"
-                            action="{% url 'cart:remove_item' item.id %}"
-                        >
+                        <form method="post" action="{% url 'cart:remove_item' item.id %}">
                             {% csrf_token %}
 
-                            <button
-                                type="submit"
-                                class="unavailable-remove"
-                                aria-label="Hapus {{ item.name }}"
-                            >
-                                🗑
+                            <button type="submit" class="unavailable-remove" aria-label="Hapus {{ item.name }}">
+                                <i data-lucide="trash-2"></i>
                             </button>
                         </form>
 
@@ -236,7 +208,9 @@ Keranjang - SiBekas
             </p>
 
             <h2>
+                <i data-lucide="circle-alert"></i>
                 Ringkasan Belanja
+
             </h2>
 
             <div class="summary-row">
@@ -264,11 +238,9 @@ Keranjang - SiBekas
                 pada proses checkout.
             </p>
 
-            <a
-                href="{% url 'order:index' %}"
-                class="checkout-button"
-            >
-                Lanjut ke Checkout
+            <a href="{% url 'order:index' %}" class="checkout-button">
+                <span>Lanjut ke Checkout</span>
+                <i data-lucide="arrow-right"></i>
             </a>
 
         </aside>
@@ -281,7 +253,7 @@ Keranjang - SiBekas
     <div class="cart-empty">
 
         <div class="cart-empty-icon">
-            🛒
+            🛒<i data-lucide="shopping-cart"></i>
         </div>
 
         <h2>
@@ -293,10 +265,7 @@ Keranjang - SiBekas
             untuk mulai berbelanja.
         </p>
 
-        <a
-            href="{% url 'product:index' %}"
-            class="button"
-        >
+        <a href="{% url 'product:index' %}" class="button">
             Jelajahi Produk
         </a>
 
