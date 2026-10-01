@@ -17,6 +17,12 @@ if (navToggle && navMenu) {
                 "aria-expanded",
                 String(isOpen)
             );
+
+            navToggle.innerHTML = isOpen
+                ? '<i data-lucide="x"></i>'
+                : '<i data-lucide="menu"></i>';
+
+            lucide.createIcons();
         }
     );
 }
