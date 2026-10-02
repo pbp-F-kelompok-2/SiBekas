@@ -1,15 +1,13 @@
 import json
-from decimal import ROUND_HALF_UP, Decimal
-from urllib.error import URLError
+import random
 from urllib.request import Request, urlopen
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction
+
 
 from product.models import Category, Product, ProductImage
 
-DUMMYJSON_URL = "https://dummyjson.com/products"
-DEFAULT_LIMIT = 50
+DUMMYJSON_URL = "https://dummyjson.com/products?limit=60"
 DEFAULT_USD_RATE = 16_000
 
 CATEGORY_NAMES = {
@@ -39,151 +37,43 @@ CATEGORY_NAMES = {
     "womens-watches": "Jam Tangan Wanita",
 }
 
-CONDITION_CYCLE = [
-    Product.Condition.LIKE_NEW,
-    Product.Condition.GOOD,
-    Product.Condition.GOOD,
-    Product.Condition.FAIR,
-]
-
-
-def usd_to_rupiah(usd_price, rate):
-    rupiah = Decimal(str(usd_price)) * Decimal(rate)
-    thousands = (rupiah / 1000).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
-    return max(int(thousands) * 1000, 1000)
-
-
-def category_name_for(slug):
-    return CATEGORY_NAMES.get(slug, slug.replace("-", " ").title())
 
 
 class Command(BaseCommand):
     help = "Seed produk awal dari DummyJSON (aman dijalankan berulang kali)."
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--limit",
-            type=int,
-            default=DEFAULT_LIMIT,
-            help=f"Jumlah produk yang di-seed (default {DEFAULT_LIMIT}, minimal 50).",
-        )
-        parser.add_argument(
-            "--exclude",
-            default="",
-            help="Slug kategori DummyJSON yang dilewati, dipisahkan koma (mis. groceries).",
-        )
-        parser.add_argument(
-            "--usd-rate",
-            type=int,
-            default=DEFAULT_USD_RATE,
-            help=f"Kurs USD ke Rupiah untuk konversi harga (default {DEFAULT_USD_RATE}).",
-        )
-        parser.add_argument(
-            "--file",
-            help="Baca respons DummyJSON dari file JSON lokal alih-alih dari internet.",
-        )
-        parser.add_argument(
-            "--timeout",
-            type=int,
-            default=15,
-            help="Batas waktu request HTTP dalam detik.",
-        )
-
     def handle(self, *args, **options):
-        limit = options["limit"]
-        if limit < 50:
-            raise CommandError("--limit minimal 50 sesuai kebutuhan data awal.")
+        with urlopen(Request(DUMMYJSON_URL, headers={"User-Agent": "Mozilla/5.0"})) as response:
+            data = json.load(response)
 
-        excluded = {slug.strip() for slug in options["exclude"].split(",") if slug.strip()}
-        raw_products = self.load_products(options, fetch_all=bool(excluded))
-        products = [item for item in raw_products if item.get("category") not in excluded]
-        products = products[:limit]
+        total = 0
+        for item in data["products"]:
+            category_name = item["category"].replace("-", " ").title()
+            category, _ = Category.objects.get_or_create(name=category_name)
 
-        if len(products) < limit:
-            raise CommandError(
-                f"Hanya {len(products)} produk yang tersedia, kurang dari {limit}."
-            )
-
-        created, updated = self.save_products(products, options["usd_rate"])
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Seed selesai: {created} produk baru, {updated} produk diperbarui. "
-                f"Total produk DummyJSON di database: "
-                f"{Product.objects.filter(source=Product.Source.DUMMYJSON).count()}."
-            )
-        )
-
-    def load_products(self, options, fetch_all):
-        if options["file"]:
-            try:
-                with open(options["file"], encoding="utf-8") as handle:
-                    payload = json.load(handle)
-            except (OSError, json.JSONDecodeError) as error:
-                raise CommandError(f"Gagal membaca file {options['file']}: {error}")
-        else:
-            limit = 0 if fetch_all else options["limit"]
-            url = f"{DUMMYJSON_URL}?limit={limit}"
-            self.stdout.write(f"Mengambil data dari {url} ...")
-            request = Request(url, headers={"User-Agent": "SiBekas-Seeder/1.0"})
-            try:
-                with urlopen(request, timeout=options["timeout"]) as response:
-                    payload = json.load(response)
-            except (URLError, TimeoutError, json.JSONDecodeError) as error:
-                raise CommandError(f"Gagal mengambil data DummyJSON: {error}")
-
-        products = payload.get("products") if isinstance(payload, dict) else payload
-        if not isinstance(products, list):
-            raise CommandError("Format data DummyJSON tidak dikenali (key 'products' tidak ada).")
-        return products
-
-    @transaction.atomic
-    def save_products(self, items, usd_rate):
-        created_count = 0
-        updated_count = 0
-        categories = {}
-
-        for item in items:
-            category_slug = item.get("category") or "lainnya"
-            if category_slug not in categories:
-                categories[category_slug], _ = Category.objects.get_or_create(
-                    slug=category_slug,
-                    defaults={"name": category_name_for(category_slug)},
-                )
-
-            external_id = int(item["id"])
-            weight_grams = max(int(item.get("weight") or 5), 1) * 100
+            price = round(item["price"] * DEFAULT_USD_RATE, -3)
 
             product, created = Product.objects.update_or_create(
-                source=Product.Source.DUMMYJSON,
-                external_id=external_id,
+                dummyjson_id=item["id"],
                 defaults={
-                    "category": categories[category_slug],
-                    "name": item["title"][:200],
-                    "description": item.get("description", ""),
-                    "price": usd_to_rupiah(item.get("price", 0), usd_rate),
-                    "stock": max(int(item.get("stock") or 0), 0),
-                    "condition": CONDITION_CYCLE[external_id % len(CONDITION_CYCLE)],
-                    "brand": (item.get("brand") or "")[:100],
-                    "weight_grams": weight_grams,
-                    "thumbnail_url": item.get("thumbnail", ""),
-                    "is_active": True,
+                    "category": category,
+                    "name": item["title"],
+                    "description": item["description"],
+                    "price": max(int(price), 1000),
+                    "stock": item["stock"],
+                    "brand": item.get("brand") or "",
+                    "thumbnail": item["thumbnail"],
+                    "condition": random.choice(["like_new", "good", "fair"]),
                 },
             )
 
-            product.images.all().delete()
-            ProductImage.objects.bulk_create(
-                ProductImage(
-                    product=product,
-                    image_url=url,
-                    alt_text=f"{product.name} - gambar {position + 1}",
-                    position=position,
-                )
-                for position, url in enumerate(item.get("images") or [])
-            )
-
             if created:
-                created_count += 1
-            else:
-                updated_count += 1
+                for url in item["images"]:
+                    ProductImage.objects.create(product=product, image_url=url)
 
-        return created_count, updated_count
+            total += 1
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Seed selesai: {total} produk"
+            )
+        )

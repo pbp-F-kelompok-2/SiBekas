@@ -1,113 +1,75 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{% if active_category %}{{ active_category.name }} - {% endif %}Produk - SiBekas{% endblock %}
+{% block title %}Produk - SiBekas{% endblock %}
 
 {% block extra_css %}
-{% include "product/_fonts.html" %}
 <link rel="stylesheet" href="{% static 'css/product.css' %}">
 {% endblock %}
 
 {% block content %}
 <section class="product-page">
-    <header class="ds-section-header">
-        <div>
-            <p class="ds-eyebrow">Katalog Preloved</p>
-            <h1 class="ds-heading-1">{% if active_category %}{{ active_category.name }}{% else %}Semua Produk{% endif %}</h1>
-            <p class="ds-subtitle">Temukan barang preloved dari sesama mahasiswa UI.</p>
-        </div>
-        <p class="ds-meta">{{ page_obj.paginator.count }} produk</p>
-    </header>
-
-    <div class="product-layout">
-        <aside class="product-sidebar" aria-label="Filter kategori">
-            <p class="ds-sidebar-label">Kategori</p>
-            <nav class="product-category-nav">
-                <a href="{% url 'product:index' %}{% if query %}?q={{ query|urlencode }}{% endif %}"
-                   {% if not category_slug %}class="is-active" aria-current="true"{% endif %}>
-                    <i data-lucide="layout-grid" aria-hidden="true"></i>
-                    <span>Semua kategori</span>
-                </a>
-                {% for category in categories %}
-                <a href="{% url 'product:index' %}?category={{ category.slug }}{% if query %}&q={{ query|urlencode }}{% endif %}"
-                   {% if category.slug == category_slug %}class="is-active" aria-current="true"{% endif %}>
-                    <i data-lucide="tag" aria-hidden="true"></i>
-                    <span>{{ category.name }}</span>
-                    <span class="product-category-count">{{ category.product_count }}</span>
-                </a>
-                {% endfor %}
-            </nav>
-        </aside>
-
-        <div class="product-main">
-            <form class="product-search" method="get" action="{% url 'product:index' %}" role="search">
-                {% if category_slug %}
-                <input type="hidden" name="category" value="{{ category_slug }}">
-                {% endif %}
-                <label class="visually-hidden" for="product-search-input">Cari produk</label>
-                <div class="input-icon">
-                    <i data-lucide="search" aria-hidden="true"></i>
-                    <input class="input" id="product-search-input" type="search" name="q" value="{{ query }}" placeholder="Cari buku, jakun, laptop...">
-                </div>
-                <button class="btn btn--primary" type="submit">Cari</button>
-            </form>
-
-            {% if query %}
-            <p class="product-filter-summary">
-                Hasil pencarian untuk <strong>"{{ query }}"</strong>
-                <a href="{% url 'product:index' %}{% if category_slug %}?category={{ category_slug }}{% endif %}">Hapus pencarian</a>
-            </p>
-            {% endif %}
-
-            {% if products %}
-            <div class="product-grid">
-                {% for product in products %}
-                {% include "product/_card.html" %}
-                {% endfor %}
-            </div>
-
-            <nav class="pagination" aria-label="Halaman produk">
-                <p class="ds-meta">Menampilkan {{ page_obj.start_index }}-{{ page_obj.end_index }} dari {{ page_obj.paginator.count }} produk</p>
-                {% if page_obj.has_other_pages %}
-                <div class="pagination-pages">
-                    {% if page_obj.has_previous %}
-                    <a class="pagination-item" href="{{ page_url_prefix }}{{ page_obj.previous_page_number }}" aria-label="Halaman sebelumnya"><i data-lucide="chevron-left"></i></a>
-                    {% else %}
-                    <span class="pagination-item is-disabled" aria-hidden="true"><i data-lucide="chevron-left"></i></span>
-                    {% endif %}
-
-                    {% for number in page_range %}
-                    {% if number == page_obj.paginator.ELLIPSIS %}
-                    <span class="pagination-ellipsis">&hellip;</span>
-                    {% elif number == page_obj.number %}
-                    <span class="pagination-item is-active" aria-current="page">{{ number }}</span>
-                    {% else %}
-                    <a class="pagination-item" href="{{ page_url_prefix }}{{ number }}">{{ number }}</a>
-                    {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                    <a class="pagination-item" href="{{ page_url_prefix }}{{ page_obj.next_page_number }}" aria-label="Halaman berikutnya"><i data-lucide="chevron-right"></i></a>
-                    {% else %}
-                    <span class="pagination-item is-disabled" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </nav>
-
-            {% else %}
-            <div class="empty-state">
-                <span class="empty-state-icon" aria-hidden="true"><i data-lucide="package-search"></i></span>
-                <h2>Belum Ada Produk</h2>
-                <p>Tidak ada barang yang cocok dengan pencarian atau kategori ini. Coba kata kunci lain.</p>
-                <a class="btn btn--primary" href="{% url 'product:index' %}">Lihat Semua Produk</a>
-            </div>
-            {% endif %}
-        </div>
+    <div class="product-heading">
+        <p class="eyebrow">Katalog Preloved</p>
+        <h1>Produk</h1>
+        <p>Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
     </div>
-</section>
-{% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/product-like.js' %}"></script>
+    <form class="product-search" method="get">
+        <input type="text" name="q" value="{{ query }}" placeholder="Cari produk...">
+        {% if category_slug %}
+        <input type="hidden" name="category" value="{{ category_slug }}">
+        {% endif %}
+        <button type="submit" class="button">Cari</button>
+    </form>
+
+    <div class="category-list">
+        <a href="{% url 'product:index' %}" class="{% if not category_slug %}active{% endif %}">Semua</a>
+        {% for category in categories %}
+        <a href="?category={{ category.slug }}" class="{% if category.slug == category_slug %}active{% endif %}">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if page.object_list %}
+    <div class="product-grid">
+        {% for product in page.object_list %}
+        <a href="{{ product.get_absolute_url }}" class="product-card">
+            <div class="product-card-image">
+                {% if product.thumbnail %}
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" loading="lazy">
+                {% endif %}
+                {% if product.is_sold_out %}
+                <span class="sold-out">Terjual</span>
+                {% endif %}
+            </div>
+            <div class="product-card-info">
+                <p class="product-category">{{ product.category.name }}</p>
+                <h3>{{ product.name }}</h3>
+                <p class="product-price">{{ product.price_display }}</p>
+                <p class="product-condition">{{ product.get_condition_display }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if page.has_other_pages %}
+    <div class="pagination">
+        {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}">&laquo; Sebelumnya</a>
+        {% endif %}
+
+        <span>Halaman {{ page.number }} dari {{ page.paginator.num_pages }}</span>
+
+        {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}">Selanjutnya &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <p class="empty-message">Belum ada produk yang cocok.</p>
+    {% endif %}
+</section>
 {% endblock %}
