@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} - SiBekas{% endblock %}
+
+{% block meta %}
+<meta property="og:title" content="{{ product.name }}">
+{% if product.main_image_url %}<meta property="og:image" content="{{ product.main_image_url }}">{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+{% include "product/_fonts.html" %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="product-page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'product:index' %}">Katalog Preloved</a>
+        <span aria-hidden="true">/</span>
+        <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{{ product.name }}</span>
+    </nav>
+
+    <div class="product-detail">
+        <div class="product-gallery">
+            <div class="product-gallery-main">
+                {% if product.main_image_url %}
+                <img id="product-main-image" src="{{ product.main_image_url }}" alt="{{ product.name }}">
+                {% else %}
+                <span class="product-card-placeholder" aria-hidden="true"><i data-lucide="image"></i></span>
+                {% endif %}
+            </div>
+            {% if images|length > 1 %}
+            <div class="product-gallery-thumbs">
+                {% for image in images %}
+                <button type="button" class="product-thumb{% if forloop.first %} is-active{% endif %}" data-image="{{ image.image_url }}" aria-label="Lihat gambar {{ forloop.counter }}">
+                    <img src="{{ image.image_url }}" alt="{{ image.alt_text|default:product.name }}" loading="lazy">
+                </button>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="product-info">
+            <p class="ds-eyebrow">{{ product.category.name }}</p>
+            <h1 class="ds-heading-1">{{ product.name }}</h1>
+            <p class="product-detail-price">{{ product.price_display }}</p>
+
+            <div class="badge-row">
+                {% include "product/_condition_badge.html" %}
+                {% if product.is_available %}
+                <span class="badge badge--status"><span class="badge-dot" aria-hidden="true"></span>Tersedia</span>
+                {% else %}
+                <span class="badge badge--muted"><i data-lucide="circle-check" aria-hidden="true"></i>Terjual</span>
+                {% endif %}
+            </div>
+
+            <div class="product-actions">
+                <form class="product-cart-form" method="post" action="{% url 'cart:add_item' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_reference" value="{{ product.slug }}">
+                    {% if product.is_available %}
+                    <button class="btn btn--primary btn--lg btn--block" type="submit">
+                        <i data-lucide="shopping-cart" aria-hidden="true"></i>
+                        Tambah ke Keranjang
+                    </button>
+                    {% else %}
+                    <button class="btn btn--lg btn--block" type="button" disabled>
+                        <i data-lucide="ban" aria-hidden="true"></i>
+                        Barang Terjual
+                    </button>
+                    {% endif %}
+                </form>
+                {% include "product/_like_button.html" with variant="detail" %}
+            </div>
+
+            <dl class="product-specs">
+                <div><dt>Kondisi</dt><dd>{{ product.get_condition_display }}</dd></div>
+                {% if product.brand %}<div><dt>Merek</dt><dd>{{ product.brand }}</dd></div>{% endif %}
+                <div><dt>Stok</dt><dd>{% if product.is_available %}{{ product.stock }} unit{% else %}Habis{% endif %}</dd></div>
+                <div><dt>Berat</dt><dd>{{ product.weight_grams }} gram</dd></div>
+                <div><dt>Diunggah</dt><dd>{{ product.created_at|timesince }} lalu</dd></div>
+            </dl>
+
+            <div class="seller-card">
+                <span class="avatar" aria-hidden="true">{% if product.seller %}{{ product.seller.username|slice:":2"|upper }}{% else %}SB{% endif %}</span>
+                <div>
+                    <p class="seller-card-name">{{ product.seller_name }}</p>
+                    <p class="ds-meta">{% if product.seller %}Penjual mahasiswa UI{% else %}Data awal katalog SiBekas{% endif %}</p>
+                </div>
+            </div>
+
+            <div class="alert alert--warning" role="note">
+                <i data-lucide="triangle-alert" aria-hidden="true"></i>
+                <div>
+                    <p class="alert-title">Panduan Keamanan Transaksi Mahasiswa</p>
+                    <p>Selalu lakukan transaksi tunai atau serah terima langsung di area publik kampus.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="product-description" aria-labelledby="description-heading">
+        <h2 class="ds-heading-3" id="description-heading">Deskripsi Barang</h2>
+        <p>{{ product.description|linebreaksbr }}</p>
+    </section>
+
+    {% if related_products %}
+    <section class="product-related" aria-labelledby="related-heading">
+        <div class="ds-section-header">
+            <h2 class="ds-heading-3" id="related-heading">Produk Serupa</h2>
+            <a class="ds-link" href="{{ product.category.get_absolute_url }}">Lihat semua {{ product.category.name }}</a>
+        </div>
+        <div class="product-grid">
+            {% for product in related_products %}
+            {% include "product/_card.html" %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/product-like.js' %}"></script>
+<script>
+    document.querySelectorAll(".product-thumb").forEach(function (button) {
+        button.addEventListener("click", function () {
+            var main = document.getElementById("product-main-image");
+            if (main) { main.src = button.dataset.image; }
+            document.querySelectorAll(".product-thumb").forEach(function (b) { b.classList.remove("is-active"); });
+            button.classList.add("is-active");
+        });
+    });
+</script>
+{% endblock %}
