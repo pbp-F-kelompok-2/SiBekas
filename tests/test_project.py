@@ -3,6 +3,14 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 class ProjectFoundationTests(TestCase):
+    def test_pws_deployment_host_is_allowed(self):
+        response = self.client.get(
+            reverse("home"),
+            HTTP_HOST="faris-salman-sibekas.pws.cs.ui.ac.id",
+        )
+
+        self.assertEqual(response.status_code, 200)
+
     def test_homepage_is_available(self):
         response = self.client.get(reverse("home"))
 
