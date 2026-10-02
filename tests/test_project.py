@@ -7,6 +7,16 @@ class ProjectFoundationTests(TestCase):
         response = self.client.get(
             reverse("home"),
             HTTP_HOST="faris-salman-sibekas.pws.cs.ui.ac.id",
+            secure=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_static_files_are_available_on_pws(self):
+        response = self.client.get(
+            "/static/css/variables.css",
+            HTTP_HOST="faris-salman-sibekas.pws.cs.ui.ac.id",
+            secure=True,
         )
 
         self.assertEqual(response.status_code, 200)
