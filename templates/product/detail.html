@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} - SiBekas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="product-page">
+    <a href="{% url 'product:index' %}" class="back-link">&larr; Kembali ke katalog</a>
+
+    <div class="product-detail">
+        <div class="product-images">
+            {% if product.thumbnail %}
+            <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="main-image">
+            {% endif %}
+
+            {% if images %}
+            <div class="image-list">
+                {% for image in images %}
+                <img src="{{ image.image_url }}" alt="{{ product.name }}" loading="lazy">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="product-info">
+            <p class="eyebrow">{{ product.category.name }}</p>
+            <h1>{{ product.name }}</h1>
+            <p class="product-price">{{ product.price_display }}</p>
+
+            <table class="product-table">
+                <tr>
+                    <td>Kondisi</td>
+                    <td>{{ product.get_condition_display }}</td>
+                </tr>
+                {% if product.brand %}
+                <tr>
+                    <td>Merek</td>
+                    <td>{{ product.brand }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td>Stok</td>
+                    <td>{% if product.is_sold_out %}Habis{% else %}{{ product.stock }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>Berat</td>
+                    <td>{{ product.weight_grams }} gram</td>
+                </tr>
+                <tr>
+                    <td>Penjual</td>
+                    <td>{{ product.seller_name }}</td>
+                </tr>
+            </table>
+
+            <h2>Deskripsi</h2>
+            <p>{{ product.description|linebreaksbr }}</p>
+        </div>
+    </div>
+
+    {% if related_products %}
+    <div class="related-products">
+        <h2>Produk serupa</h2>
+        <div class="product-grid">
+            {% for item in related_products %}
+            <a href="{{ item.get_absolute_url }}" class="product-card">
+                <div class="product-card-image">
+                    {% if item.thumbnail %}
+                    <img src="{{ item.thumbnail }}" alt="{{ item.name }}" loading="lazy">
+                    {% endif %}
+                </div>
+                <div class="product-card-info">
+                    <h3>{{ item.name }}</h3>
+                    <p class="product-price">{{ item.price_display }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
