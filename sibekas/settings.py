@@ -37,8 +37,18 @@ if not DEBUG and SECRET_KEY.startswith("django-insecure-"):
         "DJANGO_SECRET_KEY harus diatur ke nilai rahasia saat DJANGO_DEBUG=False."
     )
 
+PWS_HOST = "faris-salman-sibekas.pws.cs.ui.ac.id"
+PWS_ORIGIN = f"https://{PWS_HOST}"
+
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
+
+# The PWS deployment URL is part of this application's public configuration.
+# Keep it available even when the deployment has no environment variables yet.
+if PWS_HOST not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(PWS_HOST)
+if PWS_ORIGIN not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(PWS_ORIGIN)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -107,14 +117,11 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+WHITENOISE_USE_FINDERS = True
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {
-        "BACKEND": (
-            "django.contrib.staticfiles.storage.StaticFilesStorage"
-            if DEBUG
-            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
-        )
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 

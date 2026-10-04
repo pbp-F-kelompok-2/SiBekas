@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Produk - SiBekas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="product-page">
+    <div class="product-heading">
+        <p class="eyebrow">Katalog Preloved</p>
+        <h1>Produk</h1>
+        <p>Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
+    </div>
+
+    <form class="product-search" method="get">
+        <input type="text" name="q" value="{{ query }}" placeholder="Cari produk...">
+        {% if category_slug %}
+        <input type="hidden" name="category" value="{{ category_slug }}">
+        {% endif %}
+        <button type="submit" class="button">Cari</button>
+    </form>
+
+    <div class="category-list">
+        <a href="{% url 'product:index' %}" class="{% if not category_slug %}active{% endif %}">Semua</a>
+        {% for category in categories %}
+        <a href="?category={{ category.slug }}" class="{% if category.slug == category_slug %}active{% endif %}">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if page.object_list %}
+    <div class="product-grid">
+        {% for product in page.object_list %}
+        <a href="{{ product.get_absolute_url }}" class="product-card">
+            <div class="product-card-image">
+                {% if product.thumbnail %}
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" loading="lazy">
+                {% endif %}
+                {% if product.is_sold_out %}
+                <span class="sold-out">Terjual</span>
+                {% endif %}
+            </div>
+            <div class="product-card-info">
+                <p class="product-category">{{ product.category.name }}</p>
+                <h3>{{ product.name }}</h3>
+                <p class="product-price">{{ product.price_display }}</p>
+                <p class="product-condition">{{ product.get_condition_display }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if page.has_other_pages %}
+    <div class="pagination">
+        {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}">&laquo; Sebelumnya</a>
+        {% endif %}
+
+        <span>Halaman {{ page.number }} dari {{ page.paginator.num_pages }}</span>
+
+        {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}">Selanjutnya &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <p class="empty-message">Belum ada produk yang cocok.</p>
+    {% endif %}
+</section>
+{% endblock %}

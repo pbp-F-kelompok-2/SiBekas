@@ -1,0 +1,106 @@
+<header class="site-header">
+    <nav class="container nav" aria-label="Navigasi utama">
+
+        <a
+            class="brand"
+            href="{% url 'home' %}"
+        >
+            <span class="brand-mark">
+                SB
+            </span>
+
+            <span>
+                SiBekas
+            </span>
+        </a>
+
+        <button
+            class="nav-toggle"
+            type="button"
+            id="nav-toggle"
+            aria-label="Buka menu navigasi"
+            aria-expanded="false"
+            aria-controls="nav-menu"
+        >
+            <i
+                data-lucide="menu"
+                class="nav-toggle-icon"
+            ></i>
+        </button>
+
+        <div
+            class="nav-menu"
+            id="nav-menu"
+        >
+
+            <div class="nav-links">
+
+                <a href="{% url 'home' %}">
+                    <i data-lucide="house"></i>
+                    <span>Beranda</span>
+                </a>
+
+                <a href="{% url 'product:index' %}">
+                    <i data-lucide="store"></i>
+                    <span>Produk</span>
+                </a>
+
+                <a href="{% url 'cart:index' %}">
+                    <i data-lucide="shopping-cart"></i>
+                    <span>Keranjang</span>
+                </a>
+
+                <a href="{% url 'order:index' %}">
+                    <i data-lucide="receipt-text"></i>
+                    <span>Pesanan</span>
+                </a>
+
+                <a href="{% url 'review:index' %}">
+                    <i data-lucide="message-square-text"></i>
+                    <span>Ulasan</span>
+                </a>
+
+                <a href="{% url 'profile:index' %}">
+                    <i data-lucide="user-round"></i>
+                    <span>Profil</span>
+                </a>
+
+            </div>
+
+            <div class="nav-account">
+
+                {% if user.is_authenticated %}
+
+                    <span class="nav-user">
+                        {{ user.username }}
+                    </span>
+
+                    <a
+                        class="nav-account-link"
+                        href="{% url 'profile:index' %}"
+                    >
+                        <i data-lucide="user"></i>
+                        Profil
+                    </a>
+
+                {% else %}
+
+                    <span class="nav-guest">
+                        Guest
+                    </span>
+
+                    <a
+                        class="nav-account-link"
+                        href="{% url 'profile:index' %}"
+                    >
+                        <i data-lucide="log-in"></i>
+                        Masuk
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+    </nav>
+</header>
