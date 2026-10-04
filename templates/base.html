@@ -17,7 +17,13 @@
                 <a href="{% url 'cart:index' %}">Keranjang</a>
                 <a href="{% url 'order:index' %}">Pesanan</a>
                 <a href="{% url 'review:index' %}">Ulasan</a>
-                <a href="{% url 'profile:index' %}">Profil</a>
+                {% if user.is_authenticated %}
+                    <a>{{ user.username }}</a>
+                    <a href="{% url 'profile:logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'profile:login' %}">Login</a>
+                    <a href="{% url 'profile:register' %}">Register</a>
+                {% endif %}
             </div>
         </nav>
     </header>
