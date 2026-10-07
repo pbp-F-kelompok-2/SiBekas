@@ -45,21 +45,40 @@
                     <span>Produk</span>
                 </a>
 
-                <a href="{% url 'cart:index' %}">
-                    <i data-lucide="shopping-cart"></i>
-                    <span>Keranjang</span>
-                </a>
+                {% if user.is_authenticated %}
 
-                <a href="{% url 'order:index' %}">
-                    <i data-lucide="receipt-text"></i>
-                    <span>Pesanan</span>
-                </a>
+                    <a href="{% url 'cart:index' %}">
+                        <i data-lucide="shopping-cart"></i>
+                        <span>Keranjang</span>
+                    </a>
 
-                <a href="{% url 'review:index' %}">
-                    <i data-lucide="message-square-text"></i>
-                    <span>Ulasan</span>
-                </a>
+                    <a href="{% url 'order:index' %}">
+                        <i data-lucide="receipt-text"></i>
+                        <span>Pesanan</span>
+                    </a>
 
+                    <a href="{% url 'review:index' %}">
+                        <i data-lucide="message-square-text"></i>
+                        <span>Ulasan</span>
+                    </a>
+
+                {% else %}
+                    <a href="{% url 'profile:login' %}">
+                        <i data-lucide="shopping-cart"></i>
+                        <span>Keranjang</span>
+                    </a>
+
+                    <a href="{% url 'profile:login' %}">
+                        <i data-lucide="receipt-text"></i>
+                        <span>Pesanan</span>
+                    </a>
+
+                    <a href="{% url 'profile:login' %}">
+                        <i data-lucide="message-square-text"></i>
+                        <span>Ulasan</span>
+                    </a>
+
+                {% endif %}
 
             </div>
 
