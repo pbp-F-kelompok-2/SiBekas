@@ -60,10 +60,6 @@
                     <span>Ulasan</span>
                 </a>
 
-                <a href="{% url 'profile:index' %}">
-                    <i data-lucide="user-round"></i>
-                    <span>Profil</span>
-                </a>
 
             </div>
 
@@ -71,16 +67,16 @@
 
                 {% if user.is_authenticated %}
 
-                    <span class="nav-user">
+                    <a href="{% url 'profile:index' %}">
                         {{ user.username }}
-                    </span>
+                    </a>
 
                     <a
                         class="nav-account-link"
-                        href="{% url 'profile:index' %}"
+                        href="{% url 'profile:logout' %}"
                     >
                         <i data-lucide="user"></i>
-                        Profil
+                        Keluar
                     </a>
 
                 {% else %}
@@ -91,7 +87,7 @@
 
                     <a
                         class="nav-account-link"
-                        href="{% url 'profile:index' %}"
+                        href="{% url 'profile:login' %}"
                     >
                         <i data-lucide="log-in"></i>
                         Masuk

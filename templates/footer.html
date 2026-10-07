@@ -44,9 +44,18 @@
                 Ulasan
             </a>
 
-            <a href="{% url 'profile:index' %}">
-                Profil
-            </a>
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'profile:index' %}">
+                    Profil Saya
+                </a>
+
+            {% else %}
+                <a href="{% url 'profile:login' %}">
+                    Profil Saya
+                </a>
+
+            {% endif %}
         </nav>
 
     </div>
