@@ -1,17 +1,195 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tulis Ulasan - {{ product.name }} | SiBekas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/review.css' %}">
+{% endblock %}
 
 {% block content %}
 
-<h1>Tulis Ulasan</h1>
+<div class="review-form-page">
 
-<h2>{{ product.name }}</h2>
+    <a href="{% url 'review:index' %}" class="review-back-link">
+        ← Kembali ke Ulasan & Rating
+    </a>
 
-<form method="POST">
-    {% csrf_token %}
+    <header class="review-form-hero">
+        <div class="review-form-hero__kicker">
+            <span class="review-form-hero__dot"></span>
+            <span>REVIEW & FEEDBACK</span>
+        </div>
 
-    {{ form.as_p }}
+        <h1>Tulis Ulasan</h1>
 
-    <button type="submit">Kirim Ulasan</button>
-</form>
+        <p>
+            Bagikan pengalamanmu tentang produk ini dan bantu sesama mahasiswa UI
+            menemukan produk preloved yang tepat.
+        </p>
+    </header>
+
+    <div class="review-form-layout">
+
+        <section class="review-form-card">
+
+            <div class="review-product-box">
+
+                <div class="review-product-box__icon">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
+                </div>
+
+                <div class="review-product-box__content">
+
+                    <div class="review-product-box__status">
+                        ✓ PESANAN SELESAI
+                    </div>
+
+                    <h2 class="review-product-box__name">
+                        {{ product.name }}
+                    </h2>
+
+                    <p class="review-product-box__meta">
+                        Siap untuk dinilai
+                    </p>
+
+                </div>
+
+            </div>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="review-field">
+                    <label>Rating Produk <span class="required">*</span></label>
+
+                    <div class="star-picker">
+                        <input type="radio" name="rating" value="5" id="rating-5">
+                        <label for="rating-5">★</label>
+
+                        <input type="radio" name="rating" value="4" id="rating-4">
+                        <label for="rating-4">★</label>
+
+                        <input type="radio" name="rating" value="3" id="rating-3">
+                        <label for="rating-3">★</label>
+
+                        <input type="radio" name="rating" value="2" id="rating-2">
+                        <label for="rating-2">★</label>
+
+                        <input type="radio" name="rating" value="1" id="rating-1">
+                        <label for="rating-1">★</label>
+                    </div>
+
+                    {% if form.rating.errors %}
+                        {{ form.rating.errors }}
+                    {% endif %}
+                </div>
+
+                <div class="review-field">
+
+                    <div class="review-field__header">
+                        <label for="{{ form.comment.id_for_label }}">
+                            Ulasan / Komentar <span class="required">*</span>
+                        </label>
+
+                        <span class="review-character-count">
+                            0 / 500 karakter
+                        </span>
+                    </div>
+
+                    {{ form.comment }}
+
+                    <p class="review-field__hint">
+                        Bagikan pengalamanmu tentang kondisi barang dan proses transaksi.
+                    </p>
+
+                    <div class="review-quick-options">
+                        <p>Pilihan Cepat:</p>
+
+                        <div class="review-quick-options__list">
+                            <button type="button" class="review-chip">+ Kondisi 100% mulus</button>
+                            <button type="button" class="review-chip">+ COD tepat waktu di tempat</button>
+                            <button type="button" class="review-chip">+ Sesuai deskripsi penjual</button>
+                            <button type="button" class="review-chip">+ Penjual responsif & ramah</button>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.querySelectorAll(".review-chip").forEach(function (chip) {
+                            chip.addEventListener("click", function () {
+                                const textarea = document.getElementById("id_comment");
+                                const text = chip.textContent.replace("+ ", "").trim();
+
+                                if (textarea.value.trim() === "") {
+                                    textarea.value = text + ".";
+                                } else {
+                                    textarea.value = textarea.value.trim();
+
+                                    if (!textarea.value.endsWith(".")) {
+                                        textarea.value += ".";
+                                    }
+
+                                    textarea.value += " " + text + ".";
+                                }
+                            });
+                        });
+                    </script>
+                    {% if form.comment.errors %}
+                        {{ form.comment.errors }}
+                    {% endif %}
+
+                </div>
+
+                <div class="review-form-actions">
+
+                    <button type="submit" class="button">
+                        Kirim Ulasan
+                    </button>
+
+                    <a href="{% url 'review:index' %}"
+                       class="review-cancel-button">
+                        Batal
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <aside class="review-sidebar">
+
+            <h2>Tips Menulis Ulasan</h2>
+
+            <p>
+                <strong>Kondisi barang:</strong>
+                Berikan penilaian yang jujur tentang kondisi barang preloved.
+            </p>
+
+            <p>
+                <strong>Akurasi deskripsi:</strong>
+                Sebutkan apakah barang sesuai dengan deskripsi penjual.
+            </p>
+
+            <p>
+                <strong>Pengalaman transaksi:</strong>
+                Kamu juga bisa membagikan pengalaman selama proses transaksi.
+            </p>
+
+        </aside>
+
+    </div>
+
+</div>
 
 {% endblock %}

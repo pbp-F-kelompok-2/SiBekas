@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Avg
 
 from product.models import Product
 
@@ -12,6 +13,12 @@ def index(request):
     reviewed_product_ids = Review.objects.filter(
         user=request.user
     ).values_list("product_id", flat=True)
+
+    average_rating = Review.objects.filter(
+        user=request.user
+    ).aggregate(
+        average=Avg("rating")
+    )["average"]
 
     products_to_review = Product.objects.exclude(
         id__in=reviewed_product_ids
@@ -27,6 +34,7 @@ def index(request):
         {
             "products_to_review": products_to_review,
             "my_reviews": my_reviews,
+            "average_rating": average_rating,
         },
     )
 
@@ -75,8 +83,11 @@ def update_review(request, review_id):
         form = ReviewForm(request.POST, instance=review)
 
         if form.is_valid():
-            form.save()
+            review = form.save(commit=False)
+            review.edited = True
+            review.save()
             return redirect("review:index")
+
     else:
         form = ReviewForm(instance=review)
 

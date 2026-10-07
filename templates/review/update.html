@@ -2,16 +2,30 @@
 
 {% block content %}
 
+<p class="eyebrow">Review</p>
+
 <h1>Edit Ulasan</h1>
 
-<h2>{{ review.product.name }}</h2>
+<p class="hero-copy">
+    Perbarui rating atau komentar yang sudah kamu berikan.
+</p>
 
-<form method="POST">
-    {% csrf_token %}
+<section class="modules">
+    <h2>{{ review.product.name }}</h2>
 
-    {{ form.as_p }}
+    <form method="POST">
+        {% csrf_token %}
 
-    <button type="submit">Simpan Perubahan</button>
-</form>
+        {{ form.as_p }}
+
+        <button type="submit" class="button">
+            Simpan Perubahan
+        </button>
+
+        <a href="{% url 'review:index' %}" class="button">
+            Batal
+        </a>
+    </form>
+</section>
 
 {% endblock %}

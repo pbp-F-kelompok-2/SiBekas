@@ -2,21 +2,36 @@
 
 {% block content %}
 
+<p class="eyebrow">Review</p>
+
 <h1>Hapus Ulasan</h1>
 
-<p>
-    Apakah kamu yakin ingin menghapus ulasan untuk
-    <strong>{{ review.product.name }}</strong>?
+<p class="hero-copy">
+    Apakah kamu yakin ingin menghapus ulasan ini?
 </p>
 
-<p>Rating: {{ review.rating }}/5</p>
-<p>{{ review.comment }}</p>
+<section class="modules">
+    <h2>{{ review.product.name }}</h2>
 
-<form method="POST">
-    {% csrf_token %}
+    <p>
+        Rating: {{ review.rating }}/5
+    </p>
 
-    <button type="submit">Ya, Hapus</button>
-    <a href="{% url 'review:index' %}">Batal</a>
-</form>
+    <p>
+        {{ review.comment }}
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <button type="submit" class="button">
+            Ya, Hapus
+        </button>
+
+        <a href="{% url 'review:index' %}" class="button">
+            Batal
+        </a>
+    </form>
+</section>
 
 {% endblock %}

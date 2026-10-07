@@ -1,40 +1,632 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Ulasan & Rating - SiBekas
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/review.css' %}" />
+{% endblock %}
 
 {% block content %}
 
-<h1>Ulasan & Rating</h1>
+<div class="review-page">
 
-<p>Daftar produk yang dapat kamu ulas:</p>
+  <!-- Header / Hero Section -->
+  <header class="review-hero">
 
-{% for product in products_to_review %}
-    <div>
-        <h3>{{ product.name }}</h3>
-
-        <a href="{% url 'review:create' product.id %}">
-            Tulis Ulasan
-        </a>
+    <div class="review-hero__kicker">
+        REVIEW & FEEDBACK
     </div>
-{% empty %}
-    <p>Belum ada produk.</p>
-{% endfor %}
 
-<h2>Ulasan yang kutulis</h2>
+    <h1 class="review-hero__title">
+      Ulasan &amp; Rating
+    </h1>
 
-{% for review in my_reviews %}
-    <div>
-        <h3>{{ review.product.name }}</h3>
-        <p>Rating: {{ review.rating }}/5</p>
-        <p>{{ review.comment }}</p>
-        <a href="{% url 'review:update' review.id %}">
-            Edit Ulasan
-        </a>
-        
-        <a href="{% url 'review:delete' review.id %}">
-            Hapus Ulasan
-        </a>
+    <p class="review-hero__subtitle">
+      Bagikan pengalamanmu bertransaksi dan bantu sesama mahasiswa UI menemukan
+      produk preloved yang tepat dan berkualitas.
+    </p>
+
+    <div class="review-summary">
+
+      <div class="summary-pill summary-pill--active">
+        <svg
+          class="summary-pill__icon--green"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+
+        <span>
+          Menunggu ulasanmu:
+          <strong>{{ products_to_review|length }} Produk</strong>
+        </span>
+      </div>
+
+      <div class="summary-pill">
+        <svg
+          class="summary-pill__icon--green"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+
+        <span>
+          Sudah kamu ulas:
+          <strong>{{ my_reviews|length }} Ulasan</strong>
+        </span>
+      </div>
+
+      <div class="summary-pill">
+        <svg
+          class="summary-pill__icon--gold"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="8" r="6" />
+          <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+        </svg>
+
+        <span>
+          Rata-rata rating kamu:
+          <strong>{{ average_rating|default:"-" }} / 5</strong>
+        </span>
+      </div>
+
     </div>
-{% empty %}
-    <p>Kamu belum menulis ulasan.</p>
-{% endfor %}
+  </header>
+
+  <hr class="review-divider" />
+
+  <!-- Section 1: Menunggu Ulasanmu -->
+  <section
+    class="review-section"
+    aria-labelledby="heading-pending-reviews"
+  >
+
+    <div class="review-section__header">
+
+      <div class="review-section__title-row">
+
+        <h2
+          id="heading-pending-reviews"
+          class="review-section__title"
+        >
+          MENUNGGU ULASANMU
+        </h2>
+
+        <span class="review-section__count">
+          {{ products_to_review|length }}
+        </span>
+
+      </div>
+
+      <p class="review-section__subtitle">
+        Pesanan yang sudah kamu terima dan siap untuk dinilai.
+      </p>
+
+    </div>
+
+    <div class="review-grid">
+
+      {% for product in products_to_review %}
+
+      <article class="pending-card">
+
+        <div class="pending-card__top">
+
+          <div
+            class="pending-card__icon-box"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </div>
+
+          <div class="pending-card__content">
+
+            <span class="pending-card__status">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+
+              PESANAN SELESAI
+            </span>
+
+            <h3 class="pending-card__title">
+              {{ product.name }}
+            </h3>
+
+            <p class="pending-card__meta">
+              Pesanan telah selesai &bull; Siap untuk dinilai
+            </p>
+
+          </div>
+
+        </div>
+
+        <a
+          href="{% url 'review:create' product.id %}"
+          class="btn-write-review"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+          </svg>
+
+          <span>Tulis Ulasan</span>
+
+          <span
+            class="btn-write-review__arrow"
+            aria-hidden="true"
+          >
+            &rarr;
+          </span>
+        </a>
+
+      </article>
+
+      {% empty %}
+
+      <div class="empty-state">
+
+        <div
+          class="empty-state__icon"
+          aria-hidden="true"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+          </svg>
+        </div>
+
+        <h3 class="empty-state__title">
+          Semua produk sudah kamu ulas!
+        </h3>
+
+        <p class="empty-state__text">
+          Belum ada produk yang menunggu ulasanmu saat ini. Terus bertransaksi
+          barang preloved berkualitas di SiBekas!
+        </p>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+  </section>
+
+  <hr class="review-divider" />
+
+  <!-- Section 2: Ulasan yang Kutulis -->
+  <section
+    class="review-section"
+    aria-labelledby="heading-my-reviews"
+  >
+
+    <div class="review-section__header">
+
+      <div class="review-section__title-row">
+
+        <h2
+          id="heading-my-reviews"
+          class="review-section__title"
+        >
+          ULASAN YANG SUDAH DITULIS
+        </h2>
+
+        <span class="review-section__count">
+          {{ my_reviews|length }}
+        </span>
+
+      </div>
+
+      <p class="review-section__subtitle">
+        Riwayat feedback dan penilaian yang telah kamu publikasikan.
+      </p>
+
+    </div>
+
+    <div class="review-grid">
+
+      {% for review in my_reviews %}
+
+      <article class="review-card">
+
+        <div>
+
+          <div class="review-card__top">
+
+            <h3 class="review-card__product-name">
+              {{ review.product.name }}
+            </h3>
+
+            <span class="rating-badge">
+
+              <span
+                class="rating-badge__star"
+                aria-hidden="true"
+              >
+                &#9733;
+              </span>
+
+              <span>{{ review.rating }} / 5</span>
+
+            </span>
+
+          </div>
+
+          <div
+            class="rating-stars"
+            aria-label="Rating {{ review.rating }} dari 5"
+          >
+
+            <span
+              class="rating-stars__item {% if review.rating >= 1 %}rating-stars__item--filled{% endif %}"
+            >
+              &#9733;
+            </span>
+
+            <span
+              class="rating-stars__item {% if review.rating >= 2 %}rating-stars__item--filled{% endif %}"
+            >
+              &#9733;
+            </span>
+
+            <span
+              class="rating-stars__item {% if review.rating >= 3 %}rating-stars__item--filled{% endif %}"
+            >
+              &#9733;
+            </span>
+
+            <span
+              class="rating-stars__item {% if review.rating >= 4 %}rating-stars__item--filled{% endif %}"
+            >
+              &#9733;
+            </span>
+
+            <span
+              class="rating-stars__item {% if review.rating >= 5 %}rating-stars__item--filled{% endif %}"
+            >
+              &#9733;
+            </span>
+
+          </div>
+
+          <div class="review-card__quote-box">
+
+            <p class="review-card__comment">
+              "{{ review.comment }}"
+            </p>
+
+            {% if review.created_at %}
+
+            <div class="review-card__date">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect
+                  x="3"
+                  y="4"
+                  width="18"
+                  height="18"
+                  rx="2"
+                  ry="2"
+                />
+
+                <line
+                  x1="16"
+                  y1="2"
+                  x2="16"
+                  y2="6"
+                />
+
+                <line
+                  x1="8"
+                  y1="2"
+                  x2="8"
+                  y2="6"
+                />
+
+                <line
+                  x1="3"
+                  y1="10"
+                  x2="21"
+                  y2="10"
+                />
+              </svg>
+
+              <span>
+                Diulas pada {{ review.created_at|date:"d M Y" }}
+
+                {% if review.edited %}
+                    &bull;
+                    Diedit pada {{ review.updated_at|date:"d M Y" }}
+                {% endif %}
+              </span>
+
+            </div>
+
+            {% endif %}
+
+          </div>
+
+        </div>
+
+        <div class="review-card__actions">
+
+          <button
+            type="button"
+            class="btn-edit-review"
+            popovertarget="edit-review-{{ review.id }}"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+
+            <span>Edit Ulasan</span>
+          </button>
+
+          <button
+            type="button"
+            class="btn-delete-review"
+            popovertarget="delete-review-{{ review.id }}"
+            >
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+            >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+
+            <span>Hapus</span>
+          </button>
+
+        </div>
+
+      </article>
+
+      <!-- Delete Review Modal -->
+        <div
+        id="delete-review-{{ review.id }}"
+        popover
+        class="review-modal"
+        >
+        <div class="review-modal__content">
+
+            <h2>Hapus Ulasan?</h2>
+
+            <p>
+            Kamu yakin ingin menghapus ulasan untuk
+            </p>
+
+            <strong class="review-modal__product-name">
+            {{ review.product.name }}
+            </strong>
+
+            <div class="review-modal__actions">
+
+            <button
+                type="button"
+                class="btn-cancel-review"
+                popovertarget="delete-review-{{ review.id }}"
+            >
+                Batal
+            </button>
+
+            <form
+                method="POST"
+                action="{% url 'review:delete' review.id %}"
+            >
+                {% csrf_token %}
+
+                <button
+                type="submit"
+                class="btn-delete-confirm"
+                >
+                Hapus Ulasan
+                </button>
+            </form>
+
+            </div>
+
+          </div>
+        </div>
+
+      <!-- Edit Review Modal -->
+      <div
+        id="edit-review-{{ review.id }}"
+        popover
+        class="review-modal"
+      >
+
+        <div class="review-modal__content">
+
+          <h2>Edit Ulasan</h2>
+
+            <p>
+            Perbarui rating atau komentar untuk
+            </p>
+
+            <strong class="review-modal__product-name">
+            {{ review.product.name }}
+            </strong>
+
+          <form
+            method="POST"
+            action="{% url 'review:update' review.id %}"
+          >
+            {% csrf_token %}
+
+            <div class="review-modal__field">
+
+              <label for="rating-{{ review.id }}">
+                Rating
+              </label>
+
+              <input
+                type="number"
+                id="rating-{{ review.id }}"
+                name="rating"
+                min="1"
+                max="5"
+                value="{{ review.rating }}"
+                required
+              >
+
+            </div>
+
+            <div class="review-modal__field">
+
+              <label for="comment-{{ review.id }}">
+                Ulasan
+              </label>
+
+              <textarea
+                id="comment-{{ review.id }}"
+                name="comment"
+                rows="5"
+                required
+              >{{ review.comment }}</textarea>
+
+            </div>
+
+            <div class="review-modal__actions">
+
+              <button
+                type="button"
+                class="btn-cancel-review"
+                popovertarget="edit-review-{{ review.id }}"
+              >
+                Batal
+              </button>
+
+              <button
+                type="submit"
+                class="btn-save-review"
+              >
+                Simpan Perubahan
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+      {% empty %}
+
+      <div class="empty-state">
+
+        <div
+          class="empty-state__icon"
+          aria-hidden="true"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </div>
+
+        <h3 class="empty-state__title">
+          Belum ada ulasan yang ditulis!
+        </h3>
+
+        <p class="empty-state__text">
+          Riwayat ulasan dan penilaian produk yang kamu publikasikan akan
+          muncul di bagian ini.
+        </p>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+  </section>
+
+</div>
 
 {% endblock %}
