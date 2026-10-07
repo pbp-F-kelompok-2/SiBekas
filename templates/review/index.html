@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Ulasan & Rating</h1>
+
+<p>Daftar produk yang dapat kamu ulas:</p>
+
+{% for product in products_to_review %}
+    <div>
+        <h3>{{ product.name }}</h3>
+
+        <a href="{% url 'review:create' product.id %}">
+            Tulis Ulasan
+        </a>
+    </div>
+{% empty %}
+    <p>Belum ada produk.</p>
+{% endfor %}
+
+<h2>Ulasan yang kutulis</h2>
+
+{% for review in my_reviews %}
+    <div>
+        <h3>{{ review.product.name }}</h3>
+        <p>Rating: {{ review.rating }}/5</p>
+        <p>{{ review.comment }}</p>
+        <a href="{% url 'review:update' review.id %}">
+            Edit Ulasan
+        </a>
+        
+        <a href="{% url 'review:delete' review.id %}">
+            Hapus Ulasan
+        </a>
+    </div>
+{% empty %}
+    <p>Kamu belum menulis ulasan.</p>
+{% endfor %}
+
+{% endblock %}

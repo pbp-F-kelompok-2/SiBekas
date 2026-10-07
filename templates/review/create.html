@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Tulis Ulasan</h1>
+
+<h2>{{ product.name }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Kirim Ulasan</button>
+</form>
+
+{% endblock %}

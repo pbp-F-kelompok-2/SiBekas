@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Edit Ulasan</h1>
+
+<h2>{{ review.product.name }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Simpan Perubahan</button>
+</form>
+
+{% endblock %}
