@@ -6,10 +6,8 @@ from django.contrib.auth.models import User
 def index(request):
     return render(
         request,
-        "module_placeholder.html",
-        {"module_name": "Profile / User"},
+        "profiles/index.html"
     )
-
 
 def register(request):
     if request.method == "POST":

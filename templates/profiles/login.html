@@ -1,32 +1,84 @@
+
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Masuk | SiBekas{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 
-<h1>Login</h1>
+<div class="auth-page login-page">
 
-{% if error %}
-    <p>{{ error }}</p>
-{% endif %}
+    {% include "profiles/_auth_sidebar.html" with intro_eyebrow="MARKETPLACE PRELOVED UI" intro_heading="Barang preloved,<br><span>jadi lebih berarti.</span>" intro_description="Jual barang yang sudah tidak terpakai dan temukan barang berkualitas dengan harga yang lebih ramah di kantong, langsung di lingkungan UI." intro_footer="Satu barang, kesempatan baru. Khusus mahasiswa UI." %}
 
-<form method="POST">
-    {% csrf_token %}
+    <section class="login-content">
+        <div class="login-card">
 
-    <div>
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" required>
-    </div>
+            <p class="form-eyebrow">SELAMAT DATANG KEMBALI</p>
 
-    <div>
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required>
-    </div>
+            <h2>Masuk ke akunmu</h2>
 
-    <button type="submit">Login</button>
-</form>
+            <p class="login-description">
+                Masuk untuk melanjutkan aktivitas jual beli
+                barang preloved bersama SiBekas.
+            </p>
 
-<p>
-    Belum punya akun?
-    <a href="{% url 'profile:register' %}">Register</a>
-</p>
+            {% if error %}
+                <div class="error-message" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
 
+            <form method="POST" class="login-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="email">Email UI</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="nama@ui.ac.id"
+                        value="{{ request.POST.email|default:'' }}"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Kata sandi</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Masukkan kata sandi"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="login-button">
+                    <span>Masuk</span>
+                    <span class="button-arrow" aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <p class="register-prompt">
+                Belum punya akun?
+                <a href="{% url 'profile:register' %}">
+                    Daftar sekarang
+                </a>
+            </p>
+
+            <a href="{% url 'home' %}" class="back-home">
+                ← Kembali ke beranda
+            </a>
+
+        </div>
+    </section>
+
+</div>
 {% endblock %}

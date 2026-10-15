@@ -17,10 +17,17 @@
     <h2 id="modules-heading">Modul utama</h2>
     <div class="module-grid">
         <a href="{% url 'product:index' %}">Product</a>
-        <a href="{% url 'profile:index' %}">Profile / User</a>
-        <a href="{% url 'cart:index' %}">Cart</a>
-        <a href="{% url 'order:index' %}">Order / Transaction</a>
-        <a href="{% url 'review:index' %}">Review</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile:index' %}">Profile / User</a>
+            <a href="{% url 'cart:index' %}">Cart</a>
+            <a href="{% url 'order:index' %}">Order / Transaction</a>
+            <a href="{% url 'review:index' %}">Review</a>
+        {% else %}
+            <a href="{% url 'profile:login' %}">Profile / User</a>
+            <a href="{% url 'profile:login' %}">Cart</a>
+            <a href="{% url 'profile:login' %}">Order / Transaction</a>
+            <a href="{% url 'profile:login' %}">Review</a>
+        {% endif %}
     </div>
 </section>
 {% endblock %}
