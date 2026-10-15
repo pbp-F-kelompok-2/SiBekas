@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<p class="eyebrow">Review</p>
+
+<h1>Hapus Ulasan</h1>
+
+<p class="hero-copy">
+    Apakah kamu yakin ingin menghapus ulasan ini?
+</p>
+
+<section class="modules">
+    <h2>{{ review.product.name }}</h2>
+
+    <p>
+        Rating: {{ review.rating }}/5
+    </p>
+
+    <p>
+        {{ review.comment }}
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <button type="submit" class="button">
+            Ya, Hapus
+        </button>
+
+        <a href="{% url 'review:index' %}" class="button">
+            Batal
+        </a>
+    </form>
+</section>
+
+{% endblock %}

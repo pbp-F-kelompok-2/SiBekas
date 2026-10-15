@@ -77,6 +77,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "sibekas.urls"
 
+LOGIN_URL = "profile:login"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

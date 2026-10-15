@@ -509,3 +509,39 @@ h1 span {
         text-align: left;
     }
 }
+
+/* review */
+
+.review-card {
+    min-height: 130px;
+    padding: 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--cream);
+}
+
+.review-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.review-card p {
+    margin-bottom: 0.75rem;
+    color: var(--muted);
+}
+
+.review-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.review-actions a {
+    color: var(--green);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.review-actions a:hover {
+    color: var(--color-primary-hover);
+}
