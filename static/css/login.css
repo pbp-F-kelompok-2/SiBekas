@@ -1,137 +1,31 @@
-
 /* ========================================
-   LOGIN PAGE
+   LOGIN LAYOUT
 ======================================== */
 
-body:has(.login-page) {
+.auth-page,
+.auth-page * {
+    box-sizing: border-box;
+}
+
+body:has(.auth-page) {
     margin: 0;
 }
 
-body:has(.login-page) main.container,
-body:has(.login-page) main {
+body:has(.auth-page) main.container,
+body:has(.auth-page) main {
     width: 100%;
     max-width: none;
     margin: 0;
     padding: 0;
 }
 
-.login-page,
-.login-page * {
-    box-sizing: border-box;
-}
-
-.login-page {
+.auth-page {
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
     min-height: 100vh;
     color: var(--color-text-primary);
-    font-family: inherit;
-}
-
-/* ========================================
-   LEFT PANEL
-======================================== */
-
-.login-intro {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 32px;
-
-    min-width: 0;
-    min-height: 100vh;
-    padding: 54px 6.5%;
-    overflow: hidden;
-
-    background-color: var(--color-accent);
-    background-image: radial-gradient(
-        rgba(255, 255, 255, 0.85) 1.3px,
-        transparent 1.3px
-    );
-    background-size: 20px 20px;
-
-    border-right: 2px solid var(--color-primary);
-}
-
-/* Brand */
-
-.login-brand {
-    position: relative;
-    z-index: 1;
-
-    color: var(--color-primary-hover);
-    font-size: 30px;
-    font-weight: 900;
-    letter-spacing: -1px;
-    text-decoration: none;
-}
-
-/* Promotional card */
-
-.intro-card {
-    position: relative;
-    align-self: center;
-
-    width: 100%;
-    max-width: 660px;
-    margin-top: auto;
-    margin-bottom: auto;
-    padding: 34px 38px;
-
-    background-color: var(--color-background);
-    border: 2px solid var(--color-primary);
-    border-radius: 18px;
-    box-shadow: 7px 7px 0 var(--color-primary);
-
-    transform: translateX(10px) rotate(-1deg);
-}
-
-.intro-eyebrow {
-    margin: 0 0 20px;
-
-    color: var(--color-primary);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-}
-
-.intro-card h1 {
-    margin: 0 0 18px;
-
-    color: var(--color-primary-hover);
-    font-size: clamp(32px, 3.2vw, 48px);
-    font-weight: 900;
-    line-height: 1.13;
-    letter-spacing: -1.5px;
-}
-
-.intro-card h1 span {
-    color: var(--color-primary);
-}
-
-.intro-description {
-    max-width: 490px;
-    margin: 0;
-
-    color: var(--color-text-muted);
-    font-size: 16px;
-    line-height: 1.8;
-}
-
-/* Footer kiri */
-
-.intro-footer {
-    position: relative;
-    z-index: 1;
-
-    margin: 0;
-    color: var(--color-primary-hover);
-
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.8;
+    font-family: 'Inter', sans-serif;
 }
 
 /* ========================================
@@ -142,18 +36,17 @@ body:has(.login-page) main {
     display: flex;
     align-items: center;
     justify-content: center;
-
     min-width: 0;
     min-height: 100vh;
-    padding: 48px;
+    padding: 40px;
 
     background-color: var(--color-background);
 }
 
 .login-card {
     width: 100%;
-    max-width: 540px;
-    padding: 38px 40px;
+    max-width: 600px;
+    padding: 46px 48px;
 
     background-color: var(--color-background);
     border: 2px solid var(--color-primary);
@@ -161,33 +54,33 @@ body:has(.login-page) main {
     box-shadow: 6px 6px 0 var(--color-primary);
 }
 
-/* Heading */
+/* ========================================
+   HEADING
+======================================== */
 
 .form-eyebrow {
     margin: 0 0 20px;
-
     color: var(--color-text-primary);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 }
 
 .login-card h2 {
-    margin: 0 0 12px;
-
+    margin: 0 0 14px;
     color: var(--color-primary-hover);
-    font-size: clamp(28px, 2.5vw, 36px);
-    font-weight: 900;
-    line-height: 1.2;
-    letter-spacing: -1px;
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(30px, 2.5vw, 36px);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.5px;
 }
 
 .login-description {
     margin: 0 0 30px;
-
     color: var(--color-text-muted);
-    font-size: 15px;
-    line-height: 1.8;
+    font-size: 16px;
+    line-height: 1.7;
 }
 
 /* ========================================
@@ -197,26 +90,27 @@ body:has(.login-page) main {
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 26px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    min-width: 0;
 }
 
 .form-group label {
     color: var(--color-primary-hover);
-    font-size: 14px;
-    font-weight: 800;
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .form-group input {
     display: block;
     width: 100%;
-    min-height: 52px;
-    padding: 13px 16px;
+    min-height: 56px;
+    padding: 14px 18px;
 
     border: 1.5px solid var(--color-primary);
     border-radius: 13px;
@@ -225,12 +119,10 @@ body:has(.login-page) main {
     background-color: var(--color-background);
     color: var(--color-text-primary);
 
-    font-family: inherit;
-    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
 
-    transition:
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-group input::placeholder {
@@ -243,7 +135,9 @@ body:has(.login-page) main {
     box-shadow: 0 0 0 3px rgba(21, 92, 59, 0.13);
 }
 
-/* Login button */
+/* ========================================
+   BUTTON
+======================================== */
 
 .login-button {
     display: flex;
@@ -251,9 +145,8 @@ body:has(.login-page) main {
     justify-content: space-between;
 
     width: 100%;
-    min-height: 54px;
-    margin-top: 0;
-    padding: 0 20px;
+    min-height: 58px;
+    padding: 0 22px;
 
     border: 2px solid var(--color-primary);
     border-radius: 999px;
@@ -261,15 +154,12 @@ body:has(.login-page) main {
     background-color: var(--color-primary);
     color: white;
 
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
 
     cursor: pointer;
-
-    transition:
-        background-color 0.2s ease,
-        transform 0.2s ease;
+    transition: background-color 0.2s, transform 0.2s;
 }
 
 .login-button:hover {
@@ -278,11 +168,13 @@ body:has(.login-page) main {
 }
 
 .button-arrow {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 400;
 }
 
-/* Error message */
+/* ========================================
+   ERROR
+======================================== */
 
 .error-message {
     margin-bottom: 20px;
@@ -294,31 +186,31 @@ body:has(.login-page) main {
     background-color: #fff0ed;
     color: var(--color-error);
 
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
 /* ========================================
-   REGISTER AND HOME LINKS
+   LINKS
 ======================================== */
 
 .register-prompt {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     justify-content: center;
     gap: 5px;
 
     margin: 28px 0 0;
 
     color: var(--color-text-muted);
-    font-size: 13px;
+    font-size: 14px;
     text-align: center;
 }
 
 .register-prompt a {
     color: var(--color-primary);
-    font-weight: 800;
+    font-weight: 700;
     text-decoration: none;
 }
 
@@ -332,7 +224,7 @@ body:has(.login-page) main {
     margin: 26px auto 0;
 
     color: var(--color-text-muted);
-    font-size: 13px;
+    font-size: 14px;
     text-align: center;
     text-decoration: none;
 }
@@ -346,76 +238,23 @@ body:has(.login-page) main {
 ======================================== */
 
 @media (max-width: 1000px) {
-    .login-intro {
-        padding: 40px 5%;
-    }
-
-    .intro-card {
-        padding: 28px;
-    }
-
-    .intro-card h1 {
-        font-size: 34px;
-    }
-
-    .intro-description {
-        font-size: 14px;
-    }
-
-    .intro-footer {
-        font-size: 14px;
-    }
-
     .login-content {
         padding: 32px;
     }
 
     .login-card {
-        padding: 30px;
+        padding: 34px;
     }
 }
 
 @media (max-width: 760px) {
-    .login-page {
+    .auth-page {
         grid-template-columns: 1fr;
-        min-height: 100vh;
-    }
-
-    .login-intro {
-        min-height: 440px;
-        padding: 32px 26px;
-
-        border-right: none;
-        border-bottom: 2px solid var(--color-primary);
-    }
-
-    .login-brand {
-        font-size: 26px;
-    }
-
-    .intro-card {
-        max-width: 560px;
-        margin: 45px 0;
-        padding: 28px;
-
-        transform: none;
-    }
-
-    .intro-card h1 {
-        font-size: clamp(30px, 6vw, 42px);
-    }
-
-    .intro-description {
-        font-size: 14px;
-    }
-
-    .intro-footer {
-        font-size: 14px;
     }
 
     .login-content {
         min-height: auto;
-        padding: 48px 24px;
+        padding: 40px 24px;
     }
 
     .login-card {
@@ -425,44 +264,27 @@ body:has(.login-page) main {
 }
 
 @media (max-width: 420px) {
-    .login-intro {
-        min-height: 390px;
-        padding: 26px 20px;
-    }
-
-    .intro-card {
-        margin: 35px 0;
-        padding: 23px;
-        border-radius: 14px;
-    }
-
-    .intro-card h1 {
-        font-size: 30px;
-        letter-spacing: -0.8px;
-    }
-
-    .intro-description {
-        font-size: 13px;
-    }
-
-    .intro-footer {
-        font-size: 13px;
-    }
-
     .login-content {
-        padding: 32px 18px;
+        padding: 30px 18px;
     }
 
     .login-card {
-        padding: 26px 21px;
-        border-radius: 15px;
+        padding: 25px 20px;
     }
 
     .login-card h2 {
-        font-size: 27px;
+        font-size: 29px;
     }
 
     .login-description {
+        font-size: 15px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+    }
+
+    .form-group input {
         font-size: 14px;
     }
 }

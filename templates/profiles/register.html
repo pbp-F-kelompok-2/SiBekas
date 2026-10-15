@@ -1,15 +1,91 @@
+
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Daftar | SiBekas{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
 
-<h1>Register</h1>
+<div class="auth-page register-page">
 
-<form method="POST">
-    {% csrf_token %}
+    {% include "profiles/_auth_sidebar.html" with intro_eyebrow="GABUNG BERSAMA SIBEKAS" intro_heading="Barang baru,<br><span>nggak harus baru.</span>" intro_description="Mulai perjalanan jual beli preloved bareng mahasiswa UI. Temukan barang yang kamu butuhkan atau berikan kesempatan baru untuk barang yang sudah tidak terpakai." intro_footer="Lebih hemat, lebih bermanfaat. Khusus mahasiswa UI." %}
 
-    {{ form.as_p }}
+    <section class="register-content">
+        <div class="register-card">
 
-    <button type="submit">Register</button>
-</form>
+            <p class="register-eyebrow">BUAT AKUN BARU</p>
 
+            <h2>Gabung ke SiBekas</h2>
+
+            <p class="register-description">
+                Daftar menggunakan email UI kamu untuk mulai
+                jual beli barang preloved.
+            </p>
+
+            {% if form.non_field_errors %}
+                <div class="register-error" role="alert">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="POST" class="register-form">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="register-form-group">
+
+                        <label for="{{ field.id_for_label }}">
+                            {% if field.name == "username" %}
+                                Nama pengguna
+                            {% elif field.name == "email" %}
+                                Email UI
+                            {% elif field.name == "password1" %}
+                                Kata sandi
+                            {% elif field.name == "password2" %}
+                                Konfirmasi kata sandi
+                            {% else %}
+                                {{ field.label }}
+                            {% endif %}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <div class="register-help">
+                                {{ field.help_text|safe }}
+                            </div>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <p class="register-field-error" role="alert">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="register-button">
+                    <span>Buat akun</span>
+                    <span class="register-button-arrow" aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <p class="register-login-prompt">
+                Sudah punya akun?
+                <a href="{% url 'profile:login' %}">
+                    Masuk di sini
+                </a>
+            </p>
+
+            <a href="{% url 'home' %}" class="register-back-home">
+                ← Kembali ke beranda
+            </a>
+
+        </div>
+    </section>
+
+</div>
 {% endblock %}

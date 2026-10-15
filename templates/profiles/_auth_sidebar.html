@@ -1,0 +1,26 @@
+
+<section class="auth-intro">
+
+    <a href="{% url 'home' %}" class="auth-brand">
+        SiBekas
+    </a>
+
+    <div class="auth-intro-card">
+        <p class="auth-intro-eyebrow">
+            {{ intro_eyebrow }}
+        </p>
+
+        <h1>
+            {{ intro_heading|safe }}
+        </h1>
+
+        <p class="auth-intro-description">
+            {{ intro_description }}
+        </p>
+    </div>
+
+    <p class="auth-intro-footer">
+        {{ intro_footer }}
+    </p>
+
+</section>

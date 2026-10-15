@@ -5,41 +5,14 @@
 {% block title %}Masuk | SiBekas{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
 
-<div class="login-page">
+<div class="auth-page login-page">
 
-    <!-- Panel kiri -->
-    <section class="login-intro">
+    {% include "profiles/_auth_sidebar.html" with intro_eyebrow="MARKETPLACE PRELOVED UI" intro_heading="Barang preloved,<br><span>jadi lebih berarti.</span>" intro_description="Jual barang yang sudah tidak terpakai dan temukan barang berkualitas dengan harga yang lebih ramah di kantong, langsung di lingkungan UI." intro_footer="Satu barang, kesempatan baru. Khusus mahasiswa UI." %}
 
-        <a href="{% url 'home' %}" class="login-brand">
-            SiBekas
-        </a>
-
-        <div class="intro-card">
-            <p class="intro-eyebrow">MARKETPLACE PRELOVED UI</p>
-
-            <h1>
-                Barang preloved,<br>
-                <span>jadi lebih berarti.</span>
-            </h1>
-
-            <p class="intro-description">
-                Jual barang yang sudah tidak terpakai dan temukan
-                barang berkualitas dengan harga yang lebih ramah
-                di kantong, langsung di lingkungan UI.
-            </p>
-        </div>
-
-        <p class="intro-footer">
-            Satu barang, kesempatan baru. Khusus mahasiswa UI.
-        </p>
-
-    </section>
-
-    <!-- Panel kanan -->
     <section class="login-content">
-
         <div class="login-card">
 
             <p class="form-eyebrow">SELAMAT DATANG KEMBALI</p>
@@ -105,7 +78,6 @@
             </a>
 
         </div>
-
     </section>
 
 </div>
