@@ -13,263 +13,306 @@ Keranjang - SiBekas
 
 <section class="cart-page">
 
-    <div class="cart-heading">
-        <p class="eyebrow">
-            Keranjang Belanja
-        </p>
+    <header class="cart-page-header">
+
+        <span class="cart-eyebrow">
+            Keranjang
+        </span>
 
         <h1>
-            Keranjang
+            Keranjang belanja
         </h1>
 
         <p>
-            Periksa kembali barang yang ingin kamu beli
-            sebelum melanjutkan ke checkout.
+            Periksa kembali barang pilihanmu
+            sebelum lanjut ke pembayaran.
         </p>
-    </div>
+
+    </header>
+
 
     {% if available_items or unavailable_items %}
 
-    <div class="cart-layout">
+        <div class="cart-layout">
 
-        <div class="cart-main">
+            <div class="cart-main">
 
-            {% if available_items %}
 
-            <section class="cart-section">
+                {% if unavailable_items %}
 
-                <div class="cart-section-heading">
-                    <h2>
-                        Barang tersedia
-                    </h2>
+                    <div
+                        class="cart-alert"
+                        role="alert"
+                    >
+                        <div class="cart-alert-heading">
+                            <i data-lucide="triangle-alert"></i>
 
-                    <span>
-                        {{ total_items }} item
-                    </span>
-                </div>
+                            <div>
+                                <strong>
+                                    Sebagian barang tidak lagi tersedia
+                                </strong>
 
-                <div class="cart-items">
-
-                    {% for item in available_items %}
-
-                    <article class="cart-item">
-
-                        <div class="cart-item-image">
-                            <span>
-                                SB
-                            </span>
+                                <p>
+                                    {{ unavailable_items|length }}
+                                    barang tidak dapat dilanjutkan
+                                    ke checkout.
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="cart-item-info">
 
-                            <p class="cart-seller">
-                                {{ item.seller }}
-                            </p>
+                        <div class="cart-unavailable-list">
 
-                            <h3>
+                            {% for item in unavailable_items %}
+
+                                <div class="cart-unavailable-row">
+
+                                    <span>
+                                        {{ item.name }}
+                                    </span>
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'cart:remove_item' item.id %}"
+                                    >
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="cart-unavailable-remove"
+                                        >
+                                            Hapus
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                {% for item in available_items %}
+
+                    <article class="cart-card">
+
+                        <a
+                            href="{{ item.url }}"
+                            class="cart-product-image"
+                        >
+
+                            {% if item.thumbnail %}
+
+                                <img
+                                    src="{{ item.thumbnail }}"
+                                    alt="{{ item.name }}"
+                                    loading="lazy"
+                                >
+
+                            {% else %}
+
+                                <span>
+                                    <i data-lucide="shopping-bag"></i>
+                                </span>
+
+                            {% endif %}
+
+                        </a>
+
+
+                        <div class="cart-product-content">
+
+                            <a
+                                href="{{ item.url }}"
+                                class="cart-product-name"
+                            >
                                 {{ item.name }}
-                            </h3>
+                            </a>
 
-                            <p class="cart-condition">
+
+                            <p class="cart-product-meta">
+                                {{ item.seller }}
+                                <span aria-hidden="true">·</span>
                                 {{ item.condition }}
                             </p>
 
-                            <strong class="cart-price">
+
+                            <p class="cart-product-price">
                                 {{ item.price_display }}
-                            </strong>
+                            </p>
 
-                            <div class="cart-item-bottom">
 
-                                <form method="post" action="{% url 'cart:update_item' item.id %}"
-                                    class="quantity-control">
+                            <div class="cart-product-actions">
+
+                                <form
+                                    method="post"
+                                    action="{% url 'cart:update_item' item.id %}"
+                                    class="cart-quantity"
+                                >
                                     {% csrf_token %}
 
-                                    <button type="submit" name="action" value="decrease" aria-label="Kurangi jumlah">
+                                    <button
+                                        type="submit"
+                                        name="action"
+                                        value="decrease"
+                                        aria-label="Kurangi jumlah"
+                                        {% if item.quantity <= 1 %}disabled{% endif %}
+                                    >
                                         <i data-lucide="minus"></i>
                                     </button>
+
 
                                     <span>
                                         {{ item.quantity }}
                                     </span>
 
-                                    <button type="submit" name="action" value="increase" aria-label="Tambah jumlah">
+
+                                    <button
+                                        type="submit"
+                                        name="action"
+                                        value="increase"
+                                        aria-label="Tambah jumlah"
+                                        {% if item.max_reached %}disabled{% endif %}
+                                    >
                                         <i data-lucide="plus"></i>
                                     </button>
+
                                 </form>
 
-                                <form method="post" action="{% url 'cart:remove_item' item.id %}">
+
+                                <form
+                                    method="post"
+                                    action="{% url 'cart:remove_item' item.id %}"
+                                >
                                     {% csrf_token %}
 
-                                    <button type="submit" class="cart-remove">
+                                    <button
+                                        type="submit"
+                                        class="cart-delete"
+                                    >
+                                        <i data-lucide="trash-2"></i>
                                         Hapus
                                     </button>
+
                                 </form>
 
                             </div>
 
-                        </div>
 
-                        <div class="cart-item-total">
-                            <span>
-                                Total
-                            </span>
+                            {% if item.max_reached %}
 
-                            <strong>
-                                {{ item.line_total_display }}
-                            </strong>
+                                <p class="cart-stock-warning">
+                                    Stok maksimal tercapai
+                                    ({{ item.stock }} unit).
+                                </p>
+
+                            {% endif %}
+
                         </div>
 
                     </article>
 
-                    {% endfor %}
+                {% endfor %}
 
-                </div>
-            </section>
-
-            {% endif %}
+            </div>
 
 
-            {% if unavailable_items %}
+            <aside class="cart-summary">
 
-            <section class="cart-section unavailable-section">
+                <h2>
+                    Ringkasan
+                </h2>
 
-                <div class="cart-section-heading">
+
+                <dl class="cart-summary-list">
+
                     <div>
-                        <h2>
-                            <i data-lucide="circle-alert"></i>
-                            Tidak tersedia
-                        </h2>
+                        <dt>
+                            Subtotal
+                            ({{ available_items|length }} barang)
+                        </dt>
 
-                        <p>
-                            Barang berikut tidak dapat
-                            dilanjutkan ke checkout.
-                        </p>
+                        <dd>
+                            {{ subtotal_display }}
+                        </dd>
                     </div>
 
+
+                    <div>
+                        <dt>
+                            Ongkos kirim
+                        </dt>
+
+                        <dd class="cart-shipping">
+                            Dihitung di checkout
+                        </dd>
+                    </div>
+
+                </dl>
+
+
+                <div class="cart-summary-divider"></div>
+
+
+                <div class="cart-summary-total">
+
                     <span>
-                        {{ unavailable_items|length }}
-                        item
+                        Total
                     </span>
-                </div>
 
-                <div class="unavailable-list">
-
-                    {% for item in unavailable_items %}
-
-                    <article class="unavailable-item">
-
-                        <div class="cart-item-image unavailable-image">
-                            <span>
-                                SB
-                            </span>
-                        </div>
-
-                        <div class="unavailable-info">
-
-                            <h3>
-                                {{ item.name }}
-                            </h3>
-
-                            <p>
-                                {{ item.unavailable_reason }}
-                            </p>
-
-                            <span>
-                                {{ item.price_display }}
-                            </span>
-
-                        </div>
-
-                        <form method="post" action="{% url 'cart:remove_item' item.id %}">
-                            {% csrf_token %}
-
-                            <button type="submit" class="unavailable-remove" aria-label="Hapus {{ item.name }}">
-                                <i data-lucide="trash-2"></i>
-                            </button>
-                        </form>
-
-                    </article>
-
-                    {% endfor %}
+                    <strong>
+                        {{ subtotal_display }}
+                    </strong>
 
                 </div>
 
-            </section>
 
-            {% endif %}
+                <a
+                    href="{% url 'order:index' %}"
+                    class="cart-checkout-button"
+                >
+                    Lanjut ke checkout
+                </a>
+
+            </aside>
 
         </div>
-
-
-        <aside class="cart-summary">
-
-            <p class="eyebrow">
-                Ringkasan
-            </p>
-
-            <h2>
-                <i data-lucide="circle-alert"></i>
-                Ringkasan Belanja
-
-            </h2>
-
-            <div class="summary-row">
-                <span>
-                    Total barang
-                </span>
-
-                <strong>
-                    {{ total_items }}
-                </strong>
-            </div>
-
-            <div class="summary-row summary-total">
-                <span>
-                    Subtotal
-                </span>
-
-                <strong>
-                    {{ subtotal_display }}
-                </strong>
-            </div>
-
-            <p class="summary-note">
-                Biaya pengiriman dihitung
-                pada proses checkout.
-            </p>
-
-            <a href="{% url 'order:index' %}" class="checkout-button">
-                <span>Lanjut ke Checkout</span>
-                <i data-lucide="arrow-right"></i>
-            </a>
-
-        </aside>
-
-    </div>
 
 
     {% else %}
 
-    <div class="cart-empty">
+        <div class="cart-empty">
 
-        <div class="cart-empty-icon">
-            🛒<i data-lucide="shopping-cart"></i>
+            <div class="cart-empty-icon">
+                <i data-lucide="shopping-bag"></i>
+            </div>
+
+
+            <h2>
+                Keranjangmu masih kosong
+            </h2>
+
+
+            <p>
+                Belum ada barang yang kamu pilih.
+                Yuk, jelajahi katalog dan temukan
+                barang incaranmu.
+            </p>
+
+
+            <a
+                href="{% url 'product:index' %}"
+                class="cart-empty-button"
+            >
+                Mulai belanja
+            </a>
+
         </div>
-
-        <h2>
-            Keranjangmu masih kosong
-        </h2>
-
-        <p>
-            Tambahkan barang dari halaman produk
-            untuk mulai berbelanja.
-        </p>
-
-        <a href="{% url 'product:index' %}" class="button">
-            Jelajahi Produk
-        </a>
-
-    </div>
 
     {% endif %}
 

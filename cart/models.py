@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from product.models import Product
 
 
 class Cart(models.Model):
@@ -30,9 +31,12 @@ class CartItem(models.Model):
         on_delete=models.CASCADE,
         related_name="items",
     )
-
-    product_reference = models.CharField(
-        max_length=100,
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="cart_items",
+        null=True,
+        blank=True,
     )
 
     quantity = models.PositiveIntegerField(
@@ -49,16 +53,23 @@ class CartItem(models.Model):
 
     def __str__(self):
         return (
-            f"{self.product_reference} "
+            f"{self.product} "
             f"x {self.quantity}"
         )
+
+    @property
+    def line_total(self):
+        if not self.product:
+            return 0
+
+        return self.product.price * self.quantity
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=[
                     "cart",
-                    "product_reference",
+                    "product",
                 ],
                 name="unique_product_per_cart",
             ),
