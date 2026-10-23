@@ -70,6 +70,12 @@
     --color-primary-hover: var(--forest-600);
 
     --color-accent: var(--kiwi-500);
+    --color-accent-300: var(--kiwi-300);
+
+    /* Compatibility with existing shared components. */
+    --color-secondary-carrot: var(--carrot-500);
+    --color-secondary-sunshine: var(--sun-500);
+    --color-semantic: var(--tomato-500);
 
     --color-background: var(--cream-200);
     --color-surface: var(--cream-0);
