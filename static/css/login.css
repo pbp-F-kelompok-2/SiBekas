@@ -233,6 +233,9 @@ body:has(.auth-page) main {
     color: var(--color-primary);
 }
 
+body:has(.auth-page) .sb-footer {
+    margin-top: 0;
+}
 /* ========================================
    RESPONSIVE
 ======================================== */
@@ -262,6 +265,8 @@ body:has(.auth-page) main {
         padding: 32px;
     }
 }
+
+
 
 @media (max-width: 420px) {
     .login-content {

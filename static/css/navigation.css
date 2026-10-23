@@ -1,0 +1,517 @@
+:root {
+    --sb-forest: #19532b;
+    --sb-forest-dark: #10391c;
+    --sb-kiwi: #9abc04;
+    --sb-kiwi-light: #e2ecb8;
+    --sb-carrot: #f86015;
+    --sb-cream: #fcf8f0;
+    --sb-white: #ffffff;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.sb-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    border-bottom: 2px solid var(--sb-forest);
+
+    background:
+        rgba(252, 248, 240, 0.96);
+
+    backdrop-filter: blur(10px);
+}
+
+
+.sb-navbar {
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+}
+
+
+/* =========================
+   LOGO
+   ========================= */
+
+.sb-brand {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 10px;
+
+    color: var(--sb-forest);
+
+    text-decoration: none;
+}
+
+
+.sb-brand-mark {
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid var(--sb-forest);
+    border-radius: 9px;
+
+    background: var(--sb-kiwi);
+
+    box-shadow:
+        2px 2px 0 var(--sb-forest);
+
+    transform: rotate(-6deg);
+}
+
+
+.sb-brand-mark svg {
+    width: 18px;
+    height: 18px;
+}
+
+
+.sb-brand-name {
+    font-family: Poppins, sans-serif;
+
+    font-size: 1.25rem;
+    font-weight: 800;
+
+    letter-spacing: -0.03em;
+}
+
+
+/* =========================
+   DESKTOP LINKS
+   ========================= */
+
+.sb-desktop-links {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+
+    margin-left: 1.25rem;
+}
+
+
+.sb-desktop-links a {
+    padding: 8px 16px;
+
+    border-radius: 999px;
+
+    color: var(--sb-forest);
+
+    font-family: Poppins, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.sb-desktop-links a:hover {
+    background: var(--sb-kiwi-light);
+}
+
+
+.sb-desktop-links a.active {
+    background: var(--sb-forest);
+    color: white;
+}
+
+
+/* =========================
+   SEARCH
+   ========================= */
+
+.sb-nav-search {
+    position: relative;
+
+    flex: 1;
+
+    max-width: 310px;
+
+    margin-left: auto;
+}
+
+
+.sb-nav-search svg {
+    position: absolute;
+
+    top: 50%;
+    left: 14px;
+
+    width: 16px;
+    height: 16px;
+
+    color: #8b8575;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+}
+
+
+.sb-nav-search input {
+    width: 100%;
+
+    min-height: 40px;
+
+    padding:
+        8px
+        14px
+        8px
+        40px;
+
+    border: 2px solid var(--sb-forest);
+    border-radius: 999px;
+
+    outline: none;
+
+    background: white;
+
+    color: #24231f;
+
+    font: inherit;
+    font-size: 0.875rem;
+}
+
+
+.sb-nav-search input:focus {
+    border-color: var(--sb-carrot);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(248, 96, 21, 0.15);
+}
+
+
+/* =========================
+   ACTIONS
+   ========================= */
+
+.sb-nav-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.sb-cart-button {
+    position: relative;
+
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid var(--sb-forest);
+    border-radius: 999px;
+
+    background: white;
+    color: var(--sb-forest);
+
+    box-shadow:
+        2px 2px 0 var(--sb-forest);
+
+    text-decoration: none;
+}
+
+
+.sb-cart-button:hover {
+    background: var(--sb-kiwi-light);
+}
+
+
+.sb-cart-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+
+/* =========================
+   PROFILE
+   ========================= */
+
+.sb-profile-button {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding:
+        4px
+        14px
+        4px
+        4px;
+
+    border: 2px solid var(--sb-forest);
+    border-radius: 999px;
+
+    background: white;
+    color: var(--sb-forest);
+
+    font-family: Poppins, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.sb-avatar {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background: var(--sb-kiwi);
+
+    color: var(--sb-forest-dark);
+
+    font-weight: 800;
+}
+
+
+.sb-login-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    border: 2px solid var(--sb-forest);
+    border-radius: 999px;
+
+    background: var(--sb-forest);
+    color: white;
+
+    box-shadow:
+        2px 2px 0 var(--sb-forest-dark);
+
+    font-family: Poppins, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.sb-login-button:hover {
+    background: var(--sb-forest-dark);
+}
+
+
+/* =========================
+   MOBILE MENU
+   ========================= */
+
+.sb-menu-toggle {
+    display: none;
+
+    width: 42px;
+    height: 42px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 2px solid var(--sb-forest);
+    border-radius: 999px;
+
+    background: white;
+    color: var(--sb-forest);
+
+    cursor: pointer;
+}
+
+
+.sb-mobile-menu {
+    display: none;
+
+    border-top: 2px solid var(--sb-forest);
+
+    background: var(--sb-cream);
+}
+
+
+.sb-mobile-menu.nav-menu-open {
+    display: block;
+}
+
+
+.sb-mobile-menu .container {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+
+.sb-mobile-menu a {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 12px;
+
+    border-radius: 12px;
+
+    color: var(--sb-forest);
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.sb-mobile-menu a:hover {
+    background: var(--sb-kiwi-light);
+}
+
+
+.sb-mobile-logout {
+    color: #a21c12 !important;
+}
+
+
+/* =========================
+   BOTTOM MOBILE NAV
+   ========================= */
+
+.sb-bottom-nav {
+    display: none;
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 900px) {
+
+    body {
+        padding-bottom: 70px;
+    }
+
+
+    .sb-navbar {
+        min-height: 64px;
+    }
+
+
+    .sb-desktop-links,
+    .sb-nav-search,
+    .sb-profile-button,
+    .sb-login-button {
+        display: none;
+    }
+
+
+    .sb-nav-actions {
+        margin-left: auto;
+    }
+
+
+    .sb-menu-toggle {
+        display: inline-flex;
+    }
+
+
+    .sb-bottom-nav {
+        position: fixed;
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        z-index: 1000;
+
+        display: flex;
+
+        border-top: 2px solid var(--sb-forest);
+
+        background: var(--sb-cream);
+    }
+
+
+    .sb-bottom-nav a {
+        position: relative;
+
+        flex: 1;
+
+        min-width: 0;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        gap: 2px;
+
+        min-height: 64px;
+
+        color: var(--sb-forest);
+
+        font-size: 0.65rem;
+        font-weight: 600;
+
+        text-align: center;
+        text-decoration: none;
+    }
+
+
+    .sb-bottom-nav a:hover {
+        color: var(--sb-carrot);
+    }
+
+
+    .sb-bottom-nav svg {
+        width: 20px;
+        height: 20px;
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .sb-profile-name {
+        display: none;
+    }
+
+
+    .sb-brand-name {
+        font-size: 1.1rem;
+    }
+
+}

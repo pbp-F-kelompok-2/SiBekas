@@ -1,25 +1,95 @@
 :root {
-    --color-primary: #19532B;
-    --color-primary-hover: #10391C;
+    /* Forest Green */
+    --forest-50: #f2f7f3;
+    --forest-100: #e1ede4;
+    --forest-200: #c3dac9;
+    --forest-300: #a0c4aa;
+    --forest-400: #6fa27d;
+    --forest-500: #19532b;
+    --forest-600: #154724;
+    --forest-700: #10391c;
+    --forest-800: #0c2d17;
+    --forest-900: #071f10;
+    --forest-950: #04150a;
 
-    --color-accent-300: #D0E08B;
-    --color-accent: #9ABC04;
-    --color-secondary-carrot: #F86015;
-    --color-secondary-sunshine: #FFCA26;
-    --color-semantic: #D42518;
+    /* Kiwi */
+    --kiwi-50: #fafcf2;
+    --kiwi-100: #f2f7e0;
+    --kiwi-200: #e2ecb8;
+    --kiwi-300: #d0e08b;
+    --kiwi-400: #bbd257;
+    --kiwi-500: #9abc04;
+    --kiwi-600: #769003;
+    --kiwi-700: #586c02;
+    --kiwi-800: #3d4b02;
 
-    --color-background: #fffdf8;
-    --color-surface:    #F3E8CC;
-    --color-text-primary: #17201b;
-    --color-text-muted: #5f6f65;
+    /* Carrot */
+    --carrot-50: #fff7f3;
+    --carrot-100: #feebe2;
+    --carrot-200: #fdd2bc;
+    --carrot-300: #fcb693;
+    --carrot-400: #fa9563;
+    --carrot-500: #f86015;
+    --carrot-600: #bd4910;
+    --carrot-700: #8e370c;
 
-    --color-border: #d9ded6;
+    /* Sunshine */
+    --sun-50: #fffcf4;
+    --sun-100: #fff8e4;
+    --sun-200: #fff0c1;
+    --sun-300: #ffe79b;
+    --sun-400: #ffdc6e;
+    --sun-500: #ffca26;
+    --sun-600: #c39a1d;
+    --sun-700: #927416;
+
+    /* Error / Tomato */
+    --tomato-50: #fdf4f3;
+    --tomato-100: #fae4e2;
+    --tomato-200: #f3c1bd;
+    --tomato-400: #e26d65;
+    --tomato-500: #d42518;
+    --tomato-600: #a21c12;
+
+    /* Cream */
+    --cream-0: #ffffff;
+    --cream-50: #fefefc;
+    --cream-100: #fdfcf9;
+    --cream-200: #fcf8f0;
+    --cream-300: #f9f4e7;
+    --cream-400: #f7f0dd;
+    --cream-500: #f3e8cc;
+    --cream-600: #b9b19c;
+    --cream-700: #8b8575;
+    --cream-800: #615c51;
+    --cream-900: #38362f;
+    --cream-950: #24231f;
+
+    /* Semantic */
+    --color-primary: var(--forest-500);
+    --color-primary-hover: var(--forest-600);
+
+    --color-accent: var(--kiwi-500);
+    --color-accent-300: var(--kiwi-300);
+
+    /* Compatibility with existing shared components. */
+    --color-secondary-carrot: var(--carrot-500);
+    --color-secondary-sunshine: var(--sun-500);
+    --color-semantic: var(--tomato-500);
+
+    --color-background: var(--cream-200);
+    --color-surface: var(--cream-0);
+
+    --color-text-primary: var(--cream-950);
+    --color-text-muted: var(--cream-800);
+
+    --color-border: var(--forest-500);
 
     --color-success: #2e7d32;
-    --color-warning: #f59e0b;
-    --color-error: #d32f2f;
+    --color-warning: var(--sun-500);
+    --color-error: var(--tomato-500);
 
-    --radius-base: 4px;
+    --radius-base: 16px;
 
     --space-1: 8px;
     --space-2: 16px;
@@ -31,6 +101,15 @@
     --button-md: 40px;
     --button-lg: 48px;
 
-    --font-heading: 'Poppins', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-heading: "Poppins", sans-serif;
+    --font-body: "Inter", sans-serif;
+
+    --shadow-pop:
+        4px 4px 0 0 var(--forest-500);
+
+    --shadow-pop-sm:
+        2px 2px 0 0 var(--forest-500);
+
+    --shadow-pop-lg:
+        6px 6px 0 0 var(--forest-500);
 }
