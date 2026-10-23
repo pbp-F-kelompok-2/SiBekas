@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-
+from .models import Profile
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(
@@ -28,3 +28,30 @@ class RegisterForm(UserCreationForm):
             )
 
         return email
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = [
+            "full_name",
+            "faculty",
+            "student_id",
+            "phone_number",
+            "address",
+            "bio",
+        ]
+
+        labels = {
+            "full_name": "Nama Lengkap",
+            "faculty": "Fakultas",
+            "student_id": "NPM",
+            "phone_number": "Nomor Telepon",
+            "address": "Alamat",
+            "bio": "Tentang Saya",
+        }
+
+        widgets = {
+            "address": forms.Textarea(attrs={"rows": 3}),
+            "bio": forms.Textarea(attrs={"rows": 3}),
+        }
