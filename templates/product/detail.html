@@ -5,6 +5,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/product.css' %}">
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -30,36 +31,6 @@
             <p class="eyebrow">{{ product.category.name }}</p>
             <h1>{{ product.name }}</h1>
             <p class="product-price">{{ product.price_display }}</p>
-            {% if not product.is_sold_out %}
-
-            {% if user.is_authenticated %}
-
-            <form method="post" action="{% url 'cart:add_item' %}">
-                {% csrf_token %}
-
-                <input type="hidden" name="product_id" value="{{ product.id }}">
-
-                <button type="submit" class="button">
-                    Tambah ke Keranjang
-                </button>
-
-            </form>
-
-            {% else %}
-
-            <a href="{% url 'profile:login' %}?next={{ request.path }}" class="button">
-                Masuk untuk Membeli
-            </a>
-
-            {% endif %}
-
-            {% else %}
-
-            <button type="button" class="button" disabled>
-                Stok Habis
-            </button>
-
-            {% endif %}
 
             <table class="product-table">
                 <tr>
@@ -88,6 +59,15 @@
 
             <h2>Deskripsi</h2>
             <p>{{ product.description|linebreaksbr }}</p>
+            {% if product.stock and not request.user.is_authenticated %}
+            <a class="order-button" href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">Masuk untuk membeli</a>
+            {% elif product.stock and product.seller_id != request.user.pk %}
+            <form method="post" action="{% url 'cart:add_item' %}" class="order-cart-form">
+                {% csrf_token %}<input type="hidden" name="product_id" value="{{ product.pk }}">
+                <div class="order-field"><label for="product-quantity">Jumlah</label><input id="product-quantity" type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" required></div>
+                <button type="submit" class="order-button"><i data-lucide="shopping-cart" aria-hidden="true"></i>Tambah ke keranjang</button>
+            </form>
+            {% elif not product.stock %}<p class="order-notice">Produk ini sudah habis terjual.</p>{% endif %}
         </div>
     </div>
 

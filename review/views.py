@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Avg
 
 from product.models import Product
+from order.models import Order
 
 from .forms import ReviewForm
 from .models import Review
@@ -20,9 +21,12 @@ def index(request):
         average=Avg("rating")
     )["average"]
 
-    products_to_review = Product.objects.exclude(
+    products_to_review = Product.objects.filter(
+        order_items__order__buyer=request.user,
+        order_items__order__status=Order.Status.COMPLETED,
+    ).exclude(
         id__in=reviewed_product_ids
-    )
+    ).distinct()
 
     my_reviews = Review.objects.filter(
         user=request.user
@@ -41,7 +45,13 @@ def index(request):
 
 @login_required
 def create_review(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(
+        Product.objects.filter(
+            order_items__order__buyer=request.user,
+            order_items__order__status=Order.Status.COMPLETED,
+        ).distinct(),
+        id=product_id,
+    )
 
     if Review.objects.filter(
         user=request.user,
