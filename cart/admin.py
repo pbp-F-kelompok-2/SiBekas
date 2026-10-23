@@ -23,12 +23,12 @@ class CartItemAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "cart",
-        "product_reference",
+        "product",
         "quantity",
         "created_at",
     )
 
     search_fields = (
-        "product_reference",
+        "product",
         "cart__user__username",
     )
