@@ -4,6 +4,35 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def link_existing_products(apps, schema_editor):
+    CartItem = apps.get_model("cart", "CartItem")
+    Product = apps.get_model("product", "Product")
+    database = schema_editor.connection.alias
+    products = set(Product.objects.using(database).values_list("pk", flat=True))
+    linked = {}
+    for item in CartItem.objects.using(database).order_by("pk").iterator():
+        reference = item.product_reference
+        if reference.isdecimal() and len(reference) < 19 and int(reference) in products:
+            item.product_id = int(reference)
+            key = (item.cart_id, item.product_id)
+            if key in linked:
+                previous = linked[key]
+                previous.quantity += item.quantity
+                previous.save(using=database, update_fields=["quantity"])
+                item.delete(using=database)
+            else:
+                item.save(using=database, update_fields=["product"])
+                linked[key] = item
+
+
+def restore_references(apps, schema_editor):
+    CartItem = apps.get_model("cart", "CartItem")
+    database = schema_editor.connection.alias
+    for item in CartItem.objects.using(database).all().iterator():
+        item.product_reference = str(item.product_id) if item.product_id else f"unavailable-{item.pk}"
+        item.save(using=database, update_fields=["product_reference"])
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -16,10 +45,6 @@ class Migration(migrations.Migration):
             model_name="cartitem",
             name="unique_product_per_cart",
         ),
-        migrations.RemoveField(
-            model_name="cartitem",
-            name="product_reference",
-        ),
         migrations.AddField(
             model_name="cartitem",
             name="product",
@@ -30,6 +55,11 @@ class Migration(migrations.Migration):
                 related_name="cart_items",
                 to="product.product",
             ),
+        ),
+        migrations.RunPython(link_existing_products, restore_references),
+        migrations.RemoveField(
+            model_name="cartitem",
+            name="product_reference",
         ),
         migrations.AddConstraint(
             model_name="cartitem",

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Profile
+from django.utils.http import url_has_allowed_host_and_scheme
 
 @login_required
 def index(request):
@@ -51,6 +52,9 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+            next_url = request.POST.get("next") or request.GET.get("next", "")
+            if url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+                return redirect(next_url)
             return redirect("profile:index")
 
         return render(

@@ -130,6 +130,13 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# RajaOngkir uses subdistrict IDs from its direct destination search.
+# All parcels leave the configured SiBekas campus collection point.
+RAJAONGKIR_API_KEY = os.getenv("RAJAONGKIR_API_KEY", "")
+RAJAONGKIR_ORIGIN_ID = os.getenv("RAJAONGKIR_ORIGIN_ID", "")
+RAJAONGKIR_COURIERS = os.getenv("RAJAONGKIR_COURIERS", "jne:jnt:sicepat")
+ORDER_ENABLE_DEMO_PAYMENT = env_bool("ORDER_ENABLE_DEMO_PAYMENT", default=DEBUG)
+
 # Secure defaults are enabled automatically outside local development.
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

@@ -34,6 +34,7 @@ class ProjectFoundationTests(TestCase):
         self.assertJSONEqual(response.content, {"status": "ok", "database": "ok"})
 
     def test_every_main_module_is_available(self):
+        self.client.force_login(get_user_model().objects.create_user(username="integration-user"))
         routes = (
             "product:index",
             "profile:index",
@@ -62,7 +63,7 @@ class SharedTemplateTests(TestCase):
 
         self.assertContains(
             response,
-            "Produk",
+            "Katalog",
         )
 
         self.assertContains(
@@ -92,7 +93,7 @@ class SharedTemplateTests(TestCase):
 
         self.assertContains(
             response,
-            "Barang lama, cerita baru.",
+            "Conscious shopping",
         )
 
     def test_guest_navigation_state(self):
@@ -102,7 +103,7 @@ class SharedTemplateTests(TestCase):
 
         self.assertContains(
             response,
-            "Guest",
+            "Masuk dengan Akun UI",
         )
 
         self.assertContains(

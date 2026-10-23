@@ -272,12 +272,14 @@ Keranjang - SiBekas
                 </div>
 
 
+                {% if available_items and not unavailable_items %}
                 <a
-                    href="{% url 'order:index' %}"
+                    href="{% url 'order:checkout' %}"
                     class="cart-checkout-button"
                 >
                     Lanjut ke checkout
                 </a>
+                {% else %}<p>Hapus barang yang tidak tersedia atau sesuaikan jumlahnya sebelum checkout.</p>{% endif %}
 
             </aside>
 

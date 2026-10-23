@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static order_tags %}
+{% block title %}Pesanan | SiBekas{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/order.css' %}">{% endblock %}
+{% block content %}
+<section class="order-page">
+    <header class="order-heading order-heading-row">
+        <div><p class="eyebrow">ORDER & TRANSACTION</p><h1>{% if manage %}Kelola <span>pesanan.</span>{% else %}Pesanan<span>mu.</span>{% endif %}</h1>
+        <p>{% if manage %}Siapkan pengambilan di kampus dan pengiriman dari titik pengumpulan SiBekas.{% else %}Pantau perjalanan barang preloved menuju cerita barunya.{% endif %}</p></div>
+        <a class="order-button order-button-outline" href="{% url 'product:index' %}"><i data-lucide="shopping-bag" aria-hidden="true"></i>Jelajahi produk</a>
+    </header>
+    {% if request.user.is_staff %}<nav class="order-view-switch" aria-label="Tampilan pesanan"><a href="{% url 'order:index' %}" {% if not manage %}aria-current="page"{% endif %}>Belanja saya</a><a href="?view=manage" {% if manage %}aria-current="page"{% endif %}>Kelola semua pesanan</a></nav>{% endif %}
+    <form class="order-filters" method="get">
+        {% if manage %}<input type="hidden" name="view" value="manage">{% endif %}
+        <div class="order-field"><label for="order-search">Cari produk atau penerima</label><input id="order-search" name="q" value="{{ query }}" placeholder="Nama produk atau penerima" maxlength="100" type="search"></div>
+        <div class="order-field"><label for="order-status">Status pesanan</label><select id="order-status" name="status"><option value="">Semua status</option>{% for value, label in status_choices %}<option value="{{ value }}" {% if active_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+        <button class="order-button" type="submit"><i data-lucide="sliders-horizontal" aria-hidden="true"></i>Tampilkan</button>
+    </form>
+    <p class="order-result-count">{{ page_obj.paginator.count }} pesanan{% if query %} untuk “{{ query }}”{% endif %}</p>
+    <div class="order-list">
+        {% for order in page_obj %}
+        <article class="order-card">
+            <div class="order-card-top"><div><span class="order-number">{{ order.number }}</span><span class="order-date">{{ order.created_at|date:"d M Y, H:i" }}</span></div><span class="order-badge order-badge-{{ order.status }}">{{ order.get_status_display }}</span></div>
+            <div class="order-card-body">
+                {% with item=order.items.first %}<div class="order-product-image">{% if item.thumbnail %}<img src="{{ item.thumbnail }}" alt="" loading="lazy">{% else %}<i data-lucide="package" aria-hidden="true"></i>{% endif %}</div>
+                <div class="order-product-info"><p class="order-hint">{{ order.get_delivery_method_display }}</p><h2>{{ item.product_name }}</h2><p>{{ item.quantity }} barang{% if order.items.count > 1 %} · +{{ order.items.count|add:"-1" }} produk lainnya{% endif %}{% if manage %} · {{ order.recipient_name }}{% endif %}</p></div>{% endwith %}
+                <div class="order-card-total"><span>Total pembayaran</span><strong>{{ order.total|rupiah }}</strong><a class="order-text-link" href="{{ order.get_absolute_url }}">Lihat detail <span aria-hidden="true">→</span></a></div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="order-empty"><div class="order-icon"><i data-lucide="package-open" aria-hidden="true"></i></div><h2>{% if query or active_status %}Pesanan tidak ditemukan{% else %}Belum ada cerita belanja{% endif %}</h2><p>{% if query or active_status %}Coba nama produk atau status lainnya.{% else %}Temukan barang yang kamu suka. Pesananmu akan muncul di sini setelah checkout.{% endif %}</p><a class="order-button" href="{% if query or active_status %}{% url 'order:index' %}{% if manage %}?view=manage{% endif %}{% else %}{% url 'product:index' %}{% endif %}">{% if query or active_status %}Lihat semua pesanan{% else %}Mulai belanja{% endif %}<i data-lucide="arrow-right" aria-hidden="true"></i></a></div>
+        {% endfor %}
+    </div>
+    {% if page_obj.has_other_pages %}<nav class="order-pagination" aria-label="Halaman pesanan">{% if page_obj.has_previous %}<a class="order-button order-button-outline" href="?{{ page_query }}&page={{ page_obj.previous_page_number }}">← Sebelumnya</a>{% endif %}<span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a class="order-button order-button-outline" href="?{{ page_query }}&page={{ page_obj.next_page_number }}">Berikutnya →</a>{% endif %}</nav>{% endif %}
+</section>
+{% endblock %}
