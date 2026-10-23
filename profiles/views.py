@@ -6,18 +6,24 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Profile
 
+@login_required
 def index(request):
-    return render(
-        request,
-        "profiles/index.html"
+    profile, created = Profile.objects.get_or_create(
+        user=request.user
     )
 
+    return render(
+        request,
+        "profiles/index.html",
+        {"profile": profile},
+    )
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
 
         if form.is_valid():
             user = form.save()
+            Profile.objects.get_or_create(user=user)
             login(request, user)
             return redirect("profile:index")
     else:
