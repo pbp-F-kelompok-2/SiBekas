@@ -1,20 +1,29 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from .forms import RegisterForm
+from .forms import RegisterForm, ProfileForm
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import Profile
 
+@login_required
 def index(request):
-    return render(
-        request,
-        "profiles/index.html"
+    profile, created = Profile.objects.get_or_create(
+        user=request.user
     )
 
+    return render(
+        request,
+        "profiles/index.html",
+        {"profile": profile},
+    )
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
 
         if form.is_valid():
             user = form.save()
+            Profile.objects.get_or_create(user=user)
             login(request, user)
             return redirect("profile:index")
     else:
@@ -56,3 +65,25 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("profile:login")
+
+
+@login_required
+def edit_profile(request):
+    profile, created = Profile.objects.get_or_create(
+        user=request.user
+    )
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=profile)
+
+        if form.is_valid():
+            form.save()
+            return redirect("profile:index")
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(
+        request,
+        "profiles/edit_profile.html",
+        {"form": form},
+    )

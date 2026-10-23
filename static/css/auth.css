@@ -15,7 +15,7 @@
     padding: 54px 6.5%;
     overflow: hidden;
 
-    background-color: var(--color-accent);
+    background-color: var(--color-accent-300);
     background-image: radial-gradient(
         rgba(255, 255, 255, 0.85) 1.3px,
         transparent 1.3px

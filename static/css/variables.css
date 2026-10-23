@@ -1,12 +1,15 @@
 :root {
-    --color-primary: #155c3b;
-    --color-primary-hover: #0e3f28;
+    --color-primary: #19532B;
+    --color-primary-hover: #10391C;
 
-    --color-accent: #cde86b;
+    --color-accent-300: #D0E08B;
+    --color-accent: #9ABC04;
+    --color-secondary-carrot: #F86015;
+    --color-secondary-sunshine: #FFCA26;
+    --color-semantic: #D42518;
 
     --color-background: #fffdf8;
-    --color-surface: #f4f0e6;
-
+    --color-surface:    #F3E8CC;
     --color-text-primary: #17201b;
     --color-text-muted: #5f6f65;
 
