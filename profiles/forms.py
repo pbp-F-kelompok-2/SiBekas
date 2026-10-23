@@ -55,3 +55,20 @@ class ProfileForm(forms.ModelForm):
             "address": forms.Textarea(attrs={"rows": 3}),
             "bio": forms.Textarea(attrs={"rows": 3}),
         }
+
+def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+
+    required_fields = [
+        "full_name",
+        "faculty",
+        "student_id",
+        "phone_number",
+        "address",
+    ]
+
+    for field_name in required_fields:
+        self.fields[field_name].required = True
+
+    self.fields["bio"].required = False
+
