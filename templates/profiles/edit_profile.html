@@ -1,41 +1,65 @@
+
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Edit Profil | SiBekas{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/edit_profile.css' %}">
+{% endblock %}
+
 {% block content %}
-<section>
-    <h1>Edit Profil</h1>
-    <p>Lengkapi atau perbarui informasi profil kamu.</p>
+<div class="edit-profile-overlay" id="editProfileModal">
+    <section
+        class="edit-profile-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="editProfileTitle"
+    >
+        <header class="edit-profile-header">
+            <h2 id="editProfileTitle">Ubah profil</h2>
 
-    <form method="POST">
-        {% csrf_token %}
+            <a
+                href="{% url 'profile:index' %}"
+                class="edit-profile-close"
+                id="closeEditProfile"
+                aria-label="Tutup edit profil"
+            >&times;</a>
+        </header>
 
-        {% for field in form %}
-            <div>
-                <label for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                </label>
+        <form method="POST" class="edit-profile-form">
+            {% csrf_token %}
 
-                {{ field }}
+            {% if form.non_field_errors %}
+                <div class="edit-profile-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
-                {% if field.help_text %}
-                    <small>{{ field.help_text }}</small>
-                {% endif %}
+            {% for field in form %}
+                <div class="edit-profile-field">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
 
-                {% for error in field.errors %}
-                    <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endfor %}
+                    {{ field }}
 
-        {% if form.non_field_errors %}
-            {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="edit-profile-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
             {% endfor %}
-        {% endif %}
 
-        <button type="submit">Simpan Perubahan</button>
-        <a href="{% url 'profile:index' %}">Batal</a>
-    </form>
-</section>
+            <button type="submit" class="edit-profile-submit">
+                Simpan perubahan
+            </button>
+        </form>
+    </section>
+</div>
+
+<script src="{% static 'js/edit_profile.js' %}"></script>
 {% endblock %}

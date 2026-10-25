@@ -15,11 +15,17 @@ def index(request):
         user=request.user
     )
 
+    form = ProfileForm(instance=profile)
+
     return render(
         request,
         "profiles/index.html",
-        {"profile": profile},
+        {
+            "profile": profile,
+            "form": form,
+        },
     )
+
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)

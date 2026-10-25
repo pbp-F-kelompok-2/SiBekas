@@ -418,3 +418,10 @@
         font-size: 14px;
     }
 }
+
+.profile-button-primary {
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    pointer-events: auto;
+}
