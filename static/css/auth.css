@@ -179,3 +179,22 @@
         font-size: 13px;
     }
 }
+
+
+@media (max-width: 760px) {
+    .auth-page .auth-intro {
+        display: none !important;
+    }
+
+    .auth-page {
+        display: block;
+        min-height: auto;
+    }
+
+    .auth-page .login-content,
+    .auth-page .register-content {
+        width: 100%;
+        min-height: 100vh;
+        padding: 24px 18px;
+    }
+}
