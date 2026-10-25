@@ -1,3 +1,4 @@
+
 <header class="sb-header">
     <nav class="container sb-navbar" aria-label="Navigasi utama">
 
@@ -5,149 +6,107 @@
             <span class="sb-brand-mark">
                 <i data-lucide="leaf"></i>
             </span>
-
-            <span class="sb-brand-name">
-                SiBekas
-            </span>
+            <span class="sb-brand-name">SiBekas</span>
         </a>
 
-
         <div class="sb-desktop-links">
-
             <a href="{% url 'product:index' %}"
                 class="{% if request.resolver_match.namespace == 'product' %}active{% endif %}">
                 Katalog
             </a>
 
             {% if user.is_authenticated %}
+                <a href="{% url 'order:index' %}"
+                    class="{% if request.resolver_match.namespace == 'order' %}active{% endif %}">
+                    Pesanan
+                </a>
 
-            <a href="{% url 'order:index' %}"
-                class="{% if request.resolver_match.namespace == 'order' %}active{% endif %}">
-                Pesanan
-            </a>
-
-            <a href="{% url 'review:index' %}"
-                class="{% if request.resolver_match.namespace == 'review' %}active{% endif %}">
-                Ulasan
-            </a>
-
+                <a href="{% url 'review:index' %}"
+                    class="{% if request.resolver_match.namespace == 'review' %}active{% endif %}">
+                    Ulasan
+                </a>
             {% else %}
-
-            <a href="{% url 'profile:login' %}">
-                Pesanan
-            </a>
-
-            <a href="{% url 'profile:login' %}">
-                Ulasan
-            </a>
-
+                <a href="{% url 'profile:login' %}">Pesanan</a>
+                <a href="{% url 'profile:login' %}">Ulasan</a>
             {% endif %}
-
         </div>
-
 
         <form class="sb-nav-search" method="get" action="{% url 'product:index' %}">
             <i data-lucide="search"></i>
-
-            <input type="search" name="q" placeholder="Cari buku, gadget, barang..." aria-label="Cari produk">
+            <input type="search" name="q"
+                placeholder="Cari buku, gadget, barang..."
+                aria-label="Cari produk">
         </form>
 
-
         <div class="sb-nav-actions">
-
             {% if user.is_authenticated %}
+                <a class="sb-cart-button" href="{% url 'cart:index' %}"
+                    aria-label="Keranjang, {{ cart_count }} barang">
+                    <i data-lucide="shopping-bag"></i>
+                    {% if cart_count > 0 %}
+                        <span class="sb-cart-badge">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
 
-            <a class="sb-cart-button" href="{% url 'cart:index' %}" aria-label="Keranjang, {{ cart_count }} barang">
-                <i data-lucide="shopping-bag"></i>
+                <a class="sb-profile-button" href="{% url 'profile:index' %}">
+                    <span class="sb-avatar">{{ user.username|slice:":1"|upper }}</span>
+                    <span class="sb-profile-name">{{ user.username }}</span>
+                </a>
 
-                {% if cart_count > 0 %}
-                <span class="sb-cart-badge">
-                    {{ cart_count }}
-                </span>
-                {% endif %}
-            </a>
-
-            <a class="sb-profile-button" href="{% url 'profile:index' %}">
-                <span class="sb-avatar">
-                    {{ user.username|slice:":1"|upper }}
-                </span>
-
-                <span class="sb-profile-name">
-                    {{ user.username }}
-                </span>
-            </a>
-
+                <a class="sb-logout-button sb-desktop-logout"
+                    href="{% url 'profile:logout' %}">
+                    Keluar
+                </a>
             {% else %}
+                <a class="sb-cart-button" href="{% url 'profile:login' %}"
+                    aria-label="Masuk untuk membuka keranjang">
+                    <i data-lucide="shopping-bag"></i>
+                </a>
 
-            <a class="sb-cart-button" href="{% url 'profile:login' %}" aria-label="Masuk untuk membuka keranjang">
-                <i data-lucide="shopping-bag"></i>
-            </a>
-
-            <a class="sb-login-button" href="{% url 'profile:login' %}">
-                Masuk dengan Akun UI
-            </a>
-
+                <a class="sb-login-button sb-desktop-login"
+                    href="{% url 'profile:login' %}">
+                    Masuk dengan Akun UI
+                </a>
             {% endif %}
 
-
-            <button class="sb-menu-toggle" type="button" id="nav-toggle" aria-label="Buka menu" aria-expanded="false"
+            <button class="sb-menu-toggle" type="button" id="nav-toggle"
+                aria-label="Buka menu" aria-expanded="false"
                 aria-controls="nav-menu">
                 <i data-lucide="menu"></i>
             </button>
-
         </div>
-
     </nav>
 
-
     <div class="sb-mobile-menu" id="nav-menu">
-
         <div class="container">
+            <a href="{% url 'product:index' %}">Katalog</a>
 
-            <a href="{% url 'product:index' %}">
-                Katalog
-            </a>
-
-            {% if user.is_authenticated %}
-
-            <a href="{% url 'order:index' %}">
+            <a href="{% if user.is_authenticated %}{% url 'order:index' %}{% else %}{% url 'profile:login' %}{% endif %}">
                 Pesanan
             </a>
 
-            <a href="{% url 'review:index' %}">
+            <a href="{% if user.is_authenticated %}{% url 'review:index' %}{% else %}{% url 'profile:login' %}{% endif %}">
                 Ulasan
             </a>
 
-            <a href="{% url 'profile:index' %}">
-                Profil
-            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile:index' %}">Profil</a>
 
-            <a class="sb-mobile-logout" href="{% url 'profile:logout' %}">
-                <i data-lucide="log-out"></i>
-                Keluar
-            </a>
-
+                <a class="sb-mobile-logout" href="{% url 'profile:logout' %}">
+                    <i data-lucide="log-out"></i>
+                    Keluar
+                </a>
             {% else %}
-
-            <a href="{% url 'profile:login' %}">
-                Masuk
-            </a>
-
-            <a href="{% url 'profile:register' %}">
-                Daftar
-            </a>
-
+                <a class="sb-mobile-login-button"
+                    href="{% url 'profile:login' %}">
+                    Masuk dengan Akun UI
+                </a>
             {% endif %}
-
         </div>
-
     </div>
-
 </header>
 
-
 <nav class="sb-bottom-nav" aria-label="Navigasi mobile">
-
     <a href="{% url 'home' %}">
         <i data-lucide="house"></i>
         <span>Beranda</span>
@@ -158,46 +117,40 @@
         <span>Katalog</span>
     </a>
 
-
     {% if user.is_authenticated %}
+        <a href="{% url 'cart:index' %}">
+            <i data-lucide="shopping-bag"></i>
+            <span>Keranjang</span>
+        </a>
 
-    <a href="{% url 'cart:index' %}">
-        <i data-lucide="shopping-bag"></i>
-        <span>Keranjang</span>
-    </a>
+        <a href="{% url 'order:index' %}">
+            <i data-lucide="receipt-text"></i>
+            <span>Pesanan</span>
+        </a>
 
-    <a href="{% url 'order:index' %}">
-        <i data-lucide="receipt-text"></i>
-        <span>Pesanan</span>
-    </a>
+        <a href="{% url 'review:index' %}">
+            <i data-lucide="message-square-text"></i>
+            <span>Ulasan</span>
+        </a>
 
-    <a href="{% url 'review:index' %}">
-        <i data-lucide="message-square-text"></i>
-        <span>Ulasan</span>
-    </a>
-
-    <a href="{% url 'profile:index' %}">
-        <i data-lucide="user"></i>
-        <span>Profil</span>
-    </a>
-
+        <a href="{% url 'profile:index' %}">
+            <i data-lucide="user"></i>
+            <span>Profil</span>
+        </a>
     {% else %}
+        <a href="{% url 'profile:login' %}">
+            <i data-lucide="shopping-bag"></i>
+            <span>Keranjang</span>
+        </a>
 
-    <a href="{% url 'profile:login' %}">
-        <i data-lucide="shopping-bag"></i>
-        <span>Keranjang</span>
-    </a>
+        <a href="{% url 'profile:login' %}">
+            <i data-lucide="receipt-text"></i>
+            <span>Pesanan</span>
+        </a>
 
-    <a href="{% url 'profile:login' %}">
-        <i data-lucide="receipt-text"></i>
-        <span>Pesanan</span>
-    </a>
-
-    <a href="{% url 'profile:login' %}">
-        <i data-lucide="user"></i>
-        <span>Masuk</span>
-    </a>
-
+        <a href="{% url 'profile:login' %}">
+            <i data-lucide="user"></i>
+            <span>Masuk</span>
+        </a>
     {% endif %}
-
 </nav>
