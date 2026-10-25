@@ -1,6 +1,22 @@
 {% extends "base.html" %}
 
+{% block title %}Profil Saya | SiBekas{% endblock %}
+
 {% block content %}
-<h1>Profile</h1>
-<p>Halaman profile sementara.</p>
+<section>
+    <h1>Profil Saya</h1>
+
+    <div>
+        <p><strong>Username:</strong> {{ request.user.username }}</p>
+        <p><strong>Email:</strong> {{ request.user.email }}</p>
+        <p><strong>Nama Lengkap:</strong> {{ profile.full_name|default:"Belum diisi" }}</p>
+        <p><strong>Fakultas:</strong> {{ profile.faculty|default:"Belum diisi" }}</p>
+        <p><strong>NPM:</strong> {{ profile.student_id|default:"Belum diisi" }}</p>
+        <p><strong>Nomor Telepon:</strong> {{ profile.phone_number|default:"Belum diisi" }}</p>
+        <p><strong>Alamat:</strong> {{ profile.address|default:"Belum diisi" }}</p>
+        <p><strong>Tentang Saya:</strong> {{ profile.bio|default:"Belum diisi" }}</p>
+    </div>
+
+    <a href="{% url 'profile:edit' %}">Edit Profil</a>
+</section>
 {% endblock %}
