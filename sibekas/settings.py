@@ -79,6 +79,10 @@ ROOT_URLCONF = "sibekas.urls"
 
 LOGIN_URL = "profile:login"
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "noreply@sibekas.local"
+PASSWORD_RESET_TIMEOUT = 3600  
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

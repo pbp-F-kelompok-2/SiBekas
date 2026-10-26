@@ -5,7 +5,7 @@
 {% block title %}Masuk | SiBekas{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=2">
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
 
 <div class="auth-page login-page">
@@ -59,6 +59,12 @@
                         autocomplete="current-password"
                         required
                     >
+                </div>
+
+                <div class="forgot-password">
+                    <a href="{% url 'profile:password_reset' %}">
+                        Lupa kata sandi?
+                    </a>
                 </div>
 
                 <button type="submit" class="login-button">

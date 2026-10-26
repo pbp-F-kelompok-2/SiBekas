@@ -515,3 +515,61 @@
     }
 
 }
+
+
+/* Tombol Keluar di desktop: tulisan merah */
+.sb-logout-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #dc2626;
+    box-shadow: none;
+    font-family: Poppins, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.sb-logout-button:hover {
+    color: #b91c1c;
+    background: rgba(220, 38, 38, 0.08);
+}
+
+/* Tombol SSO di hamburger: mengikuti desain tombol desktop */
+.sb-mobile-login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 42px;
+    margin-top: 8px;
+    padding: 0 18px;
+    border: 2px solid var(--sb-forest);
+    border-radius: 999px;
+    background: var(--sb-forest);
+    color: var(--sb-white) !important;
+    box-shadow: 2px 2px 0 var(--sb-forest-dark);
+    font-family: Poppins, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.sb-mobile-login-button:hover {
+    background: var(--sb-forest-dark);
+}
+
+/* responsive */
+@media (max-width: 900px) {
+    /* sembunyikan aksi desktop, bukan tombol di hamburger */
+    .sb-nav-actions > .sb-profile-button,
+    .sb-nav-actions > .sb-desktop-login,
+    .sb-nav-actions > .sb-desktop-logout {
+        display: none;
+    }
+}
+

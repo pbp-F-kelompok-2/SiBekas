@@ -1,0 +1,65 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Profil | SiBekas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/edit_profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-overlay" id="editProfileModal">
+    <section
+        class="edit-profile-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="editProfileTitle"
+    >
+        <header class="edit-profile-header">
+            <h2 id="editProfileTitle">Ubah profil</h2>
+
+            <a
+                href="{% url 'profile:index' %}"
+                class="edit-profile-close"
+                id="closeEditProfile"
+                aria-label="Tutup edit profil"
+            >&times;</a>
+        </header>
+
+        <form method="POST" class="edit-profile-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="edit-profile-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="edit-profile-field">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="edit-profile-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="edit-profile-submit">
+                Simpan perubahan
+            </button>
+        </form>
+    </section>
+</div>
+
+<script src="{% static 'js/edit_profile.js' %}"></script>
+{% endblock %}
