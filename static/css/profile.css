@@ -425,3 +425,126 @@
     cursor: pointer;
     pointer-events: auto;
 }
+
+
+.my-listings {
+    margin-top: 40px;
+    padding-bottom: 50px;
+}
+
+.my-listings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.my-listings-header h2 {
+    color: #155c3b;
+    margin: 14px 0 6px;
+}
+
+.my-listings-header p {
+    color: #777;
+    margin-top: 0;
+}
+
+.my-listings-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.my-listing-card {
+    overflow: hidden;
+    background: white;
+    border: 1px solid #155c3b;
+    border-radius: 14px;
+    box-shadow: 4px 4px 0 #155c3b;
+}
+
+.my-listing-image {
+    display: block;
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    background: #f6efd9;
+}
+
+.my-listing-placeholder {
+    display: grid;
+    place-items: center;
+    color: #777;
+}
+
+.my-listing-info {
+    padding: 15px;
+}
+
+.my-listing-condition {
+    font-size: 12px;
+    color: #155c3b;
+}
+
+.my-listing-info h3 {
+    margin: 8px 0;
+    color: #155c3b;
+    overflow-wrap: anywhere;
+}
+
+.my-listing-price {
+    font-weight: 700;
+    font-size: 18px;
+    margin: 8px 0;
+}
+
+.my-listing-stock {
+    color: #777;
+    font-size: 13px;
+}
+
+.my-listing-info a {
+    color: #155c3b;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.my-listings-empty {
+    padding: 40px 20px;
+    text-align: center;
+    background: white;
+    border: 1px solid #155c3b;
+    border-radius: 18px;
+    box-shadow: 4px 4px 0 #155c3b;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.profile-actions .profile-button {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+}
+
+@media (max-width: 900px) {
+    .my-listings-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .my-listings-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .my-listings-grid {
+        grid-template-columns: 1fr;
+    }
+}

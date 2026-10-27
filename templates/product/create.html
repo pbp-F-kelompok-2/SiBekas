@@ -1,0 +1,61 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Jual Produk | SiBekas{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/create_product.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<main class="sell-page">
+    <span class="sell-label">JUAL BARANG</span>
+    <h1>Tambah produk</h1>
+    <p class="sell-description">
+        Yuk, isi informasi barang yang ingin kamu jual di SiBekas.
+    </p>
+
+    <section class="sell-card">
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="sell-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="sell-field">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="sell-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="sell-actions">
+                <a href="{% url 'profile:index' %}"
+                   class="sell-button sell-cancel">
+                    Batal
+                </a>
+
+                <button type="submit"
+                        class="sell-button sell-submit">
+                    Tambahkan produk
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+{% endblock %}

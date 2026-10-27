@@ -1,6 +1,10 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from .models import Category, Product
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import redirect
+from .forms import ProductForm
 
 PRODUCTS_PER_PAGE = 12
 
@@ -51,4 +55,28 @@ def detail(request, slug):
     return render(request, "product/detail.html", context)
 
 
+
+@login_required
+def create_product(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.seller = request.user #kesambung dengan pembuatnya
+            product.save()
+
+            messages.success(
+                request,
+                "Produk berhasil ditambahkan!"
+            )
+            return redirect("profile:index")
+    else:
+        form = ProductForm()
+
+    return render(
+        request,
+        "product/create.html",
+        {"form": form},
+    )
 

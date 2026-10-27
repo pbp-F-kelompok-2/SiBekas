@@ -7,7 +7,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Profile
+from product.models import Product
 from django.utils.http import url_has_allowed_host_and_scheme
+
 
 @login_required
 def index(request):
@@ -17,12 +19,18 @@ def index(request):
 
     form = ProfileForm(instance=profile)
 
+    my_products = Product.objects.filter(
+        seller=request.user
+    ).select_related("category")
+
     return render(
         request,
         "profiles/index.html",
         {
             "profile": profile,
             "form": form,
+            "my_products": my_products,
+            "total_listings": my_products.count(),
         },
     )
 
