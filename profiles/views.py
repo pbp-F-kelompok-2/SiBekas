@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Profile
 from product.models import Product
+from django.contrib import messages
 from django.utils.http import url_has_allowed_host_and_scheme
 
 
@@ -85,27 +86,23 @@ def logout_view(request):
     logout(request)
     return redirect("profile:login")
 
-
 @login_required
 def edit_profile(request):
-    profile, created = Profile.objects.get_or_create(
-        user=request.user
-    )
+    profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=profile)
 
         if form.is_valid():
             form.save()
+            messages.success(request, "Profil berhasil diperbarui!")
             return redirect("profile:index")
-    else:
-        form = ProfileForm(instance=profile)
 
-    return render(
-        request,
-        "profiles/edit_profile.html",
-        {"form": form},
-    )
+        messages.error(request, "Profil gagal diperbarui. Periksa kembali data yang kamu masukkan.")
+        return redirect("profile:index")
+
+    return redirect("profile:index")
+
 
 class PasswordResetView(auth_views.PasswordResetView):
     template_name = "profiles/password_reset_form.html"
