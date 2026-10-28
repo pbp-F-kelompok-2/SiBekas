@@ -169,3 +169,15 @@ def toggle_favorite(request, slug):
         messages.success(request, "Produk ditambahkan ke favorit.")
 
     return redirect(product.get_absolute_url)
+
+@login_required
+@require_POST
+def delete_account(request):
+    user = request.user
+
+    logout(request)
+    user.delete()
+
+    messages.success(request, "Akun kamu berhasil dihapus.")
+
+    return redirect("product:index")

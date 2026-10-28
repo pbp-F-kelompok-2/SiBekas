@@ -53,6 +53,8 @@ class Product(models.Model):
         verbose_name="kategori",
         on_delete=models.PROTECT,
         related_name="products",
+        null=True,
+        blank=True,
     )
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220, unique=True, blank=True)

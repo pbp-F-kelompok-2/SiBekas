@@ -85,6 +85,24 @@
                         class="profile-button profile-button-primary">
                     Ubah profil
                 </button>
+                <div class="delete-account-section">
+                    <h3>Hapus Akun</h3>
+                    <p>
+                        Akun kamu akan dihapus secara permanen.
+                        Pastikan kamu sudah yakin sebelum melanjutkan.
+                    </p>
+
+                    <form
+                        method="POST"
+                        action="{% url 'profile:delete_account' %}"
+                        onsubmit="return confirm('Yakin ingin menghapus akun? Tindakan ini tidak dapat dibatalkan.');"
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="delete-account-btn">
+                            Hapus Akun
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <a href="{% url 'profile:logout' %}"

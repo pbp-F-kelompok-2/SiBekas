@@ -548,3 +548,38 @@
         grid-template-columns: 1fr;
     }
 }
+
+.delete-account-section {
+    margin-top: 24px;
+}
+
+.delete-account-section h3 {
+    margin-bottom: 12px;
+}
+
+.delete-account-section p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.delete-account-section form {
+    width: 100%;
+}
+
+.delete-account-btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: 1px solid #dc2626;
+    border-radius: 999px;
+    background-color: #fff;
+    color: #dc2626;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-account-btn:hover {
+    background-color: #dc2626;
+    color: #fff;
+}

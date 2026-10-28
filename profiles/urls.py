@@ -15,4 +15,5 @@ urlpatterns = [
     path("password-reset/<uidb64>/<token>/", views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path("password-reset/complete/", views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
     path("favorite/<slug:slug>/",views.toggle_favorite,name="toggle_favorite"),
+    path("hapus-akun/",views.delete_account,name="delete_account"),
 ]
