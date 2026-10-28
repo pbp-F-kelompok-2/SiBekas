@@ -9,6 +9,7 @@ class ProductForm(forms.ModelForm):
         fields = [
             "name",
             "description",
+            "category",
             "price",
             "stock",
             "condition",
@@ -19,6 +20,7 @@ class ProductForm(forms.ModelForm):
         labels = {
             "name": "Nama produk",
             "description": "Deskripsi produk",
+            "category" : "Kategori",
             "price": "Harga (Rp)",
             "stock": "Stok",
             "condition": "Kondisi barang",

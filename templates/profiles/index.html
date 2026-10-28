@@ -80,9 +80,11 @@
                     + Jual / Tambah Produk
                 </a>
                 
-                <a href="{% url 'profile:edit' %}" class="profile-button profile-button-primary">
+                <button type="button"
+                        id="openEditProfile"
+                        class="profile-button profile-button-primary">
                     Ubah profil
-                </a>
+                </button>
             </div>
 
             <a href="{% url 'profile:logout' %}"

@@ -81,7 +81,6 @@ def login_view(request):
 
     return render(request, "profiles/login.html")
 
-
 def logout_view(request):
     logout(request)
     return redirect("profile:login")
