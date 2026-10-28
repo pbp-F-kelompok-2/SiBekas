@@ -5,11 +5,18 @@ from . import views
 
 app_name = "cart"
 
+
 urlpatterns = [
     path(
         "",
         views.index,
         name="index",
+    ),
+
+    path(
+        "json/",
+        views.cart_json,
+        name="cart_json",
     ),
 
     path(
