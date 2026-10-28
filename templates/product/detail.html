@@ -31,6 +31,23 @@
             <p class="eyebrow">{{ product.category.name }}</p>
             <h1>{{ product.name }}</h1>
             <p class="product-price">{{ product.price_display }}</p>
+            {% if request.user.is_authenticated %}
+                <form method="POST"
+                    action="{% url 'profile:toggle_favorite' product.slug %}">
+                    {% csrf_token %}
+                    <button type="submit">
+                        {% if product.favorited_by.all %}
+                            ♡ Tambah / Hapus Favorit
+                        {% else %}
+                            ♡ Favorit
+                        {% endif %}
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">
+                    Masuk untuk menambahkan favorit
+                </a>
+            {% endif %}
 
             <table class="product-table">
                 <tr>

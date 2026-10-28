@@ -107,14 +107,45 @@
                 </button>
             </div>
 
+            {% if favorites %}
+            <div class="my-listings-grid">
+                {% for product in favorites %}
+                    <article class="my-listing-card">
+                        {% if product.thumbnail %}
+                            <img src="{{ product.thumbnail }}"
+                                alt="{{ product.name }}"
+                                class="my-listing-image">
+                        {% else %}
+                            <div class="my-listing-image my-listing-placeholder">
+                                Belum ada foto
+                            </div>
+                        {% endif %}
+
+                        <div class="my-listing-info">
+                            <h3>{{ product.name }}</h3>
+                            <p class="my-listing-price">
+                                {{ product.price_display }}
+                            </p>
+                            <a href="{{ product.get_absolute_url }}">
+                                Lihat produk →
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
             <div class="profile-empty-state">
                 <div class="empty-state-icon">♡</div>
-                <h3>Barang favoritmu</h3>
+                <h3>Belum ada barang favorit</h3>
                 <p>
                     Barang yang kamu simpan sebagai favorit
                     akan muncul di sini.
                 </p>
+                <a href="{% url 'product:index' %}">
+                    Jelajahi produk
+                </a>
             </div>
+        {% endif %}
 
         </section>
 

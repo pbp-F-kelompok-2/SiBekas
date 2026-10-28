@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     const openButton = document.getElementById("openEditProfile");
     const modal = document.getElementById("editProfileModal");

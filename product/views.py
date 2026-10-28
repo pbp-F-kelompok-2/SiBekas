@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect
 from .forms import ProductForm
+from profiles.models import Favorite
 
 PRODUCTS_PER_PAGE = 12
 
@@ -37,12 +38,19 @@ def index(request):
     }
     return render(request, "product/list.html", context)
 
-
 def detail(request, slug):
     product = get_object_or_404(
         Product,
         slug=slug,
     )
+
+    is_favorite = False
+    if request.user.is_authenticated:
+        is_favorite = Favorite.objects.filter(
+            user=request.user,
+            product=product,
+        ).exists()
+
     related_products = (
         Product.objects.filter(category = product.category)
         .exclude(pk=product.pk)
@@ -51,6 +59,7 @@ def detail(request, slug):
         "product": product,
         "images": product.images.all(),
         "related_products": related_products,
+        "is_favorite": is_favorite,
     }
     return render(request, "product/detail.html", context)
 
