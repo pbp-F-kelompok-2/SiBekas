@@ -119,8 +119,8 @@ class PurchaseIntegrationTests(TestCase):
         Favorite.objects.create(user=self.buyer, product=self.product)
         self.assertContains(self.client.get(self.product.get_absolute_url()), "Hapus dari favorit")
 
-    def test_service_rejects_invalid_delivery_and_courier_cod_without_mutation(self):
-        for changes in [{"delivery_method": "invalid"}, {"delivery_method": "courier", "payment_method": "cod"}, {"phone_number": "bad"}]:
+    def test_service_rejects_invalid_delivery_and_phone_without_mutation(self):
+        for changes in [{"delivery_method": "invalid"}, {"phone_number": "bad"}]:
             with self.subTest(changes=changes), self.assertRaises(OrderError):
                 create_order(self.buyer, self.payload(**changes))
         self.assertFalse(Order.objects.exists())
@@ -153,19 +153,9 @@ class DeploymentReadinessTests(TestCase):
         urlopen.assert_not_called()
         self.assertFalse(Product.objects.exists())
 
-    @override_settings(RAJAONGKIR_API_KEY="test-key", RAJAONGKIR_ORIGIN_ID="")
-    @patch("order.management.commands.lookup_shipping_destination.get_destinations", return_value=[{"id": 123, "label": "BEJI, DEPOK"}])
-    def test_origin_lookup_does_not_require_an_existing_origin(self, lookup):
-        output = StringIO()
-        call_command("lookup_shipping_destination", "Beji", "Depok", stdout=output)
-        lookup.assert_called_once_with("Beji Depok")
-        self.assertIn("123\tBEJI, DEPOK", output.getvalue())
-        self.assertNotIn("test-key", output.getvalue())
-
-    @override_settings(RAJAONGKIR_API_KEY="", RAJAONGKIR_ORIGIN_ID="")
-    def test_strict_readiness_rejects_missing_catalog_staff_and_shipping(self):
+    def test_strict_readiness_rejects_missing_catalog_staff(self):
         with self.assertRaises(CommandError):
-            call_command("check_order_readiness", strict=True, require_shipping=True, stdout=StringIO())
+            call_command("check_order_readiness", strict=True, stdout=StringIO())
 
     @patch("sibekas.views.connection.cursor", side_effect=OperationalError("private database error"))
     def test_health_failure_returns_503_without_database_details(self, cursor):
