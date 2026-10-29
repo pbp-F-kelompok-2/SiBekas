@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib.messages import get_messages
 
 from product.forms import ProductForm
 from product.models import Category, Product
@@ -46,3 +47,15 @@ class ProductTest(TestCase):
     def test_nonexistent_product_returns_404(self):
         response = self.client.get("/products/tidak-ada/")
         self.assertEqual(response.status_code, 404)
+
+    def test_bulk_test_without_selection_shows_error(self):
+        self.client.force_login(self.seller)
+        response = self.client.post(reverse("product:bulk_delete"), {"ids":[]})
+        messages = [str(m) for m in get_messages(response.wsgi_request)]
+        self.assertIn("Tidak ada produk yang dipilih", messages)
+
+    def test_bulk_delete_show_count(self):
+        self.client.force_login(self.seller)
+        response = self.client.post(reverse("product:bulk_delete"), {"ids": [self.product.pk]})
+        messages = [str(m) for m in get_messages(response.wsgi_request)]
+        self.assertIn("1 produk berhasil dihapus", messages)
