@@ -336,3 +336,151 @@ class CartAjaxTests(TestCase):
             data["subtotal"],
             50000,
         )
+
+    def test_ajax_bulk_delete_selected(
+        self
+    ):
+        response = self.client.post(
+            reverse(
+                "cart:bulk_delete"
+            ),
+            {
+                "bulk_action":
+                    "selected",
+
+                "item_ids": [
+                    self.keyboard_item.id,
+                ],
+            },
+            HTTP_X_REQUESTED_WITH=
+                "XMLHttpRequest",
+        )
+
+
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
+
+
+        self.assertFalse(
+            CartItem.objects
+            .filter(
+                pk=
+                    self.keyboard_item.pk
+            )
+            .exists()
+        )
+
+
+        self.assertTrue(
+            CartItem.objects
+            .filter(
+                pk=self.book_item.pk
+            )
+            .exists()
+        )
+
+
+        self.assertEqual(
+            response.json()[
+                "removed_count"
+            ],
+            1,
+        )
+
+
+    def test_ajax_bulk_delete_all(
+        self
+    ):
+        response = self.client.post(
+            reverse(
+                "cart:bulk_delete"
+            ),
+            {
+                "bulk_action":
+                    "all",
+            },
+            HTTP_X_REQUESTED_WITH=
+                "XMLHttpRequest",
+        )
+
+
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
+
+
+        self.assertFalse(
+            CartItem.objects
+            .filter(
+                cart=self.cart
+            )
+            .exists()
+        )
+
+
+        self.assertTrue(
+            response.json()[
+                "cart_empty"
+            ]
+        )
+
+    def test_bulk_delete_cannot_delete_other_users_item(
+        self
+    ):
+        other_user = (
+            User.objects.create_user(
+                username="other-buyer",
+                password="testpass123",
+            )
+        )
+
+
+        other_cart = (
+            Cart.objects.create(
+                user=other_user,
+            )
+        )
+
+
+        other_item = (
+            CartItem.objects.create(
+                cart=other_cart,
+                product=self.keyboard,
+                quantity=1,
+            )
+        )
+
+
+        response = self.client.post(
+            reverse(
+                "cart:bulk_delete"
+            ),
+            {
+                "bulk_action":
+                    "selected",
+
+                "item_ids": [
+                    other_item.id,
+                ],
+            },
+            HTTP_X_REQUESTED_WITH=
+                "XMLHttpRequest",
+        )
+
+
+        self.assertEqual(
+            response.status_code,
+            400,
+        )
+
+
+        self.assertTrue(
+            CartItem.objects
+            .filter(
+                pk=other_item.pk
+            )
+            .exists()
+        )

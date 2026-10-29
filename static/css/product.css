@@ -495,3 +495,23 @@ html[data-theme="dark"] .product-review small {
 .product-info form[action*="toggle_favorite"] button:hover { background: var(--forest-50); }
 .product-login-link { display: inline-block; margin: 0.1rem 0 0.75rem; color: var(--green); font-size: 0.85rem; font-weight: 700; text-decoration: none; }
 .product-login-link:hover { text-decoration: underline; }
+.product-reviews { margin: 2rem 0; }
+.product-review { padding: 1rem 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.product-review p { margin-bottom: .5rem; }
+.product-review small { color: var(--muted); }
+
+#product-page.htmx-request {
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+#product-page.htmx-request input[name="ids"]:checked,
+#product-page.htmx-request input[name="ids"]:checked + .product-card
+{
+    display: none;
+}
+
+#bulk button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

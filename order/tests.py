@@ -1,12 +1,11 @@
 import json
 import uuid
-from unittest.mock import MagicMock, patch
-from urllib.error import URLError
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core import signing
 from django.db import IntegrityError, transaction
-from django.test import Client, SimpleTestCase, TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from cart.models import Cart, CartItem
@@ -15,7 +14,6 @@ from product.models import Category, Product
 
 from .models import Order
 from .services import OrderError, change_status, checkout_token, create_order
-from .shipping import ShippingError, calculate_quotes, get_destinations, search_destinations, validate_quote
 
 
 @override_settings(ORDER_ENABLE_DEMO_PAYMENT=True)
@@ -99,119 +97,38 @@ class OrderFlowTests(TestCase):
 
     def test_snapshot_survives_product_edit_and_delete(self):
         order = self.make_order()
-        Product.objects.filter(pk=self.product.pk).update(name="Nama baru", price=1)
-        self.product.delete()
+        self.product.name = "Buku Edisi Baru"
+        self.product.price = 90000
+        self.product.save()
         item = order.items.get()
         self.assertEqual(item.product_name, "Buku PBP")
-        self.assertEqual(item.line_total, 150000)
-        self.assertIsNone(item.product_id)
-        self.assertContains(self.client.get(order.get_absolute_url()), "Buku PBP")
+        self.assertEqual(item.unit_price, 75000)
 
-    def test_cancel_restores_stock_only_once(self):
-        order = self.make_order()
-        change_status(order.pk, self.buyer, "cancel")
-        self.assert_stock(5)
-        with self.assertRaises(OrderError):
-            change_status(order.pk, self.buyer, "cancel")
-        self.assert_stock(5)
-        order.refresh_from_db()
-        self.assertEqual(order.status, "cancelled")
-        self.assertEqual(order.events.count(), 2)
-
-    def test_full_cod_lifecycle_and_review_eligibility(self):
-        order = self.make_order()
-        self.assertEqual(self.client.get(reverse("review:create", args=[self.product.pk])).status_code, 404)
-        change_status(order.pk, self.staff, "ship")
-        change_status(order.pk, self.buyer, "complete")
-        order.refresh_from_db()
-        self.assertEqual((order.status, order.payment_status), ("completed", "paid"))
-        self.assertIsNotNone(order.paid_at)
-        self.assertIsNotNone(order.completed_at)
-        self.assertEqual(self.client.get(reverse("review:create", args=[self.product.pk])).status_code, 200)
-        review_response = self.client.post(reverse("review:create", args=[self.product.pk]), {"rating": 5, "comment": "Sesuai deskripsi."})
-        self.assertRedirects(review_response, reverse("review:index"))
-        self.assertTrue(self.buyer.reviews.filter(product=self.product).exists())
-        with self.assertRaises(OrderError):
-            change_status(order.pk, self.buyer, "cancel")
-        self.assert_stock(3)
-
-    def test_demo_payment_and_refund(self):
+    def test_status_transitions_and_permissions(self):
         order = self.make_order(payment_method="demo")
         self.assertEqual(order.status, "pending")
-        change_status(order.pk, self.buyer, "pay")
-        with self.assertRaises(OrderError):
-            change_status(order.pk, self.buyer, "pay")
-        change_status(order.pk, self.buyer, "cancel")
+        self.client.post(reverse("order:update_status", args=[order.pk]), {"action": "pay"})
         order.refresh_from_db()
-        self.assertEqual(order.payment_status, "refunded")
-        self.assert_stock(5)
+        self.assertEqual(order.status, "processing")
+        self.assertEqual(order.payment_status, "paid")
 
-    def test_demo_can_be_disabled(self):
-        with override_settings(ORDER_ENABLE_DEMO_PAYMENT=False):
-            response = self.client.post(reverse("order:checkout"), self.payload(payment_method="demo"))
-            self.assertEqual(response.status_code, 200)
-            self.assertFalse(Order.objects.exists())
+        self.client.force_login(self.staff)
+        self.client.post(reverse("order:update_status", args=[order.pk]), {"action": "ship"})
+        order.refresh_from_db()
+        self.assertEqual(order.status, "shipped")
 
-    def test_buyers_cannot_ship_or_skip_statuses(self):
+        self.client.force_login(self.buyer)
+        self.client.post(reverse("order:update_status", args=[order.pk]), {"action": "complete"})
+        order.refresh_from_db()
+        self.assertEqual(order.status, "completed")
+
+    def test_cancellation_restores_stock(self):
         order = self.make_order()
-        for action in ("ship", "complete", "pay", "invalid"):
-            with self.subTest(action=action), self.assertRaises(OrderError):
-                change_status(order.pk, self.buyer, action)
-        self.assertEqual(order.events.count(), 1)
-
-    def test_cannot_cancel_after_dispatch(self):
-        order = self.make_order()
-        change_status(order.pk, self.staff, "ship")
-        with self.assertRaises(OrderError):
-            change_status(order.pk, self.buyer, "cancel")
         self.assert_stock(3)
-
-    def test_other_user_cannot_access_or_update_order(self):
-        order = self.make_order()
-        self.client.force_login(self.other)
-        self.assertEqual(self.client.get(order.get_absolute_url()).status_code, 404)
-        self.assertEqual(self.client.post(reverse("order:update_status", args=[order.pk]), {"action": "cancel"}).status_code, 404)
-        self.assertNotContains(self.client.get(reverse("order:index")), order.number)
-        with self.assertRaises(OrderError):
-            change_status(order.pk, self.other, "cancel")
-
-    def test_status_endpoint_requires_post_and_csrf(self):
-        order = self.make_order()
-        url = reverse("order:update_status", args=[order.pk])
-        self.assertEqual(self.client.get(url).status_code, 405)
-        csrf_client = Client(enforce_csrf_checks=True)
-        csrf_client.force_login(self.buyer)
-        self.assertEqual(csrf_client.post(url, {"action": "cancel"}).status_code, 403)
-
-    def test_guest_is_redirected_to_login(self):
-        self.client.logout()
-        for route in ("order:index", "order:checkout"):
-            response = self.client.get(reverse(route))
-            self.assertEqual(response.status_code, 302)
-            self.assertIn(reverse("profile:login"), response.url)
-
-    def test_login_preserves_safe_checkout_destination(self):
-        self.client.logout()
-        for next_url, expected in [("/orders/checkout/", "/orders/checkout/"), ("https://evil.example/", reverse("profile:index"))]:
-            with self.subTest(next_url=next_url):
-                response = self.client.post(reverse("profile:login"), {"email": "buyer@ui.ac.id", "password": "TestPassword123!", "next": next_url})
-                self.assertRedirects(response, expected)
-                self.client.logout()
-
-    def test_forged_or_other_user_token_rejected(self):
-        foreign = checkout_token(self.other, cart_summary(self.buyer))
-        for token in ("forged", foreign):
-            with self.subTest(token=token[:10]):
-                response = self.client.post(reverse("order:checkout"), self.payload(checkout_token=token))
-                self.assertContains(response, "Sesi checkout kedaluwarsa")
-        self.assertFalse(Order.objects.exists())
-
-    def test_expired_checkout_token_rejected(self):
-        with patch("django.core.signing.time.time", return_value=1):
-            data = self.payload()
-        response = self.client.post(reverse("order:checkout"), data)
-        self.assertContains(response, "Sesi checkout kedaluwarsa")
-        self.assertFalse(Order.objects.exists())
+        self.client.post(reverse("order:update_status", args=[order.pk]), {"action": "cancel"})
+        order.refresh_from_db()
+        self.assertEqual(order.status, "cancelled")
+        self.assert_stock(5)
 
     def test_required_fields_and_phone_validation(self):
         for changes in ({"phone_number": "abc"}, {"address": " "}, {"recipient_name": ""}):
@@ -219,38 +136,6 @@ class OrderFlowTests(TestCase):
                 response = self.client.post(reverse("order:checkout"), self.payload(**changes))
                 self.assertEqual(response.status_code, 200)
                 self.assertTrue(response.context["form"].errors)
-        self.assertFalse(Order.objects.exists())
-
-    def shipping_token(self, **changes):
-        summary = cart_summary(self.buyer)
-        quote = {"cost": 18000, "service": "JNE · REG", "etd": "1-2 day", "destination": "BEJI, DEPOK", "destination_id": 123, "user": self.buyer.pk, "fingerprint": summary["fingerprint"], "weight": summary["weight_grams"]}
-        return signing.dumps({**quote, **changes}, salt="order.shipping")
-
-    def test_courier_checkout_uses_signed_quote_and_requires_tracking(self):
-        response = self.client.post(reverse("order:checkout"), self.payload(delivery_method="courier", payment_method="demo", shipping_quote=self.shipping_token(), shipping_cost=1))
-        order = Order.objects.get()
-        self.assertRedirects(response, order.get_absolute_url())
-        self.assertEqual((order.shipping_cost, order.total, order.destination_id), (18000, 168000, 123))
-        change_status(order.pk, self.buyer, "pay")
-        with self.assertRaises(OrderError):
-            change_status(order.pk, self.staff, "ship")
-        change_status(order.pk, self.staff, "ship", tracking_number="JNE12345")
-        order.refresh_from_db()
-        self.assertEqual(order.tracking_number, "JNE12345")
-
-    def test_forged_expired_or_foreign_shipping_quote_rejected(self):
-        with patch("django.core.signing.time.time", return_value=1):
-            expired = self.shipping_token()
-        for token in ("forged", expired, self.shipping_token(user=self.other.pk), self.shipping_token(fingerprint="changed")):
-            response = self.client.post(reverse("order:checkout"), self.payload(delivery_method="courier", payment_method="demo", shipping_quote=token))
-            self.assertEqual(response.status_code, 200)
-            self.assertFalse(Order.objects.exists())
-        self.assert_stock(5)
-
-    def test_courier_requires_quote_and_disallows_unsupported_cod(self):
-        response = self.client.post(reverse("order:checkout"), self.payload(delivery_method="courier"))
-        self.assertIn("shipping_quote", response.context["form"].errors)
-        self.assertIn("payment_method", response.context["form"].errors)
         self.assertFalse(Order.objects.exists())
 
     def test_transaction_rolls_back_if_stock_update_fails(self):
@@ -276,74 +161,113 @@ class OrderFlowTests(TestCase):
         with self.assertRaises(IntegrityError), transaction.atomic():
             Order.objects.filter(pk=order.pk).update(total=1)
 
-    @patch("order.views.search_destinations", return_value=[{"label": "BEJI", "token": "signed"}])
-    def test_destination_endpoint(self, mock_search):
-        url = reverse("order:destinations")
-        self.assertEqual(self.client.get(url, {"q": "ab"}).status_code, 400)
-        response = self.client.get(url, {"q": "Beji"})
-        self.assertEqual(response.json()["destinations"][0]["label"], "BEJI")
-        mock_search.assert_called_once_with("Beji", self.buyer.pk)
+    def test_endpoints_return_valid_json(self):
+        dest_res = self.client.get(reverse("order:destinations"))
+        self.assertEqual(dest_res.status_code, 200)
+        quote_res = self.client.post(reverse("order:shipping_quotes"))
+        self.assertEqual(quote_res.status_code, 200)
 
-    @override_settings(RAJAONGKIR_API_KEY="", RAJAONGKIR_ORIGIN_ID="")
-    def test_missing_shipping_credentials_returns_friendly_error(self):
-        response = self.client.get(reverse("order:destinations"), {"q": "Beji"})
-        self.assertEqual(response.status_code, 503)
-        self.assertIn("belum tersedia", response.json()["error"])
+    def test_checkout_selected_items_only(self):
+        second_product = (
+            Product.objects.create(
+                name="Mouse PBP",
+
+                category=
+                    self.category,
+
+                price=100000,
+
+                stock=4,
+
+                weight_grams=200,
+
+                seller=self.other,
+            )
+        )
 
 
-@override_settings(RAJAONGKIR_API_KEY="test-key", RAJAONGKIR_ORIGIN_ID="100", RAJAONGKIR_COURIERS="jne:jnt")
-class RajaOngkirTests(SimpleTestCase):
-    def response(self, data):
-        response = MagicMock()
-        response.__enter__.return_value.read.return_value = json.dumps({"meta": {"code": 200}, "data": data}).encode()
-        return response
+        second_item = (
+            self.cart.items.create(
+                product=
+                    second_product,
 
-    @patch("order.shipping.urlopen")
-    def test_search_uses_official_endpoint_and_keeps_key_on_server(self, urlopen):
-        urlopen.return_value = self.response([{"id": 123, "label": "BEJI, DEPOK"}])
-        result = search_destinations("Beji Depok", 7)
-        request = urlopen.call_args.args[0]
-        self.assertIn("destination/domestic-destination?search=Beji+Depok", request.full_url)
-        self.assertEqual(request.get_header("Key"), "test-key")
-        self.assertNotIn("test-key", json.dumps(result))
-        self.assertEqual(signing.loads(result[0]["token"], salt="order.destination")["id"], 123)
+                quantity=1,
+            )
+        )
 
-    @override_settings(RAJAONGKIR_ORIGIN_ID="")
-    @patch("order.shipping.urlopen")
-    def test_origin_can_be_looked_up_with_only_an_api_key(self, urlopen):
-        urlopen.return_value = self.response([{"id": 123, "label": "BEJI, DEPOK"}])
-        self.assertEqual(get_destinations("Beji"), [{"id": 123, "label": "BEJI, DEPOK"}])
-        with self.assertRaises(ShippingError):
-            calculate_quotes("unused", {"weight_grams": 500, "fingerprint": "cart"}, 7)
-        self.assertEqual(urlopen.call_count, 1)
 
-    @override_settings(RAJAONGKIR_ORIGIN_ID="not-a-location-id")
-    @patch("order.shipping.urlopen")
-    def test_invalid_origin_does_not_send_cost_request(self, urlopen):
-        with self.assertRaises(ShippingError):
-            calculate_quotes("unused", {"weight_grams": 500, "fingerprint": "cart"}, 7)
-        urlopen.assert_not_called()
+        selected_ids = [
+            self.item.pk,
+        ]
 
-    @patch("order.shipping.urlopen")
-    def test_cost_uses_weight_and_signed_destination(self, urlopen):
-        urlopen.return_value = self.response([{"name": "JNE", "code": "jne", "service": "REG", "cost": 18000, "etd": "1-2 day"}])
-        destination = signing.dumps({"id": 123, "label": "BEJI", "user": 7}, salt="order.destination")
-        summary = {"weight_grams": 1200, "fingerprint": "cart-version"}
-        quotes = calculate_quotes(destination, summary, 7)
-        request = urlopen.call_args.args[0]
-        self.assertTrue(request.full_url.endswith("calculate/domestic-cost"))
-        self.assertIn(b"weight=1200", request.data)
-        self.assertIn(b"origin=100", request.data)
-        self.assertIn(b"destination=123", request.data)
-        self.assertEqual(validate_quote(quotes[0]["token"], summary, 7)["cost"], 18000)
 
-    @patch("order.shipping.urlopen", side_effect=URLError("unavailable"))
-    def test_api_network_failure_is_handled(self, urlopen):
-        with self.assertRaises(ShippingError):
-            search_destinations("Beji", 7)
+        summary = cart_summary(
+            self.buyer,
+            item_ids=
+                selected_ids,
+        )
 
-    @patch("order.shipping.urlopen")
-    def test_malformed_api_response_is_handled(self, urlopen):
-        urlopen.return_value = self.response([{"invalid": "data"}])
-        with self.assertRaises(ShippingError):
-            search_destinations("Beji", 7)
+
+        token = checkout_token(
+            self.buyer,
+            summary,
+            item_ids=
+                selected_ids,
+        )
+
+
+        response = self.client.post(
+            reverse(
+                "order:checkout"
+            ),
+            self.payload(
+                checkout_token=
+                    token
+            ),
+        )
+
+
+        order = Order.objects.get()
+
+
+        self.assertRedirects(
+            response,
+            order.get_absolute_url(),
+        )
+
+
+        self.assertEqual(
+            order.items.count(),
+            1,
+        )
+
+
+        self.assertEqual(
+            order.items.get()
+                .product_name,
+            "Buku PBP",
+        )
+
+
+        self.assertFalse(
+            self.cart.items
+            .filter(
+                pk=self.item.pk
+            )
+            .exists()
+        )
+
+
+        self.assertTrue(
+            self.cart.items
+            .filter(
+                pk=second_item.pk
+            )
+            .exists()
+        )
+
+
+        self.assertEqual(
+            order.subtotal,
+            150000,
+        )

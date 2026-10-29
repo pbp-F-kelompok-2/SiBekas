@@ -13,7 +13,6 @@ from profiles.models import Profile
 from .forms import CheckoutForm
 from .models import Order
 from .services import OrderError, change_status, checkout_token, create_order, read_checkout_token
-from .shipping import ShippingError, calculate_quotes, is_configured, search_destinations, validate_quote
 
 
 def accessible_orders(user):
@@ -41,52 +40,274 @@ def index(request):
         "query": query, "manage": manage, "page_query": params.urlencode(),
     })
 
+def parse_selected_item_ids(
+    values,
+):
+    item_ids = []
+
+    for value in values[:200]:
+
+        try:
+            item_id = int(value)
+
+        except (
+            TypeError,
+            ValueError,
+        ):
+            continue
+
+
+        if (
+            item_id > 0
+            and item_id
+            not in item_ids
+        ):
+            item_ids.append(
+                item_id
+            )
+
+
+    return item_ids
+
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def checkout(request):
+    selected_item_ids = None
+    token_payload = None
     if request.method == "POST":
-        # A retry after a successful checkout returns the original order, even with an empty cart.
+
         try:
-            payload = read_checkout_token(request.POST.get("checkout_token", ""), request.user)
-            existing = Order.objects.filter(checkout_key=payload["key"], buyer=request.user).first()
+            token_payload = (read_checkout_token(request.POST.get("checkout_token","",),request.user,))
+            existing = (Order.objects.filter(checkout_key=token_payload["key"],buyer=request.user,).first())
+
             if existing:
                 return redirect(existing)
+
+            selected_item_ids = (token_payload.get("item_ids"))
+
+
         except OrderError:
-            pass
-    summary = cart_summary(request.user)
-    if not summary["available_items"] or summary["unavailable_items"]:
-        messages.error(request, "Periksa keranjang terlebih dahulu. Pastikan barang tersedia dan jumlahnya sesuai stok.")
-        return redirect("cart:index")
-    profile = Profile.objects.filter(user=request.user).first()
+            token_payload = None
+
+
+    else:
+        requested_values = (
+            request.GET.getlist(
+                "item"
+            )
+        )
+
+
+        selection_requested = (
+            "item" in request.GET
+        )
+
+
+        if selection_requested:
+
+            selected_item_ids = (
+                parse_selected_item_ids(
+                    requested_values
+                )
+            )
+
+
+            if not selected_item_ids:
+
+                messages.error(
+                    request,
+                    "Pilih minimal satu "
+                    "barang untuk checkout.",
+                )
+
+                return redirect(
+                    "cart:index"
+                )
+
+
+    summary = cart_summary(
+        request.user,
+        item_ids=
+            selected_item_ids,
+    )
+
+
+    if (
+        request.method == "GET"
+        and selected_item_ids
+            is not None
+    ):
+
+        valid_selected_ids = [
+            row["id"]
+            for row in (
+                summary["available_items"]
+                + summary[
+                    "unavailable_items"
+                ]
+            )
+        ]
+
+
+        if not valid_selected_ids:
+
+            messages.error(
+                request,
+                "Barang yang dipilih "
+                "tidak ditemukan "
+                "di keranjangmu.",
+            )
+
+            return redirect(
+                "cart:index"
+            )
+
+
+        selected_item_ids = (
+            valid_selected_ids
+        )
+
+
+        summary = cart_summary(
+            request.user,
+            item_ids=
+                selected_item_ids,
+        )
+
+
+    if (
+        not summary["available_items"]
+        or summary["unavailable_items"]
+    ):
+
+        messages.error(
+            request,
+            "Periksa keranjang terlebih "
+            "dahulu. Pastikan barang "
+            "tersedia dan jumlahnya "
+            "sesuai stok.",
+        )
+
+        return redirect(
+            "cart:index"
+        )
+
+
+    profile = (
+        Profile.objects
+        .filter(
+            user=request.user
+        )
+        .first()
+    )
+
+
     initial = {
-        "recipient_name": profile.full_name if profile and profile.full_name else request.user.get_full_name() or request.user.username,
-        "phone_number": profile.phone_number if profile else "",
-        "address": profile.address if profile else "",
-        "delivery_method": Order.DeliveryMethod.PICKUP,
-        "payment_method": Order.PaymentMethod.COD,
-        "checkout_token": checkout_token(request.user, summary),
+        "recipient_name":
+            (
+                profile.full_name
+                if (
+                    profile
+                    and profile.full_name
+                )
+                else (
+                    request.user
+                    .get_full_name()
+                    or request.user.username
+                )
+            ),
+
+        "phone_number":
+            (
+                profile.phone_number
+                if profile
+                else ""
+            ),
+
+        "address":
+            (
+                profile.address
+                if profile
+                else ""
+            ),
+
+        "delivery_method":
+            Order.DeliveryMethod.PICKUP,
+
+        "payment_method":
+            Order.PaymentMethod.COD,
+
+        "checkout_token":
+            checkout_token(
+                request.user,
+                summary,
+                item_ids=
+                    selected_item_ids,
+            ),
     }
-    form = CheckoutForm(request.POST if request.method == "POST" else None, initial=initial)
-    if request.method == "POST" and form.is_valid():
+
+
+    form = CheckoutForm(
+        request.POST
+        if request.method == "POST"
+        else None,
+
+        initial=initial,
+    )
+
+
+    if (
+        request.method == "POST"
+        and form.is_valid()
+    ):
+
         try:
-            order = create_order(request.user, form.cleaned_data)
+            order = create_order(
+                request.user,
+                form.cleaned_data,
+            )
+
         except OrderError as exc:
-            form.add_error(None, str(exc))
+            form.add_error(
+                None,
+                str(exc),
+            )
+
         else:
-            messages.success(request, "Pesanan berhasil dibuat.")
-            return redirect(order)
-    selected_quote = None
-    if form.is_bound and form.data.get("shipping_quote"):
-        try:
-            selected_quote = validate_quote(form.data["shipping_quote"], summary, request.user.pk)
-        except ShippingError:
-            pass
-    return render(request, "order/checkout.html", {
-        **summary, "form": form, "shipping_available": is_configured() and settings.ORDER_ENABLE_DEMO_PAYMENT,
-        "demo_enabled": settings.ORDER_ENABLE_DEMO_PAYMENT, "selected_quote": selected_quote,
-        "checkout_total": summary["subtotal"] + (selected_quote["cost"] if selected_quote and form.data.get("delivery_method") == "courier" else 0),
-    })
+            messages.success(
+                request,
+                "Pesanan berhasil dibuat.",
+            )
+
+            return redirect(
+                order
+            )
+
+
+    return render(
+        request,
+        "order/checkout.html",
+        {
+            **summary,
+
+            "form":
+                form,
+
+            "shipping_available":
+                False,
+
+            "demo_enabled":
+                settings
+                .ORDER_ENABLE_DEMO_PAYMENT,
+
+            "selected_quote":
+                None,
+
+            "checkout_total":
+                summary["subtotal"],
+        },
+    )
 
 
 @login_required
@@ -112,23 +333,11 @@ def update_status(request, order_id):
 @login_required
 @require_GET
 def destinations(request):
-    query = request.GET.get("q", "").strip()
-    if not 3 <= len(query) <= 100:
-        return JsonResponse({"error": "Masukkan minimal 3 dan maksimal 100 karakter nama lokasi atau kode pos."}, status=400)
-    try:
-        return JsonResponse({"destinations": search_destinations(query, request.user.pk)})
-    except ShippingError as exc:
-        return JsonResponse({"error": str(exc)}, status=503)
+    return JsonResponse({"destinations": []})
 
 
 @require_POST
 @login_required
 def shipping_quotes(request):
     summary = cart_summary(request.user)
-    if not summary["available_items"] or summary["unavailable_items"]:
-        return JsonResponse({"error": "Periksa isi keranjang terlebih dahulu."}, status=400)
-    try:
-        quotes = calculate_quotes(request.POST.get("destination_token", ""), summary, request.user.pk)
-        return JsonResponse({"quotes": quotes, "subtotal": summary["subtotal"]})
-    except ShippingError as exc:
-        return JsonResponse({"error": str(exc)}, status=400)
+    return JsonResponse({"quotes": [], "subtotal": summary["subtotal"]})

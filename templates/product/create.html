@@ -17,7 +17,7 @@
     </p>
 
     <section class="sell-card">
-        <form method="POST">
+        <form method="POST" hx-boost = "true">
             {% csrf_token %}
 
             {% if form.non_field_errors %}

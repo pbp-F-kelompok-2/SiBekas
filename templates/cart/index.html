@@ -8,10 +8,7 @@ Keranjang - SiBekas
 
 
 {% block extra_css %}
-<link
-    rel="stylesheet"
-    href="{% static 'css/cart.css' %}"
->
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
 {% endblock %}
 
 
@@ -39,505 +36,422 @@ Keranjang - SiBekas
 
     {% if cart_has_items %}
 
-        <form
-            class="cart-filter"
-            method="get"
-            action="{% url 'cart:index' %}"
-        >
+    <form class="cart-filter" method="get" action="{% url 'cart:index' %}">
 
-            <label
-                for="cart-category"
-            >
-                Filter kategori
-            </label>
+        <label for="cart-category">
+            Filter kategori
+        </label>
 
 
-            <select
-                id="cart-category"
-                name="category"
-            >
+        <select id="cart-category" name="category">
 
-                <option value="">
-                    Semua kategori
-                </option>
+            <option value="">
+                Semua kategori
+            </option>
 
 
-                {% for category in categories %}
+            {% for category in categories %}
 
-                    <option
-                        value="{{ category.slug }}"
-                        {% if category.slug == selected_category %}
-                            selected
-                        {% endif %}
-                    >
-                        {{ category.name }}
-                    </option>
+            <option value="{{ category.slug }}" {% if category.slug == selected_category %} selected {% endif %}>
+                {{ category.name }}
+            </option>
 
-                {% endfor %}
+            {% endfor %}
 
-            </select>
+        </select>
 
 
-            <button
-                type="submit"
-                class="cart-filter-button"
-            >
-                Terapkan
-            </button>
+        <button type="submit" class="cart-filter-button">
+            Terapkan
+        </button>
 
 
-            {% if selected_category %}
+        {% if selected_category %}
 
-                <a
-                    href="{% url 'cart:index' %}"
-                    class="cart-filter-reset"
-                >
-                    Reset
-                </a>
+        <a href="{% url 'cart:index' %}" class="cart-filter-reset">
+            Reset
+        </a>
 
-            {% endif %}
+        {% endif %}
 
-        </form>
+    </form>
 
     {% endif %}
 
 
-    <div
-        id="cart-ajax-status"
-        class="cart-ajax-status"
-        aria-live="polite"
-    ></div>
+    <div id="cart-ajax-status" class="cart-ajax-status" aria-live="polite"></div>
+
+    {% if cart_has_items %}
+
+    <form id="cart-bulk-form" class="cart-bulk-toolbar" method="post" action="{% url 'cart:bulk_delete' %}"
+        data-cart-bulk-form>
+
+        {% csrf_token %}
+
+
+        <label class="cart-select-all">
+
+            <input type="checkbox" data-cart-select-all>
+
+            <span data-cart-select-all-label>
+                Pilih semua
+            </span>
+
+        </label>
+
+
+        <span class="cart-selected-count" data-cart-selected-count>
+            0 dipilih
+        </span>
+
+
+        <div class="cart-bulk-actions">
+
+
+
+            <button type="submit" id="cart-delete-selected" name="bulk_action" value="selected"
+                class="cart-delete-selected" disabled>
+                <i data-lucide="trash-2"></i>
+                Hapus dipilih
+            </button>
+
+
+            <button type="submit" name="bulk_action" value="all" class="cart-delete-all">
+                Hapus semua
+            </button>
+
+        </div>
+
+    </form>
+
+    {% endif %}
 
 
     {% if cart_has_items %}
 
-        <div class="cart-layout">
+    <div class="cart-layout">
 
-            <div class="cart-main">
+        <div class="cart-main">
 
 
-                {% if is_filtered %}
+            {% if is_filtered %}
 
-                    <div class="cart-filter-result">
+            <div class="cart-filter-result">
 
-                        Menampilkan kategori:
+                Menampilkan kategori:
 
-                        <strong>
-                            {{ selected_category_name }}
-                        </strong>
-
-                    </div>
-
-                {% endif %}
-
-
-                {% if display_unavailable_items %}
-
-                    <div
-                        class="cart-alert"
-                        role="alert"
-                    >
-
-                        <div
-                            class="cart-alert-heading"
-                        >
-
-                            <i
-                                data-lucide="triangle-alert"
-                            ></i>
-
-
-                            <div>
-
-                                <strong>Sebagian barang tidak lagi tersedia</strong>
-
-                                <p>
-                                    {{ display_unavailable_items|length }}
-                                    barang pada tampilan ini
-                                    tidak dapat dilanjutkan
-                                    ke checkout.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div
-                            class="cart-unavailable-list"
-                        >
-
-                            {% for item in display_unavailable_items %}
-
-                                <div
-                                    class="cart-unavailable-row"
-                                    data-cart-item-id="{{ item.id }}"
-                                >
-
-                                    <span>
-                                        {{ item.name }}
-                                    </span>
-
-
-                                    <form
-                                        method="post"
-                                        action="{% url 'cart:remove_item' item.id %}"
-                                        data-cart-ajax
-                                        data-cart-action="remove"
-                                    >
-
-                                        {% csrf_token %}
-
-
-                                        <button
-                                            type="submit"
-                                            class="cart-unavailable-remove"
-                                        >
-                                            Hapus
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-                    </div>
-
-                {% endif %}
-
-
-                {% for item in display_available_items %}
-
-                    <article
-                        class="cart-card"
-                        data-cart-item-id="{{ item.id }}"
-                    >
-
-                        <a
-                            href="{{ item.url }}"
-                            class="cart-product-image"
-                        >
-
-                            {% if item.thumbnail %}
-
-                                <img
-                                    src="{{ item.thumbnail }}"
-                                    alt="{{ item.name }}"
-                                    loading="lazy"
-                                >
-
-                            {% else %}
-
-                                <span>
-                                    <i
-                                        data-lucide="shopping-bag"
-                                    ></i>
-                                </span>
-
-                            {% endif %}
-
-                        </a>
-
-
-                        <div
-                            class="cart-product-content"
-                        >
-
-                            <a
-                                href="{{ item.url }}"
-                                class="cart-product-name"
-                            >
-                                {{ item.name }}
-                            </a>
-
-
-                            <p
-                                class="cart-product-meta"
-                            >
-                                {{ item.seller }}
-
-                                <span
-                                    aria-hidden="true"
-                                >
-                                    ·
-                                </span>
-
-                                {{ item.condition }}
-                            </p>
-
-
-                            <p
-                                class="cart-product-price"
-                            >
-                                {{ item.price_display }}
-                            </p>
-
-
-                            <div
-                                class="cart-product-actions"
-                            >
-
-                                <form
-                                    method="post"
-                                    action="{% url 'cart:update_item' item.id %}"
-                                    class="cart-quantity"
-                                    data-cart-ajax
-                                    data-cart-action="update"
-                                >
-
-                                    {% csrf_token %}
-
-
-                                    <button
-                                        type="submit"
-                                        name="action"
-                                        value="decrease"
-                                        aria-label="Kurangi jumlah"
-                                        {% if item.quantity <= 1 %}
-                                            disabled
-                                        {% endif %}
-                                    >
-                                        <i
-                                            data-lucide="minus"
-                                        ></i>
-                                    </button>
-
-
-                                    <span
-                                        class="cart-quantity-value"
-                                    >
-                                        {{ item.quantity }}
-                                    </span>
-
-
-                                    <button
-                                        type="submit"
-                                        name="action"
-                                        value="increase"
-                                        aria-label="Tambah jumlah"
-                                        {% if item.max_reached %}
-                                            disabled
-                                        {% endif %}
-                                    >
-                                        <i
-                                            data-lucide="plus"
-                                        ></i>
-                                    </button>
-
-                                </form>
-
-
-                                <form
-                                    method="post"
-                                    action="{% url 'cart:remove_item' item.id %}"
-                                    data-cart-ajax
-                                    data-cart-action="remove"
-                                >
-
-                                    {% csrf_token %}
-
-
-                                    <button
-                                        type="submit"
-                                        class="cart-delete"
-                                    >
-
-                                        <i
-                                            data-lucide="trash-2"
-                                        ></i>
-
-                                        Hapus
-
-                                    </button>
-
-                                </form>
-
-                            </div>
-
-
-                            {% if item.max_reached %}
-
-                                <p
-                                    class="cart-stock-warning"
-                                >
-                                    Stok maksimal tercapai
-                                    ({{ item.stock }} unit).
-                                </p>
-
-                            {% endif %}
-
-                        </div>
-
-                    </article>
-
-                {% endfor %}
-
-
-                {% if is_filtered and not filter_has_results %}
-
-                    <div
-                        class="cart-filter-empty"
-                    >
-
-                        <strong>
-                            Tidak ada barang
-                            pada kategori ini.
-                        </strong>
-
-                        <p>
-                            Pilih kategori lain
-                            atau reset filter untuk
-                            melihat seluruh isi
-                            keranjang.
-                        </p>
-
-                    </div>
-
-                {% endif %}
+                <strong>
+                    {{ selected_category_name }}
+                </strong>
 
             </div>
 
-
-            <aside class="cart-summary">
-
-                <h2>
-                    Ringkasan
-                </h2>
+            {% endif %}
 
 
-                <dl
-                    class="cart-summary-list"
-                >
+            {% if display_unavailable_items %}
 
-                    <div>
+            <div class="cart-alert" role="alert">
 
-                        <dt>
-                            Subtotal
-                            (
-                            <span
-                                id="cart-summary-count"
-                            >
-                                {{ available_items|length }}
-                            </span>
-                            barang)
-                        </dt>
+                <div class="cart-alert-heading">
 
-
-                        <dd
-                            id="cart-summary-subtotal"
-                        >
-                            {{ subtotal_display }}
-                        </dd>
-
-                    </div>
+                    <i data-lucide="triangle-alert"></i>
 
 
                     <div>
 
-                        <dt>
-                            Ongkos kirim
-                        </dt>
+                        <strong>Sebagian barang tidak lagi tersedia</strong>
 
-                        <dd
-                            class="cart-shipping"
-                        >
-                            Dihitung di checkout
-                        </dd>
+                        <p>
+                            {{ display_unavailable_items|length }}
+                            barang pada tampilan ini
+                            tidak dapat dilanjutkan
+                            ke checkout.
+                        </p>
 
                     </div>
-
-                </dl>
-
-
-                <div
-                    class="cart-summary-divider"
-                ></div>
-
-
-                <div
-                    class="cart-summary-total"
-                >
-
-                    <span>
-                        Total
-                    </span>
-
-                    <strong
-                        id="cart-summary-total"
-                    >
-                        {{ subtotal_display }}
-                    </strong>
 
                 </div>
 
 
-                <div
-                    id="cart-checkout-area"
-                >
+                <div class="cart-unavailable-list">
 
-                    {% if available_items and not unavailable_items %}
+                    {% for item in display_unavailable_items %}
 
-                        <a
-                            href="{% url 'order:checkout' %}"
-                            class="cart-checkout-button"
-                        >
-                            Lanjut ke checkout
-                        </a>
+                    <div class="cart-unavailable-row" data-cart-item-id="{{ item.id }}">
+
+                        <label class="cart-item-select" aria-label="Pilih {{ item.name }}">
+                            <input type="checkbox" name="item_ids" value="{{ item.id }}" form="cart-bulk-form"
+                                data-cart-select-item data-cart-available="false">
+                        </label>
+
+                        <span>
+                            {{ item.name }}
+                        </span>
+
+
+                        <form method="post" action="{% url 'cart:remove_item' item.id %}" data-cart-ajax
+                            data-cart-action="remove">
+
+                            {% csrf_token %}
+
+
+                            <button type="submit" class="cart-unavailable-remove">
+                                Hapus
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% for item in display_available_items %}
+
+            <article class="cart-card" data-cart-item-id="{{ item.id }}">
+
+                <label class="cart-item-select" aria-label="Pilih {{ item.name }}">
+                    <input type="checkbox" name="item_ids" value="{{ item.id }}" form="cart-bulk-form"
+                        data-cart-select-item data-cart-available="true" data-cart-price="{{ item.price }}"
+                        data-cart-quantity="{{ item.quantity }}">
+                </label>
+
+                <a href="{{ item.url }}" class="cart-product-image">
+
+                    {% if item.thumbnail %}
+
+                    <img src="{{ item.thumbnail }}" alt="{{ item.name }}" loading="lazy">
 
                     {% else %}
 
-                        <p>
-                            Hapus barang yang
-                            tidak tersedia atau
-                            sesuaikan jumlahnya
-                            sebelum checkout.
-                        </p>
+                    <span>
+                        <i data-lucide="shopping-bag"></i>
+                    </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                <div class="cart-product-content">
+
+                    <a href="{{ item.url }}" class="cart-product-name">
+                        {{ item.name }}
+                    </a>
+
+
+                    <p class="cart-product-meta">
+                        {{ item.seller }}
+
+                        <span aria-hidden="true">
+                            ·
+                        </span>
+
+                        {{ item.condition }}
+                    </p>
+
+
+                    <p class="cart-product-price">
+                        {{ item.price_display }}
+                    </p>
+
+
+                    <div class="cart-product-actions">
+
+                        <form method="post" action="{% url 'cart:update_item' item.id %}" class="cart-quantity"
+                            data-cart-ajax data-cart-action="update">
+                            {% csrf_token %}
+
+                            <button type="submit" name="action" value="decrease" aria-label="Kurangi jumlah" {% if item.quantity <= 1 %}disabled{% endif %}>
+                                <i data-lucide="minus"></i>
+                            </button>
+
+                            <span class="cart-quantity-value">
+                                {{ item.quantity }}
+                            </span>
+
+                            <button type="submit" name="action" value="increase" aria-label="Tambah jumlah" {% if item.max_reached %}disabled{% endif %}>
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </form>
+
+                        <form method="post" action="{% url 'cart:remove_item' item.id %}" data-cart-ajax
+                            data-cart-action="remove">
+
+                            {% csrf_token %}
+
+
+                            <button type="submit" class="cart-delete">
+
+                                <i data-lucide="trash-2"></i>
+
+                                Hapus
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    {% if item.max_reached %}
+
+                    <p class="cart-stock-warning">
+                        Stok maksimal tercapai
+                        ({{ item.stock }} unit).
+                    </p>
 
                     {% endif %}
 
                 </div>
 
-            </aside>
+            </article>
+
+            {% endfor %}
+
+
+            {% if is_filtered and not filter_has_results %}
+
+            <div class="cart-filter-empty">
+
+                <strong>
+                    Tidak ada barang
+                    pada kategori ini.
+                </strong>
+
+                <p>
+                    Pilih kategori lain
+                    atau reset filter untuk
+                    melihat seluruh isi
+                    keranjang.
+                </p>
+
+            </div>
+
+            {% endif %}
 
         </div>
+
+
+        <aside class="cart-summary">
+
+            <h2>
+                Ringkasan
+            </h2>
+
+
+            <dl class="cart-summary-list">
+
+                <div>
+
+                    <dt>
+                        Subtotal
+                        (
+                        <span id="cart-summary-count">
+                            {{ available_items|length }}
+                        </span>
+                        barang)
+                    </dt>
+
+
+                    <dd id="cart-summary-subtotal">
+                        {{ subtotal_display }}
+                    </dd>
+
+                </div>
+
+
+                <div>
+
+                    <dt>
+                        Ongkos kirim
+                    </dt>
+
+                    <dd class="cart-shipping">
+                        Dihitung di checkout
+                    </dd>
+
+                </div>
+
+            </dl>
+
+
+            <div class="cart-summary-divider"></div>
+
+
+            <div class="cart-summary-total">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="cart-summary-total">
+                    {{ subtotal_display }}
+                </strong>
+
+            </div>
+
+
+            <div id="cart-checkout-area">
+
+                {% if available_items and not unavailable_items %}
+
+                <button type="button" id="cart-checkout-selected" class="cart-checkout-button"
+                    data-checkout-url="{% url 'order:checkout' %}" disabled>
+                    Checkout dipilih
+                </button>
+
+                {% else %}
+
+                <p>
+                    Hapus barang yang
+                    tidak tersedia atau
+                    sesuaikan jumlahnya
+                    sebelum checkout.
+                </p>
+
+                {% endif %}
+
+            </div>
+
+        </aside>
+
+    </div>
 
 
     {% else %}
 
-        <div class="cart-empty">
+    <div class="cart-empty">
 
-            <div
-                class="cart-empty-icon"
-            >
-                <i
-                    data-lucide="shopping-bag"
-                ></i>
-            </div>
-
-
-            <h2>
-                Keranjangmu masih kosong
-            </h2>
-
-
-            <p>
-                Belum ada barang yang kamu pilih.
-                Yuk, jelajahi katalog dan temukan
-                barang incaranmu.
-            </p>
-
-
-            <a
-                href="{% url 'product:index' %}"
-                class="cart-empty-button"
-            >
-                Mulai belanja
-            </a>
-
+        <div class="cart-empty-icon">
+            <i data-lucide="shopping-bag"></i>
         </div>
+
+
+        <h2>
+            Keranjangmu masih kosong
+        </h2>
+
+
+        <p>
+            Belum ada barang yang kamu pilih.
+            Yuk, jelajahi katalog dan temukan
+            barang incaranmu.
+        </p>
+
+
+        <a href="{% url 'product:index' %}" class="cart-empty-button">
+            Mulai belanja
+        </a>
+
+    </div>
 
     {% endif %}
 
@@ -548,8 +462,6 @@ Keranjang - SiBekas
 
 {% block extra_js %}
 
-<script
-    src="{% static 'js/cart.js' %}"
-></script>
+<script src="{% static 'js/cart.js' %}"></script>
 
 {% endblock %}

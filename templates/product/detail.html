@@ -87,7 +87,7 @@
             {% elif not product.stock %}<p class="order-notice">Produk ini sudah habis terjual.</p>{% endif %}
             {% if product.seller == request.user %}
             <a class = "button" href = "{% url 'product:update' product.slug %}">Ubah</a>
-            <form method = "post" action = "{% url 'product:delete' product.slug %}">
+            <form method = "post" action = "{% url 'product:delete' product.slug %}" hx-boost = "true" hx-confirm = "Yakin ingin menghapus produk ini?">
                 {% csrf_token %}
                 <button type = "submit" class = "button">Hapus</button>
             </form>

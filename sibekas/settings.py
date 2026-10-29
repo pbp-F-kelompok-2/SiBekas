@@ -147,11 +147,6 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# RajaOngkir uses subdistrict IDs from its direct destination search.
-# All parcels leave the configured SiBekas campus collection point.
-RAJAONGKIR_API_KEY = os.getenv("RAJAONGKIR_API_KEY", "")
-RAJAONGKIR_ORIGIN_ID = os.getenv("RAJAONGKIR_ORIGIN_ID", "")
-RAJAONGKIR_COURIERS = os.getenv("RAJAONGKIR_COURIERS", "jne:jnt:sicepat")
 ORDER_ENABLE_DEMO_PAYMENT = env_bool("ORDER_ENABLE_DEMO_PAYMENT", default=DEBUG)
 SEED_INITIAL_PRODUCTS = env_bool("DJANGO_SEED_INITIAL_PRODUCTS", default=False)
 ORDER_STAFF_USERNAME = os.getenv("ORDER_STAFF_USERNAME", "").strip()
