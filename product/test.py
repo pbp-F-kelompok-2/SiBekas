@@ -65,3 +65,8 @@ class ProductTest(TestCase):
         response = self.client.get(reverse("product:update", args = [self.product.slug]))
         self.assertContains(response, "mengubah", status_code = 403)
         self.assertContains(response, "Kembali ke produk", status_code = 403)
+
+    def test_anonymus_mine(self):
+        response = self.client.get(reverse("product:index"), {"mine": "1"})
+        self.assertNotContains(response,"Hapus yang dipilih")
+        self.assertNotContains(response, "Pilih semua")
