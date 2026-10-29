@@ -62,6 +62,6 @@ class ProductTest(TestCase):
 
     def test_403_mengubah(self):
         self.client.force_login(self.other)
-        response = self.client.get(reverse("product": "update", args = [self.product.slug]))
+        response = self.client.get(reverse("product:update", args = [self.product.slug]))
         self.assertContains(response, "mengubah", status_code = 403)
         self.assertContains(response, "Kembali ke produk", status_code = 403)
