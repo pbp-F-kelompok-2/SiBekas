@@ -35,10 +35,8 @@ def login_view(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            user = None
+        user = User.objects.filter(email__iexact=email).first()
+
 
         if user is not None:
             user = authenticate(
@@ -154,7 +152,7 @@ def toggle_favorite(request, slug):
     else:
         messages.success(request, "Produk ditambahkan ke favorit.")
 
-    return redirect(product.get_absolute_url)
+    return redirect(product.get_absolute_url())
 
 @login_required
 @require_POST

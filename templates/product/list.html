@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="product-page">
+<section class="product-page" id = "product-page" hx-target = "#product-page" hx-select = "#product-page" hx-swap = "outerHTML" hx-indicator = "#product-page" hx-select-oob = "#messages">
     <div class = "product-heading-row">
         <div class="product-heading">
             <p class="eyebrow">Katalog Preloved</p>
@@ -19,7 +19,7 @@
     </div>
 
 
-    <form class="product-search" method="get">
+    <form class="product-search" method="get" hx-get = "{% url 'product:index' %}" hx-push-url="true">
         <input type="text" name="q" value="{{ query }}" placeholder="Cari produk...">
         {% if category_slug %}
         <input type="hidden" name="category" value="{{ category_slug }}">
@@ -46,7 +46,7 @@
         <button type="submit" class="button">Cari</button>
     </form>
 
-    <div class="category-list">
+    <div class="category-list" hx-boost="true">
         <a href="{% url 'product:index' %}" class="{% if not category_slug %}active{% endif %}">Semua</a>
         {% for category in categories %}
         <a href="?category={{ category.slug }}" class="{% if category.slug == category_slug %}active{% endif %}">
@@ -56,8 +56,18 @@
     </div>
 
     {% if page.object_list %}
+    {% if request.GET.mine %}
+    <form id = "bulk" method = "post" action = "{% url 'product:bulk_delete' %}" hx-post = "{% url 'product:bulk_delete' %}" hx-confirm = "Hapus produk terpilih?">
+        {% csrf_token %}
+        <label><input type = "checkbox" id = "select-all">Pilih semua</label>
+        <button class = "button">Hapus yang dipilih</button>
+    </form>
+    {% endif %}
     <div class="product-grid">
         {% for product in page.object_list %}
+        {% if request.GET.mine %}
+        <input type = "checkbox" name = "ids" value ="{{ product.pk }}" form = "bulk">
+        {% endif %}
         <a href="{{ product.get_absolute_url }}" class="product-card">
             <div class="product-card-image">
                 {% if product.thumbnail %}
@@ -78,7 +88,7 @@
     </div>
 
     {% if page.has_other_pages %}
-    <div class="pagination">
+    <div class="pagination" hx-boost = "true">
         {% if page.has_previous %}
         <a href="{{ page_url_prefix }}{{ page.previous_page_number }}">&laquo; Sebelumnya</a>
         {% endif %}
@@ -95,4 +105,8 @@
     <p class="empty-message">Belum ada produk yang cocok.</p>
     {% endif %}
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src = "{% static 'js/product.js' %}"></script>
 {% endblock %}
