@@ -154,7 +154,7 @@ def toggle_favorite(request, slug):
     else:
         messages.success(request, "Produk ditambahkan ke favorit.")
 
-    return redirect(product.get_absolute_url)
+    return redirect(product.get_absolute_url())
 
 @login_required
 @require_POST
