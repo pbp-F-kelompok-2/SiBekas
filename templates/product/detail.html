@@ -44,7 +44,7 @@
                     </button>
                 </form>
             {% else %}
-                <a href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">
+                <a class="product-login-link" href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">
                     Masuk untuk menambahkan favorit
                 </a>
             {% endif %}

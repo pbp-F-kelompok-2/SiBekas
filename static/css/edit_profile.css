@@ -14,7 +14,7 @@
     box-sizing: border-box;
     overflow-y: auto;
 
-    background: rgba(13, 39, 22, 0.62);
+    background: color-mix(in srgb, var(--forest-900) 62%, transparent);
 }
 
 .edit-profile-overlay.is-open {
@@ -33,10 +33,10 @@
     box-sizing: border-box;
     overflow-y: auto;
 
-    background: #ffffff;
-    border: 2px solid #19552f;
-    border-radius: 22px;
-    box-shadow: 5px 6px 0 #19552f;
+    background: var(--cream-0);
+    border: 2px solid var(--forest-500);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pop);
 
     animation: editProfileAppear 0.2s ease-out;
 }
@@ -66,7 +66,7 @@
 
 .edit-profile-header h2 {
     margin: 0;
-    color: #19552f;
+    color: var(--forest-500);
     font-size: 25px;
     font-weight: 800;
 }
@@ -80,15 +80,15 @@
     height: 32px;
     flex-shrink: 0;
 
-    color: #252525;
+    color: var(--color-text-primary);
     font-size: 30px;
     line-height: 1;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 
 .edit-profile-close:hover {
-    background: #f4f4f4;
+    background: var(--cream-300);
 }
 
 /* Form */
@@ -107,7 +107,7 @@
 }
 
 .edit-profile-field label {
-    color: #19552f;
+    color: var(--forest-500);
     font-size: 16px;
     font-weight: 600;
 }
@@ -120,12 +120,12 @@
     padding: 13px 20px;
     box-sizing: border-box;
 
-    border: 2px solid #19552f;
-    border-radius: 16px;
+    border: 2px solid var(--forest-500);
+    border-radius: var(--radius-base);
     outline: none;
 
-    background: #ffffff;
-    color: #333333;
+    background: var(--cream-0);
+    color: var(--color-text-primary);
     font-family: inherit;
     font-size: 16px;
 
@@ -140,18 +140,18 @@
 .edit-profile-field input:focus,
 .edit-profile-field textarea:focus,
 .edit-profile-field select:focus {
-    box-shadow: 0 0 0 3px rgba(25, 85, 47, 0.13);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--forest-500) 13%, transparent);
 }
 
 .edit-profile-field small {
-    color: #666666;
+    color: var(--color-text-muted);
     font-size: 13px;
 }
 
 .edit-profile-error,
 .edit-profile-errors {
     margin: 0;
-    color: #b42318;
+    color: var(--color-error);
     font-size: 14px;
 }
 
@@ -163,10 +163,10 @@
     margin-top: 0;
     padding: 14px 20px;
 
-    border: 2px solid #19552f;
-    border-radius: 999px;
-    background: #19552f;
-    color: #ffffff;
+    border: 2px solid var(--forest-500);
+    border-radius: var(--radius-pill);
+    background: var(--forest-500);
+    color: var(--cream-0);
 
     font-family: inherit;
     font-size: 16px;
@@ -177,7 +177,7 @@
 }
 
 .edit-profile-submit:hover {
-    background: #123f23;
+    background: var(--forest-700);
 }
 
 /* Mobile */
@@ -192,7 +192,7 @@
         max-width: 100%;
         max-height: calc(100dvh - 32px);
         padding: 24px 20px;
-        border-radius: 19px;
+        border-radius: var(--radius-base);
     }
 
     .edit-profile-header h2 {
@@ -208,4 +208,65 @@
     .edit-profile-field select {
         font-size: 15px;
     }
+}
+
+/* Shared design tokens and keyboard focus */
+.edit-profile-modal, .edit-profile-form, .edit-profile-field { font-family: var(--font-body); }
+.edit-profile-modal h2 { font-family: var(--font-heading); }
+.edit-profile-field input:focus-visible, .edit-profile-field textarea:focus-visible, .edit-profile-field select:focus-visible { outline: 3px solid var(--kiwi-300); outline-offset: 1px; border-color: var(--forest-500); }
+.edit-profile-submit { box-shadow: var(--shadow-pop-sm); }
+
+
+/* EDIT PROFILE MODAL - DARK MODE */
+html[data-theme="dark"] .edit-profile-modal {
+    background: #202B23;
+    color: #F3F5EF;
+    border-color: #55745C;
+}
+
+html[data-theme="dark"] .edit-profile-header h2 {
+    color: #F3F5EF;
+}
+
+html[data-theme="dark"] .edit-profile-close {
+    color: #F3F5EF;
+}
+
+html[data-theme="dark"] .edit-profile-close:hover {
+    background: #354638;
+}
+
+html[data-theme="dark"] .edit-profile-field label {
+    color: #A8D5AE;
+}
+
+html[data-theme="dark"] .edit-profile-field input,
+html[data-theme="dark"] .edit-profile-field textarea,
+html[data-theme="dark"] .edit-profile-field select {
+    background: #17251C;
+    color: #F3F5EF;
+    border-color: #55745C;
+}
+
+html[data-theme="dark"] .edit-profile-field input::placeholder,
+html[data-theme="dark"] .edit-profile-field textarea::placeholder {
+    color: #C1CBBF;
+    opacity: 1;
+}
+
+html[data-theme="dark"] .edit-profile-field input:focus-visible,
+html[data-theme="dark"] .edit-profile-field textarea:focus-visible,
+html[data-theme="dark"] .edit-profile-field select:focus-visible {
+    outline-color: #A8D5AE;
+    border-color: #A8D5AE;
+}
+
+html[data-theme="dark"] .edit-profile-submit {
+    background: #8FC99B;
+    color: #17251C;
+    border-color: #8FC99B;
+}
+
+html[data-theme="dark"] .edit-profile-submit:hover {
+    background: #A8D5AE;
 }
