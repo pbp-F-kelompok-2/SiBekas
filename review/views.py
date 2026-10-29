@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Avg
 
@@ -81,13 +82,12 @@ def create_review(request, product_id):
         },
     )
 
+
 @login_required
 def update_review(request, review_id):
-    review = get_object_or_404(
-        Review,
-        id=review_id,
-        user=request.user,
-    )
+    review = get_object_or_404(Review, id=review_id)
+    if review.user != request.user and not request.user.is_superuser:
+        raise PermissionDenied("Anda tidak memiliki izin untuk mengubah ulasan ini.")
 
     if request.method == "POST":
         form = ReviewForm(request.POST, instance=review)
@@ -97,7 +97,6 @@ def update_review(request, review_id):
             review.edited = True
             review.save()
             return redirect("review:index")
-
     else:
         form = ReviewForm(instance=review)
 
@@ -110,13 +109,12 @@ def update_review(request, review_id):
         },
     )
 
+
 @login_required
 def delete_review(request, review_id):
-    review = get_object_or_404(
-        Review,
-        id=review_id,
-        user=request.user,
-    )
+    review = get_object_or_404(Review, id=review_id)
+    if review.user != request.user and not request.user.is_superuser:
+        raise PermissionDenied("Anda tidak memiliki izin untuk menghapus ulasan ini.")
 
     if request.method == "POST":
         review.delete()

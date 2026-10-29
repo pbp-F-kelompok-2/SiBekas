@@ -12,7 +12,6 @@ from product.models import Product
 
 from .forms import CheckoutForm
 from .models import Order, OrderEvent, OrderItem
-from .shipping import ShippingError, validate_quote
 
 
 class OrderError(ValueError):
@@ -54,16 +53,17 @@ def create_order(user, data):
         raise OrderError("Periksa keranjang: hapus produk yang tidak tersedia atau sesuaikan jumlahnya.")
     if payload["fingerprint"] != summary["fingerprint"]:
         raise OrderError("Isi atau harga keranjang berubah. Muat ulang checkout untuk meninjau total terbaru.")
-    quote = {"cost": 0, "service": "Ambil di kampus UI", "etd": "Sesuai kesepakatan", "destination": "Kampus Universitas Indonesia", "destination_id": None}
-    if data["delivery_method"] == Order.DeliveryMethod.COURIER:
-        try:
-            quote = validate_quote(data["shipping_quote"], summary, user.pk)
-        except ShippingError as exc:
-            raise OrderError(str(exc)) from exc
+    quote = {
+        "cost": 0,
+        "service": "Ambil di kampus UI",
+        "etd": "Sesuai kesepakatan",
+        "destination": data.get("address") or "Kampus Universitas Indonesia",
+        "destination_id": None,
+    }
     order = Order.objects.create(
         checkout_key=payload["key"], buyer=user,
         recipient_name=data["recipient_name"], phone_number=data["phone_number"], address=data["address"],
-        delivery_method=data["delivery_method"], destination=quote["destination"], destination_id=quote["destination_id"],
+        delivery_method=data.get("delivery_method", Order.DeliveryMethod.PICKUP), destination=quote["destination"], destination_id=quote["destination_id"],
         shipping_service=quote["service"], shipping_etd=quote["etd"], shipping_cost=quote["cost"],
         subtotal=summary["subtotal"], total=summary["subtotal"] + quote["cost"], weight_grams=summary["weight_grams"],
         payment_method=data["payment_method"], notes=data.get("notes", ""),
@@ -103,13 +103,11 @@ def change_status(order_id, actor, action, *, tracking_number=""):
         if not actor.is_staff or order.status != Order.Status.PROCESSING:
             raise OrderError("Hanya petugas yang dapat menyiapkan pesanan yang sedang diproses.")
         tracking_number = tracking_number.strip()
-        if order.delivery_method == Order.DeliveryMethod.COURIER and not tracking_number:
-            raise OrderError("Nomor resi wajib diisi untuk pengiriman kurir.")
         if len(tracking_number) > 100:
-            raise OrderError("Nomor resi maksimal 100 karakter.")
+            raise OrderError("Nomor resi atau catatan maksimal 100 karakter.")
         order.tracking_number = tracking_number
         order.status = Order.Status.SHIPPED
-        description = "Pesanan dikirim." if order.delivery_method == Order.DeliveryMethod.COURIER else "Pesanan siap diambil di titik temu."
+        description = "Pesanan siap diambil di titik temu kampus UI."
     elif action == "complete":
         if not is_buyer or order.status != Order.Status.SHIPPED:
             raise OrderError("Konfirmasi hanya tersedia untuk pembeli setelah pesanan dikirim atau siap diambil.")

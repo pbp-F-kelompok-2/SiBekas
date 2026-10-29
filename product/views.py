@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
@@ -123,9 +124,9 @@ def rate_limit(limit, seconds):
             if request.method == "POST":
                 key = f"rate:{view.__name__}:{request.user.pk}"
                 cache.add(key, 0, seconds)
-            if cache.incr(key) > limit:
-                messages.error(request, "Terlalu banyak permintaan")
-                return redirect("product:index")
+                if cache.incr(key) > limit:
+                    messages.error(request, "Terlalu banyak permintaan")
+                    return redirect("product:index")
             return view(request, *args, **kwargs)
         return wrapper
     return decorator
