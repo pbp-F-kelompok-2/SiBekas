@@ -9,12 +9,14 @@
 
 {% block content %}
 <section class="product-page">
-    <div class="product-heading">
-        <p class="eyebrow">Katalog Preloved</p>
-        <h1>Produk</h1>
-        <p>Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
+    <div class = "product-heading-row">
+        <div class="product-heading">
+            <p class="eyebrow">Katalog Preloved</p>
+            <h1>Produk</h1>
+            <p>Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
+        </div>
+        <a href = "{% url 'product:create' %}" class = "button">Jual barang</a>
     </div>
-    <a href = "{% url 'product:create' %}" class = "button">Jual barang</a>
 
 
     <form class="product-search" method="get">
@@ -36,7 +38,7 @@
             <option value="expensive" {% if request.GET.sort == "expensive" %}selected{% endif %}>Termahal</option>
         </select>
         {% if user.is_authenticated %}
-        <label>
+        <label class = "product-mine">
             <input type="checkbox" name="mine" value="1" {% if request.GET.mine %}checked{% endif %}>
             Produk saya
         </label>

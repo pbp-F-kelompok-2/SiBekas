@@ -1,9 +1,13 @@
 {% extends "base.html" %}
+{% load static %}
 
+{% block extra_css %}
+<link rel = "stylesheet" href = "{% static 'css/product.css' %}">
+{% endblock %}
 {% block content %}
 <section class = "product-page">
     <h1>{{ title }}</h1>
-    <form method = "post" enctype="multipart/form-data">
+    <form method = "post" enctype="multipart/form-data" class = "product-form">
         {% csrf_token %}
         {{ form.as_p }}
         <button type = "submit" class = "button">Simpan</button>
