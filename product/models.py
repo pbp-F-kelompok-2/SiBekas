@@ -106,8 +106,8 @@ class Product(models.Model):
 
 
     def main_image_url(self):
-        if self.thumbnail_url:
-            return self.thumbnail_url
+        if self.thumbnail:
+            return self.thumbnail
         first_image = self.images.first()
         return first_image.image_url if first_image else ""
 
