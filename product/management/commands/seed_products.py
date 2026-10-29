@@ -5,7 +5,6 @@ from urllib.request import Request, urlopen
 
 from django.core.management.base import BaseCommand, CommandError
 
-
 from product.models import Category, Product, ProductImage
 
 DUMMYJSON_URL = "https://dummyjson.com/products?limit=60"
@@ -39,7 +38,6 @@ CATEGORY_NAMES = {
 }
 
 
-
 class Command(BaseCommand):
     help = "Seed produk awal dari DummyJSON (aman dijalankan berulang kali)."
 
@@ -61,7 +59,8 @@ class Command(BaseCommand):
             if options["skip_existing"] and Product.objects.filter(dummyjson_id=item["id"]).exists():
                 skipped += 1
                 continue
-            category_name = item["category"].replace("-", " ").title()
+            cat_raw = str(item.get("category", "")).strip()
+            category_name = CATEGORY_NAMES.get(cat_raw, cat_raw.replace("-", " ").title()) or "Lainnya"
             category, _ = Category.objects.get_or_create(name=category_name)
 
             price = round(item["price"] * DEFAULT_USD_RATE, -3)
@@ -81,7 +80,7 @@ class Command(BaseCommand):
             )
 
             if created:
-                for url in item["images"]:
+                for url in item.get("images", []):
                     ProductImage.objects.create(product=product, image_url=url)
 
             total += 1
