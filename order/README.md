@@ -10,6 +10,12 @@ PWS tersedia di [PANDUAN_MANUAL.md](PANDUAN_MANUAL.md). Perintah tambahan:
 `python manage.py lookup_shipping_destination "Pondok Cina"` dan
 `python manage.py check_order_readiness --strict --require-shipping`.
 
+Panduan khusus: [aktivasi RajaOngkir](PANDUAN_RAJAONGKIR.md) dan
+[database PostgreSQL persisten](PANDUAN_POSTGRESQL.md). Akun petugas dapat dibuat
+saat release melalui `bootstrap_order_staff` dengan ketiga environment privat
+`ORDER_STAFF_USERNAME`, `ORDER_STAFF_EMAIL`, dan `ORDER_STAFF_PASSWORD`.
+Akun lama tidak diubah dan akun baru tidak diberi hak superuser.
+
 ## Menjalankan
 
 ```bash

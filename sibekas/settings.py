@@ -154,6 +154,9 @@ RAJAONGKIR_ORIGIN_ID = os.getenv("RAJAONGKIR_ORIGIN_ID", "")
 RAJAONGKIR_COURIERS = os.getenv("RAJAONGKIR_COURIERS", "jne:jnt:sicepat")
 ORDER_ENABLE_DEMO_PAYMENT = env_bool("ORDER_ENABLE_DEMO_PAYMENT", default=DEBUG)
 SEED_INITIAL_PRODUCTS = env_bool("DJANGO_SEED_INITIAL_PRODUCTS", default=False)
+ORDER_STAFF_USERNAME = os.getenv("ORDER_STAFF_USERNAME", "").strip()
+ORDER_STAFF_EMAIL = os.getenv("ORDER_STAFF_EMAIL", "").strip()
+ORDER_STAFF_PASSWORD = os.getenv("ORDER_STAFF_PASSWORD", "")
 
 # Secure defaults are enabled automatically outside local development.
 if not DEBUG:

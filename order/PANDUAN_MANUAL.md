@@ -76,23 +76,26 @@ dan [perhitungan tarif](https://www.rajaongkir.com/docs/shipping-cost/endpoint-r
 
 ## 3. Siapkan petugas pesanan
 
-Untuk server lokal, jalankan:
+Isi `ORDER_STAFF_USERNAME`, `ORDER_STAFF_EMAIL`, dan `ORDER_STAFF_PASSWORD` pada
+environment privat. Release menjalankan `python manage.py bootstrap_order_staff`
+untuk membuat akun aktif dengan `is_staff=True` dan `is_superuser=False`.
+Kredensial yang dibuat untuk project ini disimpan pada file privat
+`output/akun-petugas-sibekas.txt` di luar repository, dan konfigurasi lokal
+privatnya berada pada `.env.pws` yang diabaikan Git.
+
+Jika akun sudah ada, command tidak mengganti password atau hak akses. Username
+yang dipakai pelanggan lain tidak akan dipromosikan menjadi petugas. Untuk
+menjalankan perintah secara manual, gunakan terminal project SiBekas pada PWS.
+Pada server lokal, isi environment yang sama lalu jalankan:
 
 ```powershell
-.\.venv\bin\python.exe manage.py createsuperuser
+.\.venv\bin\python.exe manage.py bootstrap_order_staff
 ```
 
-Isi email agar petugas dapat masuk melalui halaman login biasa. Pada PWS,
-buat pengguna petugas melalui terminal/console aplikasi jika tersedia, atau
-aktifkan `is_staff` pada pengguna tepercaya melalui akun admin yang sudah ada.
-Perintah lokal menggunakan database lokal; perintah tersebut tidak otomatis
-membuat petugas di PWS.
-
-Jika PWS tidak menyediakan console dan belum ada admin, jalankan `createsuperuser`
-dari lingkungan yang bisa terhubung ke database PostgreSQL PWS dengan
-`DATABASE_URL` produksi di environment privatnya. Jangan menganggap akun admin
-SQLite lokal sebagai akun admin produksi. Jika database hanya dapat diakses
-dari jaringan hosting, minta akses console hosting dari pengelola PWS.
+Petugas masuk melalui **email** dan password akun SiBekas pada halaman login
+biasa. Identitas email petugas dipakai sebagai login lokal; ini bukan akun SSO
+baru atau pembuatan mailbox UI. `createsuperuser` hanya diperlukan jika kelompok
+juga membutuhkan administrator Django dengan hak lebih luas.
 
 Petugas membuka `/orders/`, memilih **Kelola semua pesanan**, lalu membuka detail:
 

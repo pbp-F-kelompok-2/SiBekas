@@ -47,6 +47,8 @@ class Command(BaseCommand):
                 problems.append(message)
         if options["deployment"] and settings.DEBUG:
             problems.append("Deployment wajib menggunakan DJANGO_DEBUG=False.")
+        if options["deployment"] and connection.vendor != "postgresql":
+            problems.append("DATABASE_URL PostgreSQL persisten belum dikonfigurasi; database saat ini masih SQLite.")
         if options["require_shipping"] and not settings.ORDER_ENABLE_DEMO_PAYMENT:
             problems.append("Kurir memerlukan ORDER_ENABLE_DEMO_PAYMENT=True dalam lingkup pembayaran proyek ini.")
         self.stdout.write("Pembayaran: COD saat pengambilan" + (" dan simulasi akademik." if settings.ORDER_ENABLE_DEMO_PAYMENT else "."))
