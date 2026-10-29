@@ -5,6 +5,41 @@
             "cart-ajax-status"
         );
 
+    const bulkForm =
+        document.querySelector(
+            "[data-cart-bulk-form]"
+        );
+
+
+    const selectAll =
+        document.querySelector(
+            "[data-cart-select-all]"
+        );
+
+
+    const selectAllLabel =
+        document.querySelector(
+            "[data-cart-select-all-label]"
+        );
+
+
+    const selectedCount =
+        document.querySelector(
+            "[data-cart-selected-count]"
+        );
+
+
+    const deleteSelected =
+        document.getElementById(
+            "cart-delete-selected"
+        );
+
+
+    const checkoutSelected =
+        document.getElementById(
+            "cart-checkout-selected"
+        );
+
 
     function showStatus(
         message,
@@ -355,6 +390,21 @@
                 );
 
         }
+        const checkbox =
+            card.querySelector(
+                "[data-cart-select-item]"
+            );
+
+
+        if (checkbox) {
+
+            checkbox.dataset
+                .cartQuantity =
+                String(
+                    data.quantity
+                );
+
+        }
 
 
         if (decrease) {
@@ -463,6 +513,201 @@
 
     }
 
+    function getItemCheckboxes() {
+
+        return Array.from(
+            document.querySelectorAll(
+                "[data-cart-select-item]"
+            )
+        );
+
+    }
+
+
+    function getCheckedItems() {
+
+        return getItemCheckboxes()
+            .filter(
+                function (checkbox) {
+                    return checkbox.checked;
+                }
+            );
+
+    }
+
+    function updateBulkState() {
+
+        const checkboxes =
+            getItemCheckboxes();
+
+
+        const checked =
+            getCheckedItems();
+
+
+        const availableChecked =
+            checked.filter(
+                function (checkbox) {
+
+                    return (
+                        checkbox.dataset
+                            .cartAvailable
+                        === "true"
+                    );
+
+                }
+            );
+
+
+        const hasUnavailable =
+            checked.some(
+                function (checkbox) {
+
+                    return (
+                        checkbox.dataset
+                            .cartAvailable
+                        !== "true"
+                    );
+
+                }
+            );
+
+
+        let selectedSubtotal = 0;
+
+
+        availableChecked.forEach(
+            function (checkbox) {
+
+                const price =
+                    Number(
+                        checkbox.dataset
+                            .cartPrice || 0
+                    );
+
+
+                const quantity =
+                    Number(
+                        checkbox.dataset
+                            .cartQuantity || 0
+                    );
+
+
+                selectedSubtotal +=
+                    price * quantity;
+
+            }
+        );
+
+
+        if (selectedCount) {
+
+            selectedCount.textContent =
+                checked.length
+                + " dipilih";
+
+        }
+
+
+        if (deleteSelected) {
+
+            deleteSelected.disabled =
+                checked.length === 0;
+
+        }
+
+
+        if (checkoutSelected) {
+
+            checkoutSelected.disabled =
+                availableChecked.length === 0
+                || hasUnavailable;
+
+        }
+
+
+        if (selectAll) {
+
+            selectAll.checked =
+                checkboxes.length > 0
+                && checked.length
+                === checkboxes.length;
+
+
+            selectAll.indeterminate =
+                checked.length > 0
+                && checked.length
+                < checkboxes.length;
+
+        }
+
+
+        if (selectAllLabel) {
+
+            selectAllLabel.textContent =
+                (
+                    selectAll
+                    && selectAll.checked
+                )
+                    ? "Batalkan semua"
+                    : "Pilih semua";
+
+        }
+
+
+        const summaryCount =
+            document.getElementById(
+                "cart-summary-count"
+            );
+
+
+        const summarySubtotal =
+            document.getElementById(
+                "cart-summary-subtotal"
+            );
+
+
+        const summaryTotal =
+            document.getElementById(
+                "cart-summary-total"
+            );
+
+
+        const rupiah =
+            new Intl.NumberFormat(
+                "id-ID"
+            ).format(
+                selectedSubtotal
+            );
+
+
+        if (summaryCount) {
+
+            summaryCount.textContent =
+                String(
+                    availableChecked.length
+                );
+
+        }
+
+
+        if (summarySubtotal) {
+
+            summarySubtotal.textContent =
+                "Rp " + rupiah;
+
+        }
+
+
+        if (summaryTotal) {
+
+            summaryTotal.textContent =
+                "Rp " + rupiah;
+
+        }
+
+    }
+
 
     document.addEventListener(
         "submit",
@@ -546,6 +791,8 @@
                         data
                     );
 
+                    updateBulkState();
+
                 }
 
 
@@ -557,6 +804,8 @@
                 updateCheckout(
                     data
                 );
+
+                updateBulkState();
 
 
                 showStatus(
@@ -609,5 +858,313 @@
 
         }
     );
+
+    if (selectAll) {
+
+        selectAll.addEventListener(
+            "change",
+            function () {
+
+                getItemCheckboxes()
+                    .forEach(
+                        function (
+                            checkbox
+                        ) {
+
+                            checkbox.checked =
+                                selectAll.checked;
+
+                        }
+                    );
+
+
+                updateBulkState();
+
+            }
+        );
+
+    }
+
+
+    document.addEventListener(
+        "change",
+        function (event) {
+
+            if (
+                event.target.matches(
+                    "[data-cart-select-item]"
+                )
+            ) {
+
+                updateBulkState();
+
+            }
+
+        }
+    );
+
+
+    if (checkoutSelected) {
+
+        checkoutSelected
+            .addEventListener(
+                "click",
+                function () {
+
+                    const checked =
+                        getCheckedItems();
+
+
+                    if (
+                        checked.length === 0
+                    ) {
+
+                        showStatus(
+                            "Pilih minimal satu "
+                            + "barang untuk checkout.",
+                            true
+                        );
+
+                        return;
+
+                    }
+
+
+                    const unavailable =
+                        checked.filter(
+                            function (
+                                checkbox
+                            ) {
+
+                                return (
+                                    checkbox
+                                        .dataset
+                                        .cartAvailable
+                                    !== "true"
+                                );
+
+                            }
+                        );
+
+
+                    if (
+                        unavailable.length > 0
+                    ) {
+
+                        showStatus(
+                            "Barang yang tidak "
+                            + "tersedia tidak dapat "
+                            + "di-checkout.",
+                            true
+                        );
+
+                        return;
+
+                    }
+
+
+                    const url =
+                        new URL(
+                            checkoutSelected
+                                .dataset
+                                .checkoutUrl,
+
+                            window.location.origin
+                        );
+
+
+                    checked.forEach(
+                        function (
+                            checkbox
+                        ) {
+
+                            url.searchParams
+                                .append(
+                                    "item",
+                                    checkbox.value
+                                );
+
+                        }
+                    );
+
+
+                    window.location.href =
+                        url.toString();
+
+                }
+            );
+
+    }
+
+
+    if (bulkForm) {
+
+        bulkForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const submitter =
+                    event.submitter;
+
+
+                if (!submitter) {
+                    return;
+                }
+
+
+                const action =
+                    submitter.value;
+
+
+                const checked =
+                    getCheckedItems();
+
+
+                if (
+                    action === "selected"
+                    && checked.length === 0
+                ) {
+
+                    showStatus(
+                        "Pilih minimal satu barang.",
+                        true
+                    );
+
+                    return;
+
+                }
+
+
+                let confirmed;
+
+
+                if (
+                    action === "all"
+                ) {
+
+                    confirmed =
+                        window.confirm(
+                            "Hapus semua barang "
+                            + "dari keranjang?"
+                        );
+
+                } else {
+
+                    confirmed =
+                        window.confirm(
+                            "Hapus "
+                            + checked.length
+                            + " barang yang dipilih?"
+                        );
+
+                }
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                showStatus("");
+
+
+                try {
+
+                    const data =
+                        await sendAjax(
+                            bulkForm,
+                            submitter
+                        );
+
+
+                    data.removed_ids
+                        .forEach(
+                            function (
+                                itemId
+                            ) {
+
+                                const item =
+                                    document
+                                        .querySelector(
+                                            '[data-cart-item-id="'
+                                            + itemId
+                                            + '"]'
+                                        );
+
+
+                                if (item) {
+                                    item.remove();
+                                }
+
+                            }
+                        );
+
+
+                    const alert =
+                        document.querySelector(
+                            ".cart-alert"
+                        );
+
+
+                    if (
+                        alert
+                        && !document
+                            .querySelector(
+                                ".cart-unavailable-row"
+                            )
+                    ) {
+
+                        alert.remove();
+
+                    }
+
+
+                    updateSummary(
+                        data
+                    );
+
+
+                    updateCheckout(
+                        data
+                    );
+
+
+                    updateBulkState();
+
+
+                    showStatus(
+                        data.message
+                    );
+
+
+                    if (
+                        data.cart_empty
+                        || getItemCheckboxes()
+                            .length === 0
+                    ) {
+
+                        window.location.reload();
+
+                    }
+
+                } catch (error) {
+
+                    showStatus(
+                        error.message,
+                        true
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    updateBulkState();
 
 })();

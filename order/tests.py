@@ -166,3 +166,108 @@ class OrderFlowTests(TestCase):
         self.assertEqual(dest_res.status_code, 200)
         quote_res = self.client.post(reverse("order:shipping_quotes"))
         self.assertEqual(quote_res.status_code, 200)
+
+    def test_checkout_selected_items_only(self):
+        second_product = (
+            Product.objects.create(
+                name="Mouse PBP",
+
+                category=
+                    self.category,
+
+                price=100000,
+
+                stock=4,
+
+                weight_grams=200,
+
+                seller=self.other,
+            )
+        )
+
+
+        second_item = (
+            self.cart.items.create(
+                product=
+                    second_product,
+
+                quantity=1,
+            )
+        )
+
+
+        selected_ids = [
+            self.item.pk,
+        ]
+
+
+        summary = cart_summary(
+            self.buyer,
+            item_ids=
+                selected_ids,
+        )
+
+
+        token = checkout_token(
+            self.buyer,
+            summary,
+            item_ids=
+                selected_ids,
+        )
+
+
+        response = self.client.post(
+            reverse(
+                "order:checkout"
+            ),
+            self.payload(
+                checkout_token=
+                    token
+            ),
+        )
+
+
+        order = Order.objects.get()
+
+
+        self.assertRedirects(
+            response,
+            order.get_absolute_url(),
+        )
+
+
+        self.assertEqual(
+            order.items.count(),
+            1,
+        )
+
+
+        self.assertEqual(
+            order.items.get()
+                .product_name,
+            "Buku PBP",
+        )
+
+
+        self.assertFalse(
+            self.cart.items
+            .filter(
+                pk=self.item.pk
+            )
+            .exists()
+        )
+
+
+        self.assertTrue(
+            self.cart.items
+            .filter(
+                pk=second_item.pk
+            )
+            .exists()
+        )
+
+
+        self.assertEqual(
+            order.subtotal,
+            150000,
+        )
