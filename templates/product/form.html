@@ -7,7 +7,7 @@
 {% block content %}
 <section class = "product-page">
     <h1>{{ title }}</h1>
-    <form method = "post" enctype="multipart/form-data" class = "product-form">
+    <form method = "post" enctype="multipart/form-data" class = "product-form" hx-boost = "true">
         {% csrf_token %}
         {{ form.as_p }}
         <button type = "submit" class = "button">Simpan</button>
