@@ -6,6 +6,10 @@ from django.contrib.messages import get_messages
 
 from product.forms import ProductForm
 from product.models import Category, Product
+import json
+from io import BytesIO, StringIO
+from unittest.mock import patch
+from django.core.management import call_command
 
 
 class ProductTest(TestCase):
@@ -70,3 +74,11 @@ class ProductTest(TestCase):
         response = self.client.get(reverse("product:index"), {"mine": "1"})
         self.assertNotContains(response,"Hapus yang dipilih")
         self.assertNotContains(response, "Pilih semua")
+
+    def test_seed_products_get_seller_from_dummyjson(self):
+        products = {"products": [{"id": 1, "title": "Mascara", "description": "x", "category": "beauty", "price": 9.99, "stock": 5, "thumbnail": "https://cdn.dummyjson.com/a.png"}]}
+        users = {"users": [{"username": "emilys"}]}
+        responses = [BytesIO(json.dumps(products).encode()), BytesIO(json.dumps(users).encode())]
+        with patch("products.management.commands.seed_products.urlopen", side_effect = responses):
+            call_command("seed_products", stdout = StringIO())
+        self.assertEqual(Product.objects.get(dummyjson_id =1).seller.username, "emilys")
