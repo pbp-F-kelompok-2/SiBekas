@@ -17,7 +17,7 @@ def seller_required(view):
         product = get_object_or_404(Product, slug = slug)
         if product.seller != request.user:
             action = "mengubah" if view.__name__ == "update" else "menghapus"
-            return render(request, "product/403.html", {"product": product}, status = 403)
+            return render(request, "product/403.html", {"product": product, "action": action}, status = 403)
         return view(request, product)
     return wrapper
 
