@@ -18,11 +18,9 @@
     >
         <header class="edit-profile-header">
             <h2 id="editProfileTitle">Ubah profil</h2>
-
             <a
                 href="{% url 'profile:index' %}"
                 class="edit-profile-close"
-                id="closeEditProfile"
                 aria-label="Tutup edit profil"
             >&times;</a>
         </header>
@@ -41,7 +39,6 @@
                     <label for="{{ field.id_for_label }}">
                         {{ field.label }}
                     </label>
-
                     {{ field }}
 
                     {% if field.help_text %}
@@ -60,6 +57,4 @@
         </form>
     </section>
 </div>
-
-<script src="{% static 'js/edit_profile.js' %}"></script>
 {% endblock %}

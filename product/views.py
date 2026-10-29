@@ -2,10 +2,10 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Category, Product
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.contrib import messages
+from django.shortcuts import redirect
 from .forms import ProductForm
-from django.core.files.storage import default_storage
-
+from profiles.models import Favorite
 
 PRODUCTS_PER_PAGE = 12
 
@@ -61,12 +61,19 @@ def index(request):
     }
     return render(request, "product/list.html", context)
 
-
 def detail(request, slug):
     product = get_object_or_404(
         Product,
         slug=slug,
     )
+
+    is_favorite = False
+    if request.user.is_authenticated:
+        is_favorite = Favorite.objects.filter(
+            user=request.user,
+            product=product,
+        ).exists()
+
     related_products = (
         Product.objects.filter(category = product.category)
         .exclude(pk=product.pk)
@@ -75,6 +82,7 @@ def detail(request, slug):
         "product": product,
         "images": product.images.all(),
         "related_products": related_products,
+        "is_favorite": is_favorite,
     }
     return render(request, "product/detail.html", context)
 
@@ -107,7 +115,27 @@ def delete(request, slug):
     product.delete()
     return redirect("product:index")
 
-def save_image(product, image):
-    if image:
-        path = default_storage.save(f"products/{image.name}", image)
-        product.thumbnail = default_storage.url(path)
+@login_required
+def create_product(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.seller = request.user #kesambung dengan pembuatnya
+            product.save()
+
+            messages.success(
+                request,
+                "Produk berhasil ditambahkan!"
+            )
+            return redirect("profile:index")
+    else:
+        form = ProductForm()
+
+    return render(
+        request,
+        "product/create.html",
+        {"form": form},
+    )
+

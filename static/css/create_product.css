@@ -1,0 +1,124 @@
+.sell-page {
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+}
+
+.sell-label {
+    display: inline-block;
+    padding: 7px 13px;
+    border-radius: 8px;
+    background: #ffca28;
+    color: #155c3b;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.sell-page h1 {
+    color: #155c3b;
+    margin: 20px 0 14px;
+}
+
+.sell-description {
+    color: #6b7280;
+    margin-top: 0;
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+
+.sell-card {
+    background: white;
+    border: 1px solid #155c3b;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 5px 5px 0 #155c3b;
+}
+
+.sell-field {
+    margin-bottom: 20px;
+}
+
+.sell-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: #155c3b;
+    font-weight: 700;
+}
+
+.sell-field input,
+.sell-field select,
+.sell-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid #d6d9d3;
+    border-radius: 10px;
+    background: #fffdf8;
+    font: inherit;
+}
+
+.sell-field input:focus,
+.sell-field select:focus,
+.sell-field textarea:focus {
+    outline: 2px solid #cde86b;
+    border-color: #155c3b;
+}
+
+.sell-error {
+    color: #c62828;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.sell-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.sell-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 13px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    cursor: pointer;
+    font: inherit;
+}
+
+.sell-submit {
+    flex: 1;
+    border: 1px solid #155c3b;
+    background: #155c3b;
+    color: white;
+}
+
+.sell-cancel {
+    border: 1px solid #155c3b;
+    color: #155c3b;
+    background: white;
+}
+
+.sell-button:hover {
+    opacity: 0.9;
+}
+
+.sell-field .help-text,
+.sell-field small {
+    display: block;
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .sell-card {
+        padding: 18px;
+    }
+
+    .sell-actions {
+        flex-direction: column;
+    }
+}

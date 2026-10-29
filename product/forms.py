@@ -1,10 +1,39 @@
+
 from django import forms
 from .models import Product
+
 
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ["name", "category", "description", "price", "stock", "condition", "brand", "weight_grams"]
-        labels = {"name": "Nama", "description": "Deskripsi", "price": "Harga", "stock": "Stok"}
-    image = forms.ImageField(label = "Foto", required = False)
-        
+        fields = [
+            "name",
+            "description",
+            "category",
+            "price",
+            "stock",
+            "condition",
+            "brand",
+            "weight_grams",
+            "thumbnail",
+        ]
+        labels = {
+            "name": "Nama produk",
+            "description": "Deskripsi produk",
+            "category" : "Kategori",
+            "price": "Harga (Rp)",
+            "stock": "Stok",
+            "condition": "Kondisi barang",
+            "brand": "Merek",
+            "weight_grams": "Berat (gram)",
+            "thumbnail": "URL foto produk",
+        }
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 4}),
+            "price": forms.NumberInput(attrs={"min": 0}),
+            "stock": forms.NumberInput(attrs={"min": 0}),
+            "weight_grams": forms.NumberInput(attrs={"min": 0}),
+            "thumbnail": forms.URLInput(
+                attrs={"placeholder": "https://contoh.com/foto.jpg"}
+            ),
+        }

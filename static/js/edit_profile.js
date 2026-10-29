@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     const openButton = document.getElementById("openEditProfile");
     const modal = document.getElementById("editProfileModal");
@@ -9,16 +8,17 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    openButton.addEventListener("click", function () {
-        modal.style.display = "flex";
+    function openModal() {
+        modal.classList.add("is-open");
         document.body.style.overflow = "hidden";
-    });
+    }
 
     function closeModal() {
-        modal.style.display = "none";
+        modal.classList.remove("is-open");
         document.body.style.overflow = "";
     }
 
+    openButton.addEventListener("click", openModal);
     closeButton.addEventListener("click", closeModal);
 
     modal.addEventListener("click", function (event) {

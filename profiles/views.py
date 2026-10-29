@@ -5,9 +5,13 @@ from django.urls import reverse_lazy
 from .forms import RegisterForm, ProfileForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .models import Profile
+from .models import Profile, Favorite
+from product.models import Product
+from django.contrib import messages
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
+
 
 @login_required
 def index(request):
@@ -17,12 +21,18 @@ def index(request):
 
     form = ProfileForm(instance=profile)
 
+    my_products = Product.objects.filter(
+        seller=request.user
+    ).select_related("category")
+
     return render(
         request,
         "profiles/index.html",
         {
             "profile": profile,
             "form": form,
+            "my_products": my_products,
+            "total_listings": my_products.count(),
         },
     )
 
@@ -73,32 +83,27 @@ def login_view(request):
 
     return render(request, "profiles/login.html")
 
-
 def logout_view(request):
     logout(request)
     return redirect("profile:login")
 
-
 @login_required
 def edit_profile(request):
-    profile, created = Profile.objects.get_or_create(
-        user=request.user
-    )
+    profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=profile)
 
         if form.is_valid():
             form.save()
+            messages.success(request, "Profil berhasil diperbarui!")
             return redirect("profile:index")
-    else:
-        form = ProfileForm(instance=profile)
 
-    return render(
-        request,
-        "profiles/edit_profile.html",
-        {"form": form},
-    )
+        messages.error(request, "Profil gagal diperbarui. Periksa kembali data yang kamu masukkan.")
+        return redirect("profile:index")
+
+    return redirect("profile:index")
+
 
 class PasswordResetView(auth_views.PasswordResetView):
     template_name = "profiles/password_reset_form.html"
@@ -118,3 +123,61 @@ class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = "profiles/password_reset_complete.html"
+
+@login_required
+def index(request):
+    profile, created = Profile.objects.get_or_create(
+        user=request.user
+    )
+
+    form = ProfileForm(instance=profile)
+
+    my_products = Product.objects.filter(
+        seller=request.user
+    ).select_related("category")
+
+    favorites = Product.objects.filter(
+        favorited_by__user=request.user
+    ).select_related("category")
+
+    return render(
+        request,
+        "profiles/index.html",
+        {
+            "profile": profile,
+            "form": form,
+            "my_products": my_products,
+            "total_listings": my_products.count(),
+            "favorites": favorites,
+        },
+    )
+
+@login_required
+@require_POST
+def toggle_favorite(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+
+    favorite, created = Favorite.objects.get_or_create(
+        user=request.user,
+        product=product,
+    )
+
+    if not created:
+        favorite.delete()
+        messages.success(request, "Produk dihapus dari favorit.")
+    else:
+        messages.success(request, "Produk ditambahkan ke favorit.")
+
+    return redirect(product.get_absolute_url)
+
+@login_required
+@require_POST
+def delete_account(request):
+    user = request.user
+
+    logout(request)
+    user.delete()
+
+    messages.success(request, "Akun kamu berhasil dihapus.")
+
+    return redirect("product:index")
