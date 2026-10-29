@@ -10,8 +10,8 @@ from cart.models import Cart, CartItem
 from cart.services import cart_summary
 from product.models import Product
 
+from .forms import CheckoutForm
 from .models import Order, OrderEvent, OrderItem
-from .shipping import ShippingError, validate_quote
 
 
 class OrderError(ValueError):
@@ -35,12 +35,17 @@ def read_checkout_token(token, user):
 
 @transaction.atomic
 def create_order(user, data):
-    payload = read_checkout_token(data["checkout_token"], user)
+    payload = read_checkout_token(data.get("checkout_token", ""), user)
     # Serializes checkout against this user's cart mutations and double submissions.
     cart = Cart.objects.select_for_update().filter(user=user).first()
     existing = Order.objects.filter(checkout_key=payload["key"], buyer=user).first()
     if existing:
         return existing
+    form = CheckoutForm(data)
+    if not form.is_valid():
+        errors = [str(error) for messages in form.errors.values() for error in messages]
+        raise OrderError(" ".join(errors))
+    data = form.cleaned_data
     if cart is None:
         raise OrderError("Keranjangmu masih kosong.")
     summary = cart_summary(user, lock=True)
@@ -48,18 +53,17 @@ def create_order(user, data):
         raise OrderError("Periksa keranjang: hapus produk yang tidak tersedia atau sesuaikan jumlahnya.")
     if payload["fingerprint"] != summary["fingerprint"]:
         raise OrderError("Isi atau harga keranjang berubah. Muat ulang checkout untuk meninjau total terbaru.")
-    if data["payment_method"] == Order.PaymentMethod.DEMO and not settings.ORDER_ENABLE_DEMO_PAYMENT:
-        raise OrderError("Pembayaran simulasi tidak tersedia.")
-    quote = {"cost": 0, "service": "Ambil di kampus UI", "etd": "Sesuai kesepakatan", "destination": "Kampus Universitas Indonesia", "destination_id": None}
-    if data["delivery_method"] == Order.DeliveryMethod.COURIER:
-        try:
-            quote = validate_quote(data["shipping_quote"], summary, user.pk)
-        except ShippingError as exc:
-            raise OrderError(str(exc)) from exc
+    quote = {
+        "cost": 0,
+        "service": "Ambil di kampus UI",
+        "etd": "Sesuai kesepakatan",
+        "destination": data.get("address") or "Kampus Universitas Indonesia",
+        "destination_id": None,
+    }
     order = Order.objects.create(
         checkout_key=payload["key"], buyer=user,
         recipient_name=data["recipient_name"], phone_number=data["phone_number"], address=data["address"],
-        delivery_method=data["delivery_method"], destination=quote["destination"], destination_id=quote["destination_id"],
+        delivery_method=data.get("delivery_method", Order.DeliveryMethod.PICKUP), destination=quote["destination"], destination_id=quote["destination_id"],
         shipping_service=quote["service"], shipping_etd=quote["etd"], shipping_cost=quote["cost"],
         subtotal=summary["subtotal"], total=summary["subtotal"] + quote["cost"], weight_grams=summary["weight_grams"],
         payment_method=data["payment_method"], notes=data.get("notes", ""),
@@ -99,13 +103,11 @@ def change_status(order_id, actor, action, *, tracking_number=""):
         if not actor.is_staff or order.status != Order.Status.PROCESSING:
             raise OrderError("Hanya petugas yang dapat menyiapkan pesanan yang sedang diproses.")
         tracking_number = tracking_number.strip()
-        if order.delivery_method == Order.DeliveryMethod.COURIER and not tracking_number:
-            raise OrderError("Nomor resi wajib diisi untuk pengiriman kurir.")
         if len(tracking_number) > 100:
-            raise OrderError("Nomor resi maksimal 100 karakter.")
+            raise OrderError("Nomor resi atau catatan maksimal 100 karakter.")
         order.tracking_number = tracking_number
         order.status = Order.Status.SHIPPED
-        description = "Pesanan dikirim." if order.delivery_method == Order.DeliveryMethod.COURIER else "Pesanan siap diambil di titik temu."
+        description = "Pesanan siap diambil di titik temu kampus UI."
     elif action == "complete":
         if not is_buyer or order.status != Order.Status.SHIPPED:
             raise OrderError("Konfirmasi hanya tersedia untuk pembeli setelah pesanan dikirim atau siap diambil.")

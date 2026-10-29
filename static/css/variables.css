@@ -113,3 +113,61 @@
     --shadow-pop-lg:
         6px 6px 0 0 var(--forest-500);
 }
+
+
+/* Dark Mode Theme Support (WCAG AA Compliant) */
+:root.dark, html.dark {
+    --color-background: #0b1120;
+    --color-surface: #1e293b;
+    --color-text-primary: #f8fafc;
+    --color-text-muted: #94a3b8;
+    --color-border: #334155;
+
+    --cream-0: #1e293b;
+    --cream-50: #1e293b;
+    --cream-100: #1e293b;
+    --cream-200: #0f172a;
+    --cream-300: #1e293b;
+    --cream-950: #f8fafc;
+    --cream-900: #f1f5f9;
+    --cream-800: #cbd5e1;
+
+    --forest-50: #0f2918;
+    --forest-100: #143d23;
+    --forest-500: #10b981;
+    --forest-600: #059669;
+
+    --shadow-pop: 4px 4px 0 0 #047857;
+    --shadow-pop-sm: 2px 2px 0 0 #047857;
+    --shadow-pop-lg: 6px 6px 0 0 #047857;
+}
+
+html.dark body {
+    background-color: #0b1120;
+    color: #f8fafc;
+}
+
+html.dark .sb-header,
+html.dark .sb-footer,
+html.dark .product-card,
+html.dark .order-panel,
+html.dark .order-summary,
+html.dark .profile-sidebar,
+html.dark .my-listing-card,
+html.dark .product-detail,
+html.dark .product-info,
+html.dark .product-reviews,
+html.dark .cart-card,
+html.dark .auth-card {
+    background-color: #1e293b !important;
+    color: #f8fafc;
+    border-color: #334155;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+    background-color: #0f172a;
+    color: #f8fafc;
+    border-color: #334155;
+}

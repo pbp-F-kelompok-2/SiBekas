@@ -1,9 +1,9 @@
 import json
 import random
+from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 from django.core.management.base import BaseCommand, CommandError
-
 
 from product.models import Category, Product, ProductImage
 
@@ -38,17 +38,29 @@ CATEGORY_NAMES = {
 }
 
 
-
 class Command(BaseCommand):
     help = "Seed produk awal dari DummyJSON (aman dijalankan berulang kali)."
 
+    def add_arguments(self, parser):
+        parser.add_argument("--skip-existing", action="store_true", help="Pertahankan stok dan perubahan produk yang sudah ada.")
+
     def handle(self, *args, **options):
-        with urlopen(Request(DUMMYJSON_URL, headers={"User-Agent": "Mozilla/5.0"})) as response:
-            data = json.load(response)
+        try:
+            with urlopen(Request(DUMMYJSON_URL, headers={"User-Agent": "Mozilla/5.0"}), timeout=20) as response:
+                data = json.load(response)
+            if not isinstance(data, dict) or not isinstance(data.get("products"), list):
+                raise ValueError
+        except (URLError, OSError, ValueError) as exc:
+            raise CommandError("Data awal DummyJSON tidak dapat dimuat. Coba lagi setelah koneksi tersedia.") from exc
 
         total = 0
+        skipped = 0
         for item in data["products"]:
-            category_name = item["category"].replace("-", " ").title()
+            if options["skip_existing"] and Product.objects.filter(dummyjson_id=item["id"]).exists():
+                skipped += 1
+                continue
+            cat_raw = str(item.get("category", "")).strip()
+            category_name = CATEGORY_NAMES.get(cat_raw, cat_raw.replace("-", " ").title()) or "Lainnya"
             category, _ = Category.objects.get_or_create(name=category_name)
 
             price = round(item["price"] * DEFAULT_USD_RATE, -3)
@@ -68,12 +80,12 @@ class Command(BaseCommand):
             )
 
             if created:
-                for url in item["images"]:
+                for url in item.get("images", []):
                     ProductImage.objects.create(product=product, image_url=url)
 
             total += 1
         self.stdout.write(
             self.style.SUCCESS(
-                f"Seed selesai: {total} produk"
+                f"Seed selesai: {total} produk diproses, {skipped} produk lama dipertahankan"
             )
         )

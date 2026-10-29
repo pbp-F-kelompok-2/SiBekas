@@ -5,35 +5,120 @@
 {% block content %}
 <section class="order-page">
     <a class="order-back" href="{% url 'cart:index' %}">← Kembali ke keranjang</a>
-    <header class="order-heading"><p class="eyebrow">SELANGKAH MENUJU CERITA BARU</p><h1>Checkout<span>.</span></h1><p>Periksa barangmu, tentukan titik tujuan, dan selesaikan pesanan.</p></header>
-    <ol class="order-steps" aria-label="Tahap pembelian"><li class="is-done"><span>1</span>Keranjang</li><li class="is-active" aria-current="step"><span>2</span>Checkout</li><li><span>3</span>Pesanan</li></ol>
-    <form method="post" id="checkout-form" class="order-layout" data-destinations-url="{% url 'order:destinations' %}" data-quotes-url="{% url 'order:shipping_quotes' %}" data-subtotal="{{ subtotal }}" data-selected-cost="{% if selected_quote %}{{ selected_quote.cost }}{% endif %}" data-shipping-available="{{ shipping_available|yesno:'true,false' }}">
-        {% csrf_token %}{{ form.checkout_token }}{{ form.shipping_quote }}
+    <header class="order-heading">
+        <p class="eyebrow">SELANGKAH MENUJU CERITA BARU</p>
+        <h1>Checkout<span>.</span></h1>
+        <p>Periksa barangmu, tentukan titik temu di kampus UI, dan selesaikan pesanan.</p>
+    </header>
+    <ol class="order-steps" aria-label="Tahap pembelian">
+        <li class="is-done"><span>1</span>Keranjang</li>
+        <li class="is-active" aria-current="step"><span>2</span>Checkout</li>
+        <li><span>3</span>Pesanan</li>
+    </ol>
+    <form method="post" id="checkout-form" class="order-layout">
+        {% csrf_token %}
+        {{ form.checkout_token }}
+        {{ form.shipping_quote }}
         <div class="order-main">
-            {% if form.errors %}<div class="order-alert" role="alert"><strong>Pesanan belum dapat dibuat.</strong>{{ form.non_field_errors }}{% for field in form.hidden_fields %}{{ field.errors }}{% endfor %}<p>Periksa kembali isian di bawah. <a href="{% url 'order:checkout' %}">Muat ulang checkout</a> jika keranjang berubah atau sesi kedaluwarsa.</p></div>{% endif %}
-            <section class="order-panel"><div class="order-panel-heading"><span class="order-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span><div><h2>Penerima & tujuan</h2><p>Pastikan barang sampai ke tangan yang tepat.</p></div></div>
-                <div class="order-panel-content"><div class="order-field-grid">{% include 'order/_field.html' with field=form.recipient_name %}{% include 'order/_field.html' with field=form.phone_number %}</div>{% include 'order/_field.html' with field=form.delivery_method %}{% include 'order/_field.html' with field=form.address %}
-                    <p class="order-hint" id="pickup-hint">Pengambilan di kampus UI tanpa ongkir. Tulis titik temu yang jelas dan sepakati waktunya dengan penjual atau petugas.</p>
-                    {% if not shipping_available %}<p class="order-hint">Pengiriman kurir belum tersedia. Pilih pengambilan di kampus untuk melanjutkan.</p>{% endif %}
-                    <div id="courier-fields" {% if form.delivery_method.value != 'courier' %}hidden{% endif %}>
-                        {% if shipping_available %}
-                        <p class="order-hint">Paket dikirim dari titik pengumpulan SiBekas di kampus UI. Ongkir mengikuti total berat {{ weight_grams }} gram.</p>
-                        <div class="order-field"><label for="destination-search">Kecamatan, kelurahan, atau kode pos</label><div class="order-search-row"><input id="destination-search" type="search" minlength="3" maxlength="100" placeholder="Contoh: Beji, Depok" autocomplete="off"><button type="button" id="find-destination" class="order-button order-button-outline">Cari tujuan</button></div></div>
-                        <div class="order-field"><label for="destination-select">Tujuan pengiriman</label><select id="destination-select" disabled><option value="">Cari dan pilih tujuan</option></select></div>
-                        <fieldset class="order-shipping-options" id="shipping-options"><legend>Pilihan kurir</legend>{% if selected_quote %}<p>{{ selected_quote.service }} · {{ selected_quote.cost|rupiah }} · {{ selected_quote.destination }}</p>{% endif %}</fieldset>
-                        <p id="shipping-feedback" class="order-hint" role="status" aria-live="polite">Pilih tujuan untuk menampilkan ongkir.</p>
-                        <noscript><p class="order-alert">Aktifkan JavaScript untuk menghitung ongkir, atau pilih pengambilan di kampus.</p></noscript>
-                        {% else %}<p class="order-notice">Pengiriman kurir belum tersedia. Kamu tetap dapat memesan dengan memilih ambil di kampus UI.</p>{% endif %}
+            {% if form.errors %}
+            <div class="order-alert" role="alert">
+                <strong>Pesanan belum dapat dibuat.</strong>
+                {{ form.non_field_errors }}
+                {% for field in form.hidden_fields %}{{ field.errors }}{% endfor %}
+                <p>Periksa kembali isian di bawah. <a href="{% url 'order:checkout' %}">Muat ulang checkout</a> jika keranjang berubah atau sesi kedaluwarsa.</p>
+            </div>
+            {% endif %}
+            <section class="order-panel">
+                <div class="order-panel-heading">
+                    <span class="order-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span>
+                    <div>
+                        <h2>Penerima & Titik Temu</h2>
+                        <p>Pastikan barang diserahterimakan di lingkungan kampus UI dengan aman.</p>
                     </div>
                 </div>
+                <div class="order-panel-content">
+                    <div class="order-field-grid">
+                        {% include 'order/_field.html' with field=form.recipient_name %}
+                        {% include 'order/_field.html' with field=form.phone_number %}
+                    </div>
+                    {% include 'order/_field.html' with field=form.delivery_method %}
+                    {% include 'order/_field.html' with field=form.address %}
+                    <p class="order-hint" id="pickup-hint">
+                        <i data-lucide="info" class="inline w-4 h-4 mr-1"></i>
+                        Pengambilan di kampus UI tanpa biaya ongkos kirim. Tuliskan gedung atau titik temu yang spesifik (misal: Kantin Fasilkom, Perpustakaan Pusat UI, atau Halte Bikun) dan sepakati waktunya dengan penjual atau petugas.
+                    </p>
+                </div>
             </section>
-            <section class="order-panel"><div class="order-panel-heading"><span class="order-icon"><i data-lucide="shopping-bag" aria-hidden="true"></i></span><div><h2>Barang pilihanmu</h2><p>{{ total_items }} barang · {{ weight_grams }} gram</p></div></div>
-                {% for item in available_items %}<div class="order-item"><div class="order-product-image">{% if item.thumbnail %}<img src="{{ item.thumbnail }}" alt="" loading="lazy">{% else %}<i data-lucide="package" aria-hidden="true"></i>{% endif %}</div><div class="order-product-info"><p class="order-seller">{{ item.seller }}</p><h3>{{ item.name }}</h3><p>{{ item.condition }} · {{ item.quantity }} × {{ item.price_display }}</p></div><strong class="order-line-total">{{ item.line_total_display }}</strong></div>{% endfor %}
+            <section class="order-panel">
+                <div class="order-panel-heading">
+                    <span class="order-icon"><i data-lucide="shopping-bag" aria-hidden="true"></i></span>
+                    <div>
+                        <h2>Barang pilihanmu</h2>
+                        <p>{{ total_items }} barang · {{ weight_grams }} gram</p>
+                    </div>
+                </div>
+                {% for item in available_items %}
+                <div class="order-item">
+                    <div class="order-product-image">
+                        {% if item.thumbnail %}
+                        <img src="{{ item.thumbnail }}" alt="" loading="lazy">
+                        {% else %}
+                        <i data-lucide="package" aria-hidden="true"></i>
+                        {% endif %}
+                    </div>
+                    <div class="order-product-info">
+                        <p class="order-seller">{{ item.seller }}</p>
+                        <h3>{{ item.name }}</h3>
+                        <p>{{ item.condition }} · {{ item.quantity }} × {{ item.price_display }}</p>
+                    </div>
+                    <strong class="order-line-total">{{ item.line_total_display }}</strong>
+                </div>
+                {% endfor %}
             </section>
-            <section class="order-panel"><div class="order-panel-heading"><span class="order-icon"><i data-lucide="wallet" aria-hidden="true"></i></span><div><h2>Pembayaran</h2><p>Pilih cara menyelesaikan pesananmu.</p></div></div><div class="order-panel-content">{% include 'order/_field.html' with field=form.payment_method %}<p class="order-hint">COD dibayar saat barang diambil di kampus UI.{% if demo_enabled %} Pembayaran simulasi untuk demonstrasi proyek; tidak memindahkan uang.{% endif %}</p>{% include 'order/_field.html' with field=form.notes %}</div></section>
+            <section class="order-panel">
+                <div class="order-panel-heading">
+                    <span class="order-icon"><i data-lucide="wallet" aria-hidden="true"></i></span>
+                    <div>
+                        <h2>Pembayaran</h2>
+                        <p>Pilih metode penyelesaian pesananmu.</p>
+                    </div>
+                </div>
+                <div class="order-panel-content">
+                    {% include 'order/_field.html' with field=form.payment_method %}
+                    <p class="order-hint">
+                        COD dibayarkan tunai saat serah terima di kampus UI.{% if demo_enabled %} Pembayaran simulasi untuk demonstrasi akademik proyek.{% endif %}
+                    </p>
+                    {% include 'order/_field.html' with field=form.notes %}
+                </div>
+            </section>
         </div>
-        <aside class="order-summary"><p class="eyebrow">RINGKASAN BELANJA</p><h2>Satu langkah lagi.</h2><dl class="order-totals"><div><dt>Subtotal ({{ total_items }} barang)</dt><dd>{{ subtotal|rupiah }}</dd></div><div><dt>Ongkos kirim</dt><dd id="shipping-cost">{% if selected_quote and form.delivery_method.value == 'courier' %}{{ selected_quote.cost|rupiah }}{% elif form.delivery_method.value == 'courier' %}Pilih kurir{% else %}Gratis{% endif %}</dd></div><div class="order-grand-total"><dt>Total pembayaran</dt><dd id="checkout-total">{{ checkout_total|rupiah }}</dd></div></dl><p class="order-hint" id="quote-note">{% if selected_quote %}{{ selected_quote.service }} · {{ selected_quote.destination }}{% else %}Ongkir kurir ditampilkan setelah memilih tujuan dan layanan.{% endif %}</p><button class="order-button order-button-wide" type="submit" id="place-order">Buat pesanan<i data-lucide="arrow-right" aria-hidden="true"></i></button><p class="order-summary-note"><i data-lucide="leaf" aria-hidden="true"></i>Barang lama, cerita baru. Terima kasih sudah memberi barang preloved kesempatan kedua.</p></aside>
+        <aside class="order-summary">
+            <p class="eyebrow">RINGKASAN BELANJA</p>
+            <h2>Satu langkah lagi.</h2>
+            <dl class="order-totals">
+                <div>
+                    <dt>Subtotal ({{ total_items }} barang)</dt>
+                    <dd>{{ subtotal|rupiah }}</dd>
+                </div>
+                <div>
+                    <dt>Pengambilan Kampus</dt>
+                    <dd id="shipping-cost">Gratis (Rp 0)</dd>
+                </div>
+                <div class="order-grand-total">
+                    <dt>Total pembayaran</dt>
+                    <dd id="checkout-total">{{ checkout_total|rupiah }}</dd>
+                </div>
+            </dl>
+            <p class="order-hint" id="quote-note">Ambil langsung di titik temu kampus Universitas Indonesia.</p>
+            <button class="order-button order-button-wide" type="submit" id="place-order">
+                Buat pesanan
+                <i data-lucide="arrow-right" aria-hidden="true"></i>
+            </button>
+            <p class="order-summary-note">
+                <i data-lucide="leaf" aria-hidden="true"></i>
+                Barang lama, cerita baru. Terima kasih sudah memberi barang preloved kesempatan kedua.
+            </p>
+        </aside>
     </form>
 </section>
 {% endblock %}
-{% block extra_js %}<script src="{% static 'js/order-checkout.js' %}" defer></script>{% endblock %}

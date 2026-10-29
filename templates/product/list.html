@@ -9,16 +9,39 @@
 
 {% block content %}
 <section class="product-page">
-    <div class="product-heading">
-        <p class="eyebrow">Katalog Preloved</p>
-        <h1>Produk</h1>
-        <p>Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
+    <div class = "product-heading-row">
+        <div class="product-heading">
+            <p class="eyebrow">Katalog Preloved</p>
+            <h1>Produk</h1>
+            <p>Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
+        </div>
+        <a href = "{% url 'product:create' %}" class = "button">Jual barang</a>
     </div>
+
 
     <form class="product-search" method="get">
         <input type="text" name="q" value="{{ query }}" placeholder="Cari produk...">
         {% if category_slug %}
         <input type="hidden" name="category" value="{{ category_slug }}">
+        {% endif %}
+        <select name="condition">
+            <option value="">Semua kondisi</option>
+            {% for value, label in conditions %}
+            <option value="{{ value }}" {% if request.GET.condition == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="min_price" value="{{ request.GET.min_price }}" placeholder="Harga min">
+        <input type="number" name="max_price" value="{{ request.GET.max_price }}" placeholder="Harga maks">
+        <select name="sort">
+            <option value="">Terbaru</option>
+            <option value="cheap" {% if request.GET.sort == "cheap" %}selected{% endif %}>Termurah</option>
+            <option value="expensive" {% if request.GET.sort == "expensive" %}selected{% endif %}>Termahal</option>
+        </select>
+        {% if user.is_authenticated %}
+        <label class = "product-mine">
+            <input type="checkbox" name="mine" value="1" {% if request.GET.mine %}checked{% endif %}>
+            Produk saya
+        </label>
         {% endif %}
         <button type="submit" class="button">Cari</button>
     </form>
@@ -57,13 +80,13 @@
     {% if page.has_other_pages %}
     <div class="pagination">
         {% if page.has_previous %}
-        <a href="?page={{ page.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}">&laquo; Sebelumnya</a>
+        <a href="{{ page_url_prefix }}{{ page.previous_page_number }}">&laquo; Sebelumnya</a>
         {% endif %}
 
         <span>Halaman {{ page.number }} dari {{ page.paginator.num_pages }}</span>
 
         {% if page.has_next %}
-        <a href="?page={{ page.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}">Selanjutnya &raquo;</a>
+        <a href="{{ page_url_prefix }}{{ page.next_page_number }}">Selanjutnya &raquo;</a>
         {% endif %}
     </div>
     {% endif %}

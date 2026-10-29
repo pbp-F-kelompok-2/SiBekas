@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.conf import settings
 from django.core.validators import RegexValidator
@@ -5,17 +7,44 @@ from django.core.validators import RegexValidator
 from .models import Order
 
 
+class PhoneNumberField(forms.CharField):
+    def to_python(self, value):
+        return re.sub(r"[\s()-]", "", super().to_python(value))
+
+
 class CheckoutForm(forms.Form):
-    recipient_name = forms.CharField(label="Nama penerima", max_length=150, widget=forms.TextInput(attrs={"autocomplete": "name"}))
-    phone_number = forms.CharField(
-        label="Nomor telepon", max_length=20,
+    recipient_name = forms.CharField(
+        label="Nama penerima",
+        max_length=150,
+        widget=forms.TextInput(attrs={"autocomplete": "name"}),
+    )
+    phone_number = PhoneNumberField(
+        label="Nomor telepon",
+        max_length=20,
         validators=[RegexValidator(r"^\+?\d{9,15}$", "Gunakan 9–15 digit angka, misalnya 081234567890.")],
         widget=forms.TextInput(attrs={"type": "tel", "autocomplete": "tel", "placeholder": "081234567890"}),
     )
-    delivery_method = forms.ChoiceField(label="Metode penerimaan", choices=Order.DeliveryMethod.choices, initial=Order.DeliveryMethod.PICKUP)
-    address = forms.CharField(label="Alamat lengkap / titik temu di UI", max_length=1000, widget=forms.Textarea(attrs={"rows": 3, "autocomplete": "street-address", "placeholder": "Nama jalan, nomor rumah, atau titik temu di kampus UI"}))
+    delivery_method = forms.ChoiceField(
+        label="Metode penerimaan",
+        choices=[(Order.DeliveryMethod.PICKUP, "Ambil di kampus UI (Gratis / Titik Temu)")],
+        initial=Order.DeliveryMethod.PICKUP,
+    )
+    address = forms.CharField(
+        label="Titik temu / alamat di kampus UI",
+        max_length=1000,
+        widget=forms.Textarea(attrs={
+            "rows": 3,
+            "autocomplete": "street-address",
+            "placeholder": "Contoh: Kantin Fasilkom UI, Perpustakaan Pusat UI, atau Gedung Kuliah",
+        }),
+    )
     payment_method = forms.ChoiceField(label="Metode pembayaran", choices=Order.PaymentMethod.choices)
-    notes = forms.CharField(label="Catatan pesanan (opsional)", required=False, max_length=500, widget=forms.Textarea(attrs={"rows": 2, "placeholder": "Pesan untuk penjual atau petugas"}))
+    notes = forms.CharField(
+        label="Catatan pesanan (opsional)",
+        required=False,
+        max_length=500,
+        widget=forms.Textarea(attrs={"rows": 2, "placeholder": "Pesan untuk penjual atau kesepakatan waktu temu"}),
+    )
     checkout_token = forms.CharField(widget=forms.HiddenInput)
     shipping_quote = forms.CharField(required=False, widget=forms.HiddenInput)
 
@@ -26,10 +55,4 @@ class CheckoutForm(forms.Form):
 
     def clean(self):
         cleaned = super().clean()
-        if cleaned.get("delivery_method") == Order.DeliveryMethod.COURIER:
-            if not cleaned.get("shipping_quote"):
-                self.add_error("shipping_quote", "Cari tujuan dan pilih layanan pengiriman terlebih dahulu.")
-            # Shipping Cost supplies tariffs; it does not book COD shipments.
-            if cleaned.get("payment_method") == Order.PaymentMethod.COD:
-                self.add_error("payment_method", "COD tersedia untuk pengambilan di kampus. Untuk kurir, pilih pembayaran simulasi.")
         return cleaned

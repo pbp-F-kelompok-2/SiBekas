@@ -38,7 +38,7 @@
 
             <div class="profile-stats">
                 <div class="stat-item">
-                    <strong>{{ total_orders|default:"0" }}</strong>
+                    <strong><a href="{% url 'order:index' %}">{{ total_orders }}</a></strong>
                     <span>Pesanan</span>
                 </div>
 
@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="stat-item">
-                    <strong>{{ total_reviews|default:"0" }}</strong>
+                    <strong><a href="{% url 'review:index' %}">{{ total_reviews }}</a></strong>
                     <span>Ulasan</span>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                     <h3>Hapus Akun</h3>
                     <p>
                         Akun kamu akan dihapus secara permanen.
-                        Pastikan kamu sudah yakin sebelum melanjutkan.
+                        Akun yang memiliki riwayat pesanan tidak dapat dihapus agar catatan transaksi tetap tersedia.
                     </p>
 
                     <form
@@ -120,9 +120,9 @@
                     ♡ &nbsp; Favorit ({{ favorites.count|default:"0" }})
                 </button>
 
-                <button type="button" class="profile-tab">
-                    Ulasan saya ({{ reviews.count|default:"0" }})
-                </button>
+                <a href="{% url 'review:index' %}" class="profile-tab">
+                    Ulasan saya ({{ total_reviews }})
+                </a>
             </div>
 
             {% if favorites %}
@@ -235,7 +235,7 @@
 </main>
 
 <!-- Modal Edit Profil -->
-<div class="edit-profile-overlay" id="editProfileModal">
+<div class="edit-profile-overlay{% if form.errors %} is-open{% endif %}" id="editProfileModal">
     <section class="edit-profile-modal"
              role="dialog"
              aria-modal="true"

@@ -1,13 +1,11 @@
 import hashlib
 import json
 
+from sibekas.utils import format_rupiah
+
 from product.models import Product
 
 from .models import CartItem
-
-
-def format_rupiah(value):
-    return f"Rp {value:,}".replace(",", ".")
 
 
 def cart_summary(user, *, lock=False):

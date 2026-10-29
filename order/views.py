@@ -13,7 +13,6 @@ from profiles.models import Profile
 from .forms import CheckoutForm
 from .models import Order
 from .services import OrderError, change_status, checkout_token, create_order, read_checkout_token
-from .shipping import ShippingError, calculate_quotes, is_configured, search_destinations, validate_quote
 
 
 def accessible_orders(user):
@@ -76,16 +75,10 @@ def checkout(request):
         else:
             messages.success(request, "Pesanan berhasil dibuat.")
             return redirect(order)
-    selected_quote = None
-    if form.is_bound and form.data.get("shipping_quote"):
-        try:
-            selected_quote = validate_quote(form.data["shipping_quote"], summary, request.user.pk)
-        except ShippingError:
-            pass
     return render(request, "order/checkout.html", {
-        **summary, "form": form, "shipping_available": is_configured() and settings.ORDER_ENABLE_DEMO_PAYMENT,
-        "demo_enabled": settings.ORDER_ENABLE_DEMO_PAYMENT, "selected_quote": selected_quote,
-        "checkout_total": summary["subtotal"] + (selected_quote["cost"] if selected_quote and form.data.get("delivery_method") == "courier" else 0),
+        **summary, "form": form, "shipping_available": False,
+        "demo_enabled": settings.ORDER_ENABLE_DEMO_PAYMENT, "selected_quote": None,
+        "checkout_total": summary["subtotal"],
     })
 
 
@@ -112,23 +105,11 @@ def update_status(request, order_id):
 @login_required
 @require_GET
 def destinations(request):
-    query = request.GET.get("q", "").strip()
-    if not 3 <= len(query) <= 100:
-        return JsonResponse({"error": "Masukkan minimal 3 dan maksimal 100 karakter nama lokasi atau kode pos."}, status=400)
-    try:
-        return JsonResponse({"destinations": search_destinations(query, request.user.pk)})
-    except ShippingError as exc:
-        return JsonResponse({"error": str(exc)}, status=503)
+    return JsonResponse({"destinations": []})
 
 
 @require_POST
 @login_required
 def shipping_quotes(request):
     summary = cart_summary(request.user)
-    if not summary["available_items"] or summary["unavailable_items"]:
-        return JsonResponse({"error": "Periksa isi keranjang terlebih dahulu."}, status=400)
-    try:
-        quotes = calculate_quotes(request.POST.get("destination_token", ""), summary, request.user.pk)
-        return JsonResponse({"quotes": quotes, "subtotal": summary["subtotal"]})
-    except ShippingError as exc:
-        return JsonResponse({"error": str(exc)}, status=400)
+    return JsonResponse({"quotes": [], "subtotal": summary["subtotal"]})
