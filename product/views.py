@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
@@ -90,7 +91,9 @@ def detail(request, slug):
 
 @login_required
 def update(request, slug):
-    product = get_object_or_404(Product, slug=slug, seller=request.user)
+    product = get_object_or_404(Product, slug=slug)
+    if product.seller != request.user and not request.user.is_superuser:
+        raise PermissionDenied("Anda tidak memiliki izin untuk mengubah produk ini.")
     form = ProductForm(request.POST or None, request.FILES or None, instance=product)
     if form.is_valid():
         form.save()
@@ -100,7 +103,9 @@ def update(request, slug):
 @login_required
 @require_POST
 def delete(request, slug):
-    product = get_object_or_404(Product, slug=slug, seller = request.user)
+    product = get_object_or_404(Product, slug=slug)
+    if product.seller != request.user and not request.user.is_superuser:
+        raise PermissionDenied("Anda tidak memiliki izin untuk menghapus produk ini.")
     product.delete()
     return redirect("product:index")
 
@@ -127,4 +132,3 @@ def create_product(request):
         "product/create.html",
         {"form": form},
     )
-

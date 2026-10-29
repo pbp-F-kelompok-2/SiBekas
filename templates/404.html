@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Halaman Tidak Ditemukan (404) | SiBekas{% endblock %}
+
+{% block content %}
+<section style="text-align: center; padding: 4rem 1rem; max-width: 600px; margin: 0 auto;">
+    <div style="font-size: 4rem; color: #10b981; margin-bottom: 1rem;">
+        <i data-lucide="compass" style="width: 64px; height: 64px; margin: 0 auto;"></i>
+    </div>
+    <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Halaman Tidak Ditemukan (404)</h1>
+    <p style="color: var(--color-text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+        Halaman atau produk yang Anda cari mungkin sudah dihapus, dipindahkan, atau tautan yang Anda tuju salah.
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="{% url 'product:index' %}" class="button" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+            <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
+            Jelajahi Produk Lainnya
+        </a>
+        <a href="{% url 'home' %}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border: 1px solid var(--color-border); border-radius: 12px; text-decoration: none; font-weight: 500;">
+            Beranda
+        </a>
+    </div>
+</section>
+{% endblock %}
