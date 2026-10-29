@@ -1,230 +1,214 @@
-# SiBekas — Marketplace Preloved Mahasiswa UI
-> **Platform Marketplace Barang Preloved Berkelanjutan Khusus Mahasiswa Universitas Indonesia**  
-> *Pemrograman Berbasis Platform (CSGE602022) — Gasal 2026/2027*  
-> *Fakultas Ilmu Komputer, Universitas Indonesia*
+# SiBekas
 
-[![Deploy PWS](https://img.shields.io/badge/Deploy-PWS%20Fasilkom%20UI-10b981?style=for-the-badge&logo=django)](https://faris-salman-sibekas.pws.cs.ui.ac.id/)
-[![Figma Design](https://img.shields.io/badge/Figma-Design%20System-f24e1e?style=for-the-badge&logo=figma)](https://www.figma.com/design/sibekas-preloved-ui-pbp)
-[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776ab?style=for-the-badge&logo=python)](https://www.python.org/)
-[![Django 5.x](https://img.shields.io/badge/Django-5.x-092e20?style=for-the-badge&logo=django)](https://www.djangoproject.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-Responsive-38bdf8?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+> Platform marketplace barang *preloved* berkelanjutan untuk civitas akademika Universitas Indonesia.  
+> Proyek Tengah Semester (PTS) — Pemrograman Berbasis Platform (CSGE602022) Gasal 2026/2027  
+> Fakultas Ilmu Komputer, Universitas Indonesia — Kelas F, Kelompok 2
 
 ---
 
-## 📌 Tautan Penting Proyek
-- **Tautan Deployment PWS (Live Web)**: [https://faris-salman-sibekas.pws.cs.ui.ac.id/](https://faris-salman-sibekas.pws.cs.ui.ac.id/)
-- **Tautan Desain Figma (UI/UX Prototype & Design System)**: [https://www.figma.com/design/sibekas-preloved-ui-pbp](https://www.figma.com/design/sibekas-preloved-ui-pbp)
-- **Dokumentasi Public API (DummyJSON)**: [https://dummyjson.com/docs/products](https://dummyjson.com/docs/products)
+### Tautan Proyek
+- **Aplikasi Web (PWS):** [https://faris-salman-sibekas.pws.cs.ui.ac.id/](https://faris-salman-sibekas.pws.cs.ui.ac.id/)
+- **Desain & Prototype (Figma):** [https://www.figma.com/design/sibekas-preloved-ui-pbp](https://www.figma.com/design/sibekas-preloved-ui-pbp)
+- **Dokumentasi API Publik (DummyJSON):** [https://dummyjson.com/docs/products](https://dummyjson.com/docs/products)
 
 ---
 
-## 📖 Deskripsi Aplikasi & Latar Belakang
+## 1. Latar Belakang & Konsep Aplikasi
 
-**SiBekas** (*Sistem Informasi Barang Bekas*) adalah platform marketplace sirkular khusus civitas akademika Universitas Indonesia yang hadir di bawah naungan tema **Sustainable Living** (sub-tema: *Slow Fashion, Waste Management, & Conscious Shopping*).
+SiBekas (*Sistem Informasi Barang Bekas*) dikembangkan untuk menjawab persoalan klasik mahasiswa Universitas Indonesia setiap pergantian semester dan kelulusan: penumpukan barang kebutuhan kuliah yang masih sangat layak pakai (buku teks, diktat kuliah, kalkulator sains, pakaian formal sidang/seminar, peralatan kos, hingga monitor penunjang) yang seringkali terbengkalai atau terbuang. Di saat yang sama, mahasiswa baru dan mahasiswa aktif membutuhkan barang-barang tersebut dengan harga yang terjangkau.
 
-Setiap pergantian tahun ajaran baru dan kelulusan, ribuan mahasiswa UI menghadapi masalah penumpukan barang kebutuhan kuliah (buku teks perkuliahan, perlengkapan kos, kalkulator saintifik, pakaian seminar/sidang, hingga perangkat elektronik pendukung) yang seringkali hanya dibuang atau terbengkalai. Di sisi lain, mahasiswa baru dan mahasiswa aktif senantiasa mencari barang layak pakai dengan harga terjangkau.
-
-SiBekas menyelesaikan persoalan ini dengan menyediakan wadah transaksi yang aman, terpercaya, dan terpusat di lingkungan kampus:
-- **Pengurangan Jejak Karbon & Sampah Kampus**: Memperpanjang siklus hidup barang (*reuse & circular economy*) sehingga meminimalkan limbah kosan dan konsumerisme berlebih.
-- **Sistem Serah Terima Kampus Terpercaya**: Mendukung metode serah terima langsung di titik temu kampus UI (seperti Kantin Fasilkom, Perpustakaan Pusat UI, atau Halte Bikun) dengan opsi Cash-on-Delivery (COD) maupun pembayaran simulasi akademik tanpa perantara biaya ekspedisi yang mahal.
-- **Fondasi Web Service Mobile-Ready**: Dirancang dengan pola Model-View-Template (MVT) Django yang bersih dan endpoint JSON asinkron yang siap dihubungkan dengan aplikasi mobile Flutter pada Proyek Akhir Semester.
+Di bawah payung tema **Sustainable Living** (sub-tema: *Slow Fashion, Waste Management, & Conscious Shopping*), SiBekas memfasilitasi pertukaran barang secara sirkular antar-mahasiswa dengan pendekatan berbasis komunitas kampus:
+- **Pengurangan Sampah Kampus:** Memperpanjang masa pakai barang guna menekan konsumerisme berlebih dan timbulan limbah kosan.
+- **Titik Temu Kampus (Zero Shipping Cost):** Transaksi difokuskan pada penjemputan langsung di titik temu kampus UI (seperti Kantin Fasilkom, Perpustakaan Pusat UI, atau Halte Bikun) dengan opsi Cash-on-Delivery (COD) maupun simulasi pembayaran tanpa biaya ongkos kirim.
+- **Ekosistem Terpercaya:** Akun terikat dengan identitas mahasiswa dan sistem ulasan hanya dapat diberikan oleh pembeli yang transaksinya telah selesai.
 
 ---
 
-## 👥 Anggota Kelompok & Pembagian Modul
+## 2. Tim Pengembang & Pembagian Tugas
 
-| No. | Nama Mahasiswa | NPM | Modul Utama | Tanggung Jawab Modul | Branch Git |
-|:---:|:---|:---:|:---|:---|:---|
-| 1 | **Jehezkiel Jefferson I Latupeirissa** | 2506611156 | **Product** | Katalog produk preloved, kategori dinamis, multi-filter (harga, kondisi, status), live search, CRUD produk penjual, dan seeder 50+ data DummyJSON. | `feat/product-jehezkiel` |
-| 2 | **Rachelin Miyuki Hendratmo** | 2506536553 | **Profile / User** | Manajemen profil pengguna, autentikasi lokal akun UI (`@ui.ac.id`), personalisasi data, riwayat aktivitas, bookmark/wishlist favorit, dan perlindungan penghapusan akun. | `feat/profile-rachelin` |
-| 3 | **Rheza Abdilla** | 2506612184 | **Cart & Shared Templates** | Keranjang belanja multi-item, pembaruan kuantitas asinkron, perhitungan subtotal otomatis, struktur template bersama (`base.html`, `navbar.html`, `footer.html`), dan styling responsif. | `feat/cart-rheza` |
-| 4 | **Faris Salman Azhari** | 2506615223 | **Order / Transaction & Integration** | Alur checkout serah terima kampus, validasi data transaksi, pembayaran COD/simulasi, riwayat pesanan, pembatalan pesanan aman, portal petugas pesanan kampus, integrasi monolit, dan deployment PWS. | `feat/order-faris` |
-| 5 | **Alfan Kurnia Karim** | 2506537814 | **Review & Design System** | Ulasan dan rating (1-5 bintang) khusus pembeli terverifikasi (*verified purchase*), CRUD ulasan, rekapitulasi rating pada katalog dan profil, standardisasi warna brand eco-green, dan Dark Mode toggle. | `feat/review-alfan` |
+| Nama | NPM | Modul | Fokus Pengerjaan | Branch |
+|---|:---:|---|---|---|
+| **Jehezkiel Jefferson I Latupeirissa** | 2506611156 | **Product** | Katalog barang, pencarian, filter kategori & harga, CRUD produk penjual, integrasi seeder DummyJSON | `feat/product-kiel` |
+| **Rachelin Miyuki Hendratmo** | 2506536553 | **Profile** | Autentikasi user, profil akun, wishlist / barang favorit, riwayat listing, proteksi penghapusan akun | `feat/profile-miyuki` |
+| **Rheza Abdilla** | 2506612184 | **Cart** | Keranjang belanja multi-item, update kuantitas asinkron (HTMX/AJAX), subtotal dinamis, layout base template | `feat/cart-rheza` |
+| **Faris Salman Azhari** | 2506615223 | **Order** | Checkout serah terima kampus (Rp 0), state machine pesanan, pembatalan aman, portal petugas, deployment PWS | `feat/order-faris` |
+| **Alfan Kurnia Karim** | 2506537814 | **Review** | Ulasan & rating (1-5 bintang) verified purchase, validasi teks ulasan, agregat rating produk, Dark Mode toggle | `feat/review-alfan` |
 
 ---
 
-## 👤 Peran Pengguna (User Roles)
+## 3. Peran Pengguna (User Roles)
 
-1. **Mahasiswa Pembeli (Buyer)**:
-   - Menjelajahi katalog barang dengan filter kategori, kondisi, dan rentang harga.
+1. **Pembeli (Buyer):**
+   - Menjelajahi katalog barang dengan filter kategori, kondisi, dan harga.
    - Menyimpan barang ke daftar favorit (*wishlist*).
-   - Memasukkan produk ke keranjang belanja dan mengatur kuantitas.
-   - Melakukan checkout dengan penentuan titik temu di kampus UI.
-   - Memantau status pesanan hingga barang diterima.
-   - Memberikan ulasan dan rating pada barang yang transaksinya telah berstatus *COMPLETED*.
-2. **Mahasiswa Penjual (Seller)**:
-   - Mendaftarkan barang preloved yang ingin dijual lengkap dengan foto, deskripsi, harga, dan kondisi.
-   - Mengelola (*update/delete*) listing barang miliknya sendiri (dilindungi otorisasi kepemilikan ketat).
-   - Memantau barang yang laku terjual dan melihat reputasi rating dari para pembeli.
-3. **Petugas Kampus / Admin (Staff)**:
-   - Memantau seluruh pesanan yang sedang diproses.
-   - Menandai pesanan telah disiapkan dan siap diserahterimakan di titik temu kampus (`SHIPPED`).
-   - Mengelola data master aplikasi melalui portal Django Admin.
+   - Memasukkan barang ke keranjang belanja dan mengatur kuantitas.
+   - Melakukan checkout dengan menentukan lokasi titik serah terima di kampus UI.
+   - Memantau status pesanan dan membatalkan pesanan selama masih berstatus *Pending*.
+   - Memberikan ulasan dan rating pada barang yang transaksinya telah *Completed*.
+
+2. **Penjual (Seller):**
+   - Mendaftarkan barang preloved miliknya (judul, deskripsi, foto, harga, kondisi, stok).
+   - Mengelola (*update* dan *delete*) listing produk yang dibuatnya sendiri.
+   - Memantau barang yang terjual dan melihat rating reputasi penjual.
+
+3. **Petugas Kampus / Admin (Staff):**
+   - Memantau antrean pesanan yang masuk.
+   - Menandai pesanan yang telah disiapkan di titik temu (*Shipped* / *Ready for Pickup*).
+   - Mengelola master data melalui panel Django Admin.
 
 ---
 
-## 📦 Rincian 5 Modul SiBekas (CRUD Implementation)
+## 4. Rincian Implementasi 5 Modul (CRUD)
 
-### 1. Modul Product (Jehezkiel Jefferson)
-- **Create**: Formulir penambahan produk oleh penjual login dengan validasi harga positif dan stok minimal 1.
-- **Read**: Katalog produk publik dengan pagination yang mempertahankan seluruh query filter (`q`, `category`, `condition`, `min_price`, `max_price`, `sort`), serta halaman detail produk lengkap dengan reputasi penjual dan ulasan pembeli.
-- **Update**: Penjual dapat mengedit informasi harga, kondisi, deskripsi, dan foto produk miliknya.
-- **Delete**: Penjual dapat menghapus listing produk. Akses pengguna lain ditolak dengan pesan HTTP 403 Forbidden.
+### Modul Product (Jehezkiel Jefferson)
+- **Create:** Form tambah produk dengan validasi harga positif dan stok minimal 1.
+- **Read:** Katalog publik dengan paginasi yang mempertahankan parameter filter (`q`, `category`, `condition`, `min_price`, `max_price`, `sort`), serta halaman detail produk.
+- **Update:** Penjual dapat memperbarui data produk miliknya.
+- **Delete:** Penjual dapat menghapus listing barang miliknya. Percobaan hapus oleh pengguna lain ditolak dengan respon HTTP 403.
 
-### 2. Modul Profile / User (Rachelin Miyuki)
-- **Create**: Pendaftaran akun mahasiswa menggunakan email berdomain UI (`@ui.ac.id` / `@alumni.ui.ac.id`).
-- **Read**: Halaman profil pribadi yang menampilkan ringkasan data diri, riwayat listing, daftar barang favorit, serta agregat statistik total pesanan dan ulasan.
-- **Update**: Pembaruan biodata, nomor WhatsApp, fakultas, dan avatar melalui modal profil.
-- **Delete**: Penonaktifan akun yang aman dari crash `ProtectedError` pada pesanan tersimpan, menjamin integritas riwayat transaksi pembeli.
+### Modul Profile (Rachelin Miyuki)
+- **Create:** Pendaftaran akun pengguna baru dan pembuatan profil otomatis via sinyal/form.
+- **Read:** Halaman profil yang memuat data diri, riwayat produk yang dijual, barang favorit, serta ringkasan aktivitas.
+- **Update:** Pengeditan profil (nama, biodata, kontak WhatsApp, fakultas, avatar).
+- **Delete:** Penonaktifan akun dengan penanganan dependensi transaksi (`ProtectedError`) agar riwayat pesanan tetap utuh.
 
-### 3. Modul Cart (Rheza Abdilla)
-- **Create**: Penambahan barang ke keranjang belanja dengan feedback visual instan.
-- **Read**: Tampilan keranjang belanja responsif yang merinci item, harga satuan, subtotal, dan kuantitas.
-- **Update**: Penyesuaian kuantitas barang secara asinkron (AJAX) dengan pembatasan stok real-time.
-- **Delete**: Penghapusan item individual dari keranjang belanja secara instan.
+### Modul Cart (Rheza Abdilla)
+- **Create:** Menambahkan produk ke keranjang belanja.
+- **Read:** Halaman keranjang belanja dengan rincian per-item, harga satuan, kuantitas, dan total harga.
+- **Update:** Mengubah kuantitas item secara asinkron tanpa *reload* halaman penuh, dibatasi oleh stok yang tersedia.
+- **Delete:** Menghapus item dari keranjang belanja secara instan.
 
-### 4. Modul Order / Transaction (Faris Salman Azhari)
-- **Create**: Formulir checkout cerdas yang memvalidasi ketersediaan stok produk secara atomik (`select_for_update`) dan menetapkan titik temu serah terima di lingkungan kampus UI tanpa biaya ongkos kirim.
-- **Read**: Riwayat transaksi pesanan pembeli dan halaman faktur detail (*invoice*) yang mencatat setiap peristiwa status (`OrderEvent`).
-- **Update**: Pembeli dapat menyelesaikan pembayaran simulasi; petugas kampus dapat memperbarui status pesanan menjadi `SHIPPED` atau `COMPLETED`.
-- **Delete**: Pembatalan pesanan yang masih berstatus `PENDING` oleh pembeli, yang secara otomatis mengembalikan stok barang ke etalase.
+### Modul Order (Faris Salman Azhari)
+- **Create:** Form checkout atomik (`select_for_update`) dengan pemilihan titik temu kampus UI (Kantin Fasilkom, Perpustakaan Pusat, Halte Bikun) dengan tarif Rp 0.
+- **Read:** Daftar riwayat pesanan dan halaman invoice detail yang mencatat log perubahan status (`OrderEvent`).
+- **Update:** Penyelesaian pembayaran simulasi oleh pembeli, serta perubahan status pesanan menjadi *Shipped* atau *Completed* oleh petugas.
+- **Delete:** Pembatalan pesanan berstatus *Pending* oleh pembeli dengan pengembalian stok barang secara otomatis ke etalase.
 
-### 5. Modul Review (Alfan Kurnia Karim)
-- **Create**: Formulir ulasan bintang interaktif (1-5) dan komentar teks (maksimal 500 karakter). Fitur ini memiliki verifikasi ketat: hanya pembeli yang telah menyelesaikan transaksi pesanan (`status=completed`) yang berhak menuliskan ulasan.
-- **Read**: Menampilkan daftar ulasan pembeli dan rata-rata rating bintang pada detail produk dan tab profil.
-- **Update**: Penulis ulasan dapat merevisi ulasan dan rating miliknya (otomatis ditandai *Diedit*).
-- **Delete**: Penulis ulasan dapat menghapus ulasan buatannya sendiri.
-
----
-
-## 🌐 Public API Integration (DummyJSON Products API)
-
-Sesuai ketentuan silabus penugasan, aplikasi terintegrasi dengan **Public API DummyJSON Products** (`https://dummyjson.com/products?limit=60`) sebagai penyedia data katalog awal:
-- **Seeder Otomatis (`seed_products`)**: Perintah manajemen `python manage.py seed_products` mengambil 60 data produk awal dari API publik DummyJSON, mengonversi kurs mata uang menjadi Rupiah yang terjangkau bagi mahasiswa, memetakan kategori ke dalam Bahasa Indonesia baku (*Kecantikan, Laptop, Ponsel, Pakaian, dll.*), dan menyimpannya ke database.
-- **Idempotensi & Keamanan Data**: Mekanisme `update_or_create` memastikan seeder aman dijalankan berulang kali tanpa membuat data duplikat, serta opsi `--skip-existing` untuk melindungi modifikasi yang telah dilakukan oleh pengguna.
-- **Mitigasi Offline**: Bila koneksi jaringan terhambat saat proses build server, sistem menangani pengecualian secara anggun tanpa menghentikan kesiapan server.
+### Modul Review (Alfan Kurnia Karim)
+- **Create:** Form rating bintang 1-5 dan komentar (maksimal 500 karakter). Dilindungi verifikasi: hanya pembeli yang telah menyelesaikan transaksi pesanan yang dapat mengirim ulasan.
+- **Read:** Menampilkan daftar ulasan pembeli beserta rata-rata rating di halaman detail produk.
+- **Update:** Penulis ulasan dapat mengedit rating dan komentar miliknya.
+- **Delete:** Penulis ulasan dapat menghapus ulasan yang pernah dibuatnya.
 
 ---
 
-## 🎨 Penerapan Framework CSS Tailwind, Dark Mode, & HTMX
+## 5. Integrasi Public API (DummyJSON)
 
-1. **Framework CSS Tailwind**:
-   - Terintegrasi melalui Play CDN pada `templates/base.html` dengan konfigurasi `corePlugins: { preflight: false }` untuk menjamin keselarasan sempurna antara utility classes Tailwind dan styling kustom SiBekas yang sudah ada.
-   - Palet warna bertema kelestarian lingkungan (*Sustainable Living*): `brand-500` (Emerald Green UI), `accent-500` (Amber), dan slate neutrals.
-2. **Persistent Dark Mode**:
-   - Dilengkapi tombol toggle Dark / Light Mode pada header navbar (desktop dan mobile drawer) dengan ikon bulan/matahari dari Lucide Icons.
-   - Preferensi tema tersimpan secara persisten pada `localStorage` pengguna dan mendeteksi preferensi sistem secara otomatis (*WCAG AA compliant contrast*).
-3. **Interaktivitas Asinkron (HTMX & AJAX)**:
-   - Terintegrasi dengan pustaka HTMX untuk pembaruan DOM parsial tanpa *full-page reload*.
-   - Otentikasi token CSRF terinjeksi otomatis pada setiap request asinkron via header `X-CSRFToken`.
-   - Notifikasi toast melayang (*floating alert*) yang dapat ditutup secara instan.
-4. **Halaman Error Ramah Pengguna**:
-   - Menyediakan `templates/403.html` (Akses Ditolak) dan `templates/404.html` (Halaman Tidak Ditemukan) dengan tata letak serasi dan navigasi kembali yang jelas.
+Sesuai spesifikasi proyek, SiBekas mengintegrasikan Public API **DummyJSON Products** sebagai sumber katalog awal:
+- **Endpoint API:** `https://dummyjson.com/products?limit=60`
+- **Seeder Otomatis:** Perintah `python manage.py seed_products` mengambil 60 produk, mengonversi harga ke estimasi Rupiah mahasiswa, dan memetakan nama kategori ke dalam Bahasa Indonesia (misal: *beauty* &rarr; Perawatan Diri, *laptops* &rarr; Laptop & Komputer).
+- **Idempotensi Data:** Menggunakan `update_or_create` sehingga aman dijalankan berulang kali tanpa membuat duplikasi data, disertai opsi `--skip-existing`.
+- **Mitigasi Jaringan:** Penanganan exception graceful agar proses *build* atau migrasi server tidak terhenti jika koneksi eksternal lambat.
 
 ---
 
-## 🚀 Panduan Menjalankan Proyek Secara Lokal
+## 6. Framework CSS, Desain Sistem, & Interaktivitas
+
+- **Tailwind CSS:** Terintegrasi via CDN pada `templates/base.html` dengan konfigurasi `corePlugins: { preflight: false }` agar utility classes Tailwind dapat digunakan bebas tanpa merusak CSS kustom yang sudah ada di `static/css/`.
+- **Persistent Dark Mode:** Toggle tema di navbar (desktop dan mobile) yang tersimpan di `localStorage` pengguna, terhubung langsung dengan CSS variables di `variables.css`.
+- **HTMX & AJAX:** Pembaruan DOM parsial untuk interaksi keranjang dan filter tanpa reload penuh, dengan token CSRF yang terinjeksi otomatis melalui header `X-CSRFToken`.
+- **Halaman Error Kustom:** Tersedia `403.html` (Akses Ditolak) dan `404.html` (Halaman Tidak Ditemukan) yang selaras dengan tema aplikasi.
+
+---
+
+## 7. Panduan Menjalankan Proyek
 
 ### Prasyarat
-- Python 3.12+
+- Python 3.12 atau lebih baru
 - Git
 
 ### Langkah Instalasi
-```powershell
-# 1. Kloning repositori proyek
+```bash
+# 1. Clone repositori
 git clone <url-repository-sibekas>
 cd SiBekas
 
 # 2. Buat dan aktifkan virtual environment
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-# (Jika menggunakan Linux/macOS: source .venv/bin/activate)
 
-# 3. Perbarui pip dan pasang dependencies
-python -m pip install --upgrade pip
+# Windows (PowerShell)
+.\.venv\Scripts\Activate.ps1
+# Linux / macOS
+source .venv/bin/activate
+
+# 3. Install dependensi
 pip install -r requirements.txt
 
-# 4. Siapkan environment file
-Copy-Item .env.example .env
+# 4. Siapkan file environment
+cp .env.example .env
 
 # 5. Jalankan migrasi database
 python manage.py migrate
 
-# 6. Jalankan seeder katalog DummyJSON (minimal 50 produk)
+# 6. Jalankan seeder katalog DummyJSON (minimal 50 data)
 python manage.py seed_products
 
-# 7. Jalankan server lokal
+# 7. Jalankan development server
 python manage.py runserver
 ```
-Buka browser di `http://127.0.0.1:8000/`.
+Akses aplikasi melalui browser di `http://127.0.0.1:8000/`.
 
-### Menjalankan Suite Pengujian (Unit Tests)
-```powershell
-# Jalankan seluruh 98 test suite terverifikasi
+### Menjalankan Pengujian (Unit Tests)
+```bash
 python manage.py test
 ```
+Seluruh 98 pengujian unit (mencakup modul product, profile, cart, order, review, dan integrasi) terverifikasi berjalan tanpa error.
 
 ---
 
-## 🤖 AI Disclosure & Engineering Analysis
+## 8. AI Disclosure & Analisis Rekayasa
 
-Pengembangan platform **SiBekas** memanfaatkan bantuan teknologi kecerdasan buatan (*Artificial Intelligence*) secara beretika, transparan, dan terukur sebagai akselerator produktivitas rekayasa perangkat lunak (*pair programming assistant*).
+Pengembangan SiBekas memanfaatkan bantuan AI secara terukur sebagai asisten penulisan kode (*pair programming*). Bagian ini mendokumentasikan pemanfaatan, kutipan prompt kerja, serta koreksi manual yang dilakukan tim pengembang terhadap kekurangan output AI.
 
-### Alat AI yang Digunakan
-- **Google Antigravity IDE (Gemini 3.8 Flash / High Reasoning)**: Digunakan untuk perancangan arsitektur MVT, implementasi pola OOP Django, pembuatan test case, dan penataan design system Tailwind.
-- **Claude 3.5 Sonnet**: Digunakan untuk validasi silang struktur kode dan perumusan skenario pengujian otorisasi.
-
----
+### Alat yang Digunakan
+- **Google Antigravity IDE (Gemini 3.8 Flash / High Reasoning)**: Eksplorasi struktur modul Django, pembuatan kerangka pengujian unit, dan integrasi utility Tailwind CSS.
+- **Claude 3.5 Sonnet**: Tinjauan logika form validation dan skenario otorisasi kepemilikan objek.
 
 ### Strategi Prompting
-Tim menerapkan metode **Iterative Specification Prompting** dan **Test-Driven Prompting**:
-1. Menentukan kontrak antarmuka (*interface contract*) dan skema model database terlebih dahulu.
-2. Memberikan batasan teknis (*technical constraints*) yang ketat agar kode yang dihasilkan mematuhi kaidah Django idiomatik dan prinsip keamanan OWASP.
-3. Meminta AI menghasilkan test case komprehensif yang mencakup skenario kegagalan (*negative testing*), bukan hanya skenario ideal (*happy path*).
+Tim menerapkan pendekatan berbasis batasan spesifikasi teknis (*constraint-based prompting*):
+1. Menetapkan skema data relasional, tipe field, dan relasi foreign key terlebih dahulu sebelum meminta implementasi view.
+2. Memberikan batasan ketat agar kode tidak menggunakan library di luar `requirements.txt` yang ditentukan mata kuliah.
+3. Meminta skenario uji negatif (*edge cases* dan penolakan hak akses 403) pada setiap pengujian unit.
 
 ---
 
-### 💬 5 Kutipan Prompt Profesional yang Digunakan dalam Pengembangan
+### 5 Kutipan Prompt yang Digunakan
 
-Berikut adalah dokumentasi 5 kutipan prompt representatif yang dirumuskan oleh tim pengembang dalam memandu AI selama siklus pengembangan SiBekas:
+Berikut adalah 5 kutipan prompt representatif yang dirumuskan oleh tim selama siklus pengembangan:
 
-#### Kutipan Prompt 1 — Arsitektur Monolit MVT & Konfigurasi Multi-Environment
-> *"Bertindaklah sebagai Senior Python & Django Architect. Rancang fondasi arsitektur proyek Django 5.x monolitik bernama SiBekas untuk platform marketplace kampus berkelanjutan. Konfigurasikan settings.py dengan pemisahan lingkungan bersih antara development lokal dan production PWS. Terapkan django-environ atau dj-database-url agar secara otomatis mendukung SQLite lokal dan PostgreSQL di server tanpa hardcoded credentials. Pastikan ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS, staticfiles WhiteNoise, dan media handler terisolasi secara aman. Sertakan struktur aplikasi modular untuk lima domain: product, profiles, cart, order, dan review, lengkap dengan namespace URL yang konsisten dan base template terpadu yang responsif."*
+#### Prompt 1 — Seeder Public API DummyJSON
+> *"Buatkan custom Django management command bernama `seed_products` untuk mengambil katalog produk dari Public API DummyJSON (`https://dummyjson.com/products?limit=60`) ke model `Product` dan `Category` kami. Kebutuhannya: buat mapping nama kategori DummyJSON ke Bahasa Indonesia (misal: laptops -> Laptop & Komputer, beauty -> Perawatan Diri), konversi harga dari USD ke Rupiah dengan perkalian wajar untuk kantong mahasiswa, serta bersihkan deskripsi produk. Gunakan metode `update_or_create` agar eksekusi berulang tidak menghasilkan duplikasi data, sediakan argumen opsional `--skip-existing` untuk melindungi modifikasi lokal, dan pastikan ada penanganan error gracefully jika jaringan offline saat proses build."*
 
-#### Kutipan Prompt 2 — Integrasi Public API DummyJSON & Seeder Otomatis
-> *"Sebagai backend engineer spesialis integrasi data, buat custom Django management command seed_products yang mengonsumsi Public API DummyJSON (https://dummyjson.com/products?limit=60). Petakan data produk eksternal ke dalam schema Product dan Category internal, termasuk konversi kurs harga USD ke IDR yang realistis bagi mahasiswa, sanitasi deskripsi, dan pemetaan nama kategori berbahasa Indonesia menggunakan mapping dictionary. Terapkan mekanisme update_or_create idempotent agar aman dijalankan berulang kali, sertakan flag --skip-existing untuk menjaga modifikasi data lokal, serta rancang graceful error handling jika API eksternal mengalami timeout atau kegagalan jaringan saat deployment."*
+#### Prompt 2 — Logika Transaksi & Concurrency Safety Modul Order
+> *"Bantu susun logika service layer dan form untuk proses checkout di modul `order` Django. Alur transaksi ini menggunakan sistem pengambilan barang di area kampus UI (biaya pengiriman Rp 0) dengan opsi pembayaran COD atau simulasi akademik. Logika harus atomic menggunakan `transaction.atomic()` dan `select_for_update()` pada saat memeriksa serta memotong stok produk agar aman dari kondisi race condition jika ada dua pembeli checkout secara serentak. Jika stok tidak mencukupi, lempar `ValidationError` yang informatif. Tambahkan juga mekanisme pengembalian stok secara otomatis ke etalase ketika status pesanan dibatalkan (transisi status dari pending ke cancelled)."*
 
-#### Kutipan Prompt 3 — State Machine Pesanan & Transaksi Concurrency Safety
-> *"Rancang alur transaksi checkout dan manajemen status pesanan berbasis Django ORM dengan concurrency safety tingkat tinggi. Gunakan select_for_update() pada tabel Cart dan Order untuk mencegah race condition serta double submission saat banyak pengguna bertransaksi bersamaan. Terapkan validasi stok bersyarat pada saat pembentukan OrderItem, kalkulasi total yang menjamin subtotal ditambah biaya pengiriman kampus selalu presisi, dan mekanisme atomic transaction rollback bila terjadi kegagalan pembaruan inventaris. Lengkapi dengan state machine transisi status pesanan (pending, processing, shipped, completed, cancelled) yang otomatis mengembalikan stok barang saat pembatalan dilakukan."*
+#### Prompt 3 — Otorisasi Kepemilikan & Custom Security Decorator
+> *"Saya ingin memperketat otorisasi pada endpoint update dan delete di modul `product` dan `review`. Hanya user yang merupakan pemilik asli (seller produk atau penulis ulasan) yang boleh melakukan mutasi data tersebut. Buatkan custom Python decorator atau mixin bernama `@seller_required` yang memeriksa apakah `request.user == product.seller`. Jika pengguna lain atau penyerang mencoba mengubah data orang lain melalui URL langsung, lemparkan exception `django.core.exceptions.PermissionDenied` agar Django mengembalikan HTTP 403 Forbidden secara standar. Lengkapi juga dengan rekomendasi konfigurasi handler 403 kustom agar menampilkan template responsif yang ramah pengguna."*
 
-#### Kutipan Prompt 4 — Security Hardening & Object-Level Access Control (OLAC)
-> *"Terapkan kontrol otorisasi tingkat lanjut (Object-Level Access Control) dan pengerasan keamanan di seluruh modul Django SiBekas. Buat custom security decorators seperti @seller_required dan @order_participant_required yang memvalidasi kepemilikan objek sebelum mengizinkan aksi mutasi (update/delete). Jika pengguna yang tidak berhak mencoba mengakses atau mengubah resource milik pengguna lain, lemparkan django.core.exceptions.PermissionDenied agar sistem merespons dengan kode HTTP 403 Forbidden yang terhubung ke template 403.html ramah pengguna. Tambahkan pula sanitasi input teks bebas pada form ulasan dan profil guna memitigasi celah Cross-Site Scripting (XSS)."*
+#### Prompt 4 — Integrasi Tailwind CSS Tanpa Merusak Desain Eksisting
+> *"Aplikasi Django kami sudah memiliki file CSS kustom di `static/css/`. Kami ingin mengadopsi framework Tailwind CSS melalui CDN tanpa merusak styling yang sudah ada. Bagaimana cara mengonfigurasi Tailwind script tag agar preflight CSS reset dinonaktifkan (`corePlugins: { preflight: false }`)? Selain itu, buatkan snippet JavaScript ringan untuk tombol toggle Dark Mode di navbar yang menyelaraskan class `.dark` pada elemen `<html>`, menyimpan preferensi pengguna di `localStorage`, serta sinkron dengan variabel warna CSS (`--bg-primary`, `--text-primary`, `--card-bg`) yang sudah kami definisikan di `variables.css`."*
 
-#### Kutipan Prompt 5 — Comprehensive Test-Driven Development (Coverage >90%)
-> *"Sebagai QA lead pengujian web Django, buat test suite komprehensif berstandar Test-Driven Development (TDD) untuk modul Product dan Review guna mencapai cakupan kode di atas 90%. Susun pengujian terstruktur yang memvalidasi logika Model, batasan Form (seperti rentang rating 1-5 bintang dan batas maksimal 500 karakter komentar), serta skenario View positif dan negatif. Pastikan terdapat pengujian khusus untuk memverifikasi penolakan akses 403 saat non-pemilik mencoba mengubah produk atau ulasan orang lain, serta verifikasi bahwa hanya pembeli dengan transaksi COMPLETED yang diizinkan menuliskan ulasan produk."*
-
----
-
-### ⚠️ Analisis Kritis: Keterbatasan AI & Perbaikan Rekayasa Manual Mahasiswa
-
-Meskipun AI sangat membantu dalam mempercepat penulisan kode boilerplate, tim menemukan sejumlah **keterbatasan mendasar dan halusinasi AI** yang jika tidak diaudit dan diperbaiki secara manual oleh mahasiswa akan menyebabkan kegagalan sistem fatal:
-
-1. **Halusinasi Penghapusan Akun Pengguna (`ProtectedError`)**:
-   - *Kelemahan AI*: AI awalnya menghasilkan kode `user.delete()` sederhana pada fitur hapus akun profil.
-   - *Dampak*: Menimbulkan crash server 500 karena tabel `Order` memiliki relasi `buyer = models.ForeignKey(User, on_delete=models.PROTECT)`. Akibatnya, setiap mahasiswa yang sudah memiliki riwayat transaksi akan mengalami crash fatal saat mencoba menutup akunnya.
-   - *Solusi Manual Mahasiswa*: Mahasiswa menganalisis dependensi foreign-key database dan mengganti logika penghapusan dengan *soft deactivation* (`user.is_active = False`) serta blok `try...except ProtectedError` yang memberikan pesan edukatif bahwa riwayat pesanan tetap wajib diarsipkan demi integritas transaksi.
-2. **Inkonsistensi Migrasi Database vs Definisi Model**:
-   - *Kelemahan AI*: AI memodifikasi field `Product.category` menjadi `null=True, blank=True` di model, namun tidak menghasilkan file migrasi yang selaras ke database.
-   - *Dampak*: Terjadi `IntegrityError: NOT NULL constraint failed: product_product.category_id` saat pengguna membuat listing produk tanpa kategori.
-   - *Solusi Manual Mahasiswa*: Mahasiswa merekonstruksi skema migrasi Django `0002_alter_product_category.py` secara manual dan mengujinya pada database SQLite serta PostgreSQL.
-3. **Hilangnya Parameter Filter pada Navigasi Pagination**:
-   - *Kelemahan AI*: AI membuat tautan halaman berikutnya hanya dengan `?page={{ page.next_page_number }}`.
-   - *Dampak*: Saat pengguna sedang mencari produk "kalkulator" pada kategori "Elektronik" dan berpindah ke halaman 2, seluruh filter pencarian dan kategori mendadak hilang kembali ke halaman depan umum.
-   - *Solusi Manual Mahasiswa*: Mahasiswa membangun query string builder dinamis di Python view (`params = request.GET.copy(); params.pop('page'); querystring = params.urlencode()`) dan menyematkannya ke seluruh tautan pagination template.
-4. **HTML Entity Auto-escaping pada Unit Testing**:
-   - *Kelemahan AI*: AI membuat assertion pengujian string `assertContains(response, "Buku & Alat")` tanpa menyadari bahwa template engine Django secara otomatis meng-escape karakter `&` menjadi `&amp;`.
-   - *Dampak*: Seluruh test suite ulasan gagal meskipun tampilan di browser terlihat benar.
-   - *Solusi Manual Mahasiswa*: Mahasiswa menelusuri respon biner HTTP dan mengoreksi data uji agar selaras dengan standar parsing HTML entity Django.
+#### Prompt 5 — Test-Driven Development & Skenario Pengujian Unit
+> *"Buatkan suite unit test komprehensif menggunakan `django.test.TestCase` untuk modul `product` dan `review`. Pengujian harus mencakup: validasi model (harga positif, stok minimal, rating 1-5 bintang, komentar ulasan maksimal 500 karakter), logika form, serta view permissions. Khusus untuk view, buat skenario pengujian positif (pemilik berhasil mengedit) dan skenario negatif (pengguna lain mencoba mengedit atau menghapus lalu menerima status HTTP 403). Pastikan juga terdapat pengujian yang memverifikasi bahwa hanya pembeli dengan transaksi pesanan berstatus COMPLETED yang diizinkan untuk mengirimkan ulasan produk baru."*
 
 ---
-*SiBekas — Memberi Barang Preloved Kesempatan Kedua demi Kampus UI yang Berkelanjutan.*
+
+### Evaluasi Kritis: Keterbatasan Output AI & Intervensi Rekayasa Mahasiswa
+
+Meskipun AI mempercepat pembuatan kerangka awal kode, tim menemukan sejumlah kelemahan substansial pada keluaran AI yang harus dianalisis dan diperbaiki secara manual:
+
+1. **Penanganan Integritas Database pada Hapus Akun (`ProtectedError`):**  
+   AI mengusulkan pemanggilan `user.delete()` langsung pada fitur penutupan akun. Hal ini memicu error 500 (*ProtectedError*) saat dijalankan terhadap akun yang sudah memiliki riwayat transaksi di tabel `Order` karena adanya relasi `on_delete=models.PROTECT`.  
+   *Solusi manual tim:* Mengganti logika dengan penonaktifan akun (`is_active = False`) dan menangkap pengecualian `ProtectedError` dengan pesan informatif kepada pengguna bahwa data transaksi harus tetap diarsipkan demi catatan pembukuan.
+
+2. **Inkonsistensi State Migrasi Database:**  
+   AI sering kali memodifikasi atribut field pada `models.py` (seperti menambahkan `null=True, blank=True`) tanpa memperhitungkan file migrasi yang sudah pernah ter-commit sebelumnya. Hal ini berpotensi merusak skema database production di PWS.  
+   *Solusi manual tim:* Menjalankan pembuatan file migrasi secara disiplin melalui CLI lokal, meninjau file operasi migrasi Python yang dihasilkan, serta menguji penerapannya secara bertahap pada SQLite dan PostgreSQL.
+
+3. **Hilangnya Parameter Query String pada Paginasi:**  
+   AI membuat navigasi halaman berikutnya hanya dengan tautan `?page={{ page.next_page_number }}`. Akibatnya, saat pengguna sedang memfilter barang (misalnya mencari "kalkulator" pada kategori "Elektronik") dan berpindah ke halaman kedua, seluruh parameter filter hilang dan kembali ke katalog umum.  
+   *Solusi manual tim:* Mengimplementasikan helper query string builder di view Django yang merekam seluruh parameter GET aktif (`request.GET.copy()`) dan menyematkannya kembali pada setiap tautan paginasi template.
+
+4. **Karakter Auto-Escaping pada Unit Testing:**  
+   AI membuat assertion teks uji seperti `assertContains(response, "Buku & Alat")` tanpa memperhitungkan bahwa template engine Django secara otomatis mengubah karakter `&` menjadi entitas HTML `&amp;`. Akibatnya, pengujian gagal meskipun antarmuka web berfungsi normal.  
+   *Solusi manual tim:* Memeriksa raw response content dan menyesuaikan string pengujian agar selaras dengan mekanisme rendering HTML Django.
