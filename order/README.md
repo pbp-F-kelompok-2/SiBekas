@@ -122,8 +122,11 @@ CSRF, transisi status, pengembalian stok, pembayaran simulasi, eligibility ulasa
 serta kontrak dan kegagalan API RajaOngkir dengan response mock. Tarif live tetap
 perlu diuji memakai akun dan API key RajaOngkir yang valid.
 
-`Procfile` menjalankan migration, bootstrap katalog opsional, dan collectstatic saat release, kemudian
-Gunicorn. Gunakan konfigurasi produksi pada `.env.example` dengan secret key
+`Procfile` menyediakan migration, bootstrap katalog/petugas, dan collectstatic
+untuk hosting yang mendukung phase release. PWS yang diperiksa membangun Docker
+dan tidak mengeksekusi phase itu; jalankan `migrate`, `bootstrap_catalog`,
+`bootstrap_order_staff`, dan `collectstatic` melalui tab Terminal PWS sesudah deploy.
+Gunakan konfigurasi produksi pada `.env.example` dengan secret key
 kuat, `DJANGO_DEBUG=False`, HTTPS, dan database PWS. Untuk demo ongkir kurir,
 aktifkan simulasi dan isi konfigurasi RajaOngkir di PWS.
 
@@ -140,6 +143,7 @@ PWS menjalankan build/release setelah push. Periksa status Running dan
 di deployment. Jangan menjalankan ulang `seed_products` pada setiap release:
 command seed tanpa `--skip-existing` memakai `update_or_create` dan akan mengatur ulang stok
 contoh dari DummyJSON, termasuk stok yang sudah berkurang karena transaksi.
-Untuk data awal pada PWS tanpa console, aktifkan `DJANGO_SEED_INITIAL_PRODUCTS=True`;
-bootstrap hanya berjalan jika katalog belum mencapai 50 produk dan mempertahankan
+Untuk data awal pada PWS, aktifkan `DJANGO_SEED_INITIAL_PRODUCTS=True` dan jalankan
+`python manage.py bootstrap_catalog` melalui Terminal. Bootstrap hanya berjalan
+jika katalog belum mencapai 50 produk dan mempertahankan
 produk yang sudah ada. Nonaktifkan opsi setelah data awal terisi.

@@ -37,11 +37,13 @@ ke PWS. Saran integrasi saja belum membuat akun, database, atau koneksi aktif.
    secret Django hanya untuk mengganti database.
 6. Pastikan `DJANGO_SEED_INITIAL_PRODUCTS=True` serta ketiga `ORDER_STAFF_*`
    sudah tersedia di environment privat PWS, kemudian redeploy commit terbaru.
-   Release menjalankan migrasi, mengisi katalog dari DummyJSON jika dibutuhkan,
-   dan membuat akun petugas bila belum ada.
-7. Jalankan di terminal PWS:
+7. PWS yang diperiksa tidak menjalankan phase `release` dari Procfile. Buka
+   **Terminal** project PWS dan jalankan:
 
    ```bash
+   python manage.py migrate --noinput
+   python manage.py bootstrap_catalog
+   python manage.py bootstrap_order_staff
    python manage.py check_order_readiness --deployment
    ```
 

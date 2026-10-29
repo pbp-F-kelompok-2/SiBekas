@@ -77,7 +77,8 @@ dan [perhitungan tarif](https://www.rajaongkir.com/docs/shipping-cost/endpoint-r
 ## 3. Siapkan petugas pesanan
 
 Isi `ORDER_STAFF_USERNAME`, `ORDER_STAFF_EMAIL`, dan `ORDER_STAFF_PASSWORD` pada
-environment privat. Release menjalankan `python manage.py bootstrap_order_staff`
+environment privat. Jalankan `python manage.py bootstrap_order_staff`
+di terminal PWS setelah deploy
 untuk membuat akun aktif dengan `is_staff=True` dan `is_superuser=False`.
 Kredensial yang dibuat untuk project ini disimpan pada file privat
 `output/akun-petugas-sibekas.txt` di luar repository, dan konfigurasi lokal
@@ -123,11 +124,13 @@ data DummyJSON tanpa menimpa stok/perubahan produk yang sudah ada. Tanpa flag
 tersebut, seeder tetap memiliki perilaku lama `update_or_create` yang bisa mereset
 stok contoh yang sudah bertransaksi.
 
-Untuk PWS tanpa console, set `DJANGO_SEED_INITIAL_PRODUCTS=True` pada environment,
-lalu deploy. Release menjalankan `bootstrap_catalog`: hanya jika opsi itu aktif
-dan katalog belum mencapai 50 produk, seeder dipanggil dengan `--skip-existing`.
-Set kembali ke `False` setelah data awal terisi. Pengisian katalog memerlukan
-akses internet ke DummyJSON saat release dan tidak membuat akun petugas.
+Set `DJANGO_SEED_INITIAL_PRODUCTS=True` pada environment, lalu jalankan
+`python manage.py bootstrap_catalog` melalui tab **Terminal** PWS setelah deploy.
+Hanya jika opsi itu aktif dan katalog belum mencapai 50 produk, seeder dipanggil
+dengan `--skip-existing`. Set kembali ke `False` setelah data awal terisi bila
+tidak diperlukan lagi. Pengisian katalog memerlukan akses internet ke DummyJSON.
+PWS yang diperiksa tidak menjalankan tahap `release` dari Procfile; tahap itu
+tetap dapat digunakan pada hosting lain yang mendukungnya.
 
 Sebelum merge anggota, jalankan `git fetch origin`, periksa PR/perubahan masing-masing,
 dan gabungkan melalui PR sesuai kesepakatan kelompok. Jangan mengganti perubahan
@@ -186,8 +189,19 @@ gunakan **Project Credentials PWS**, bukan password SSO. Tidak perlu menyimpan
 password di remote URL atau memasukkannya ke commit. Jangan memakai force push
 untuk mengatasi riwayat deployment yang berbeda; periksa commit dan integrasinya dahulu.
 
-`Procfile` menjalankan migrasi, pengisian katalog awal opsional, dan collectstatic pada release. Pantau build log
-sampai status **Running**. Jika tersedia console aplikasi, jalankan:
+PWS membuat image Docker dan pada deployment yang diperiksa tidak mengeksekusi
+phase `release` dari `Procfile`. Setelah build **Successful** dan status
+**Running**, buka tab **Terminal** project lalu jalankan:
+
+```bash
+python manage.py migrate --noinput
+python manage.py bootstrap_catalog
+python manage.py bootstrap_order_staff
+python manage.py collectstatic --noinput
+```
+
+Perintah dapat dijalankan ulang: bootstrap mempertahankan produk dan akun yang
+sudah tersedia. Setelah itu periksa kesiapan database produksi:
 
 ```bash
 python manage.py check_order_readiness --deployment --require-shipping
