@@ -157,8 +157,13 @@ def create_product(request):
 @rate_limit(5, 60)
 def bulk_delete(request):
     ids = [i for i in request.POST.getlist("ids") if i.isdigit()]
-    Product.objects.filter(pk__in=ids,seller=request.user).delete()
-    messages.success(request, "Produk terpilih berhasil dihapus")
+    products = Product.objects.filter(pk__in=ids,seller=request.user)
+    count = products.count()
+    if count == 0:
+        messages.error(request, "Tidak ada produk yang dipilih")
+    else:
+        products.delete()
+        messages.success(request, f"{count} produk berhasil dihapus")
     return redirect("/products/?mine=1")
 
 
