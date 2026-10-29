@@ -124,3 +124,4 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"Gambar {self.product.name} - {self.product.name}"
+

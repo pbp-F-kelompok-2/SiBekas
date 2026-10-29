@@ -171,3 +171,4 @@ def delete_account(request):
     messages.success(request, "Akun kamu berhasil dihapus.")
 
     return redirect("product:index")
+
