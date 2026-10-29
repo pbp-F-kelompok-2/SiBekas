@@ -275,3 +275,7 @@
     color: var(--color-text-muted);
     font-size: 0.85rem;
 }
+.product-reviews { margin: 2rem 0; }
+.product-review { padding: 1rem 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.product-review p { margin-bottom: .5rem; }
+.product-review small { color: var(--muted); }

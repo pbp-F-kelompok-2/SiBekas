@@ -16,11 +16,12 @@ class ShippingError(ValueError):
 
 
 def is_configured():
-    return bool(settings.RAJAONGKIR_API_KEY and settings.RAJAONGKIR_ORIGIN_ID)
+    origin = str(settings.RAJAONGKIR_ORIGIN_ID).strip()
+    return bool(settings.RAJAONGKIR_API_KEY and origin.isdigit() and int(origin) > 0 and settings.RAJAONGKIR_COURIERS.strip())
 
 
 def _request(endpoint, data=None):
-    if not is_configured():
+    if not settings.RAJAONGKIR_API_KEY:
         raise ShippingError("Pengiriman kurir belum tersedia. Silakan pilih ambil di kampus UI.")
     encoded = urlencode(data).encode() if data is not None else None
     request = Request(BASE_URL + endpoint, data=encoded, headers={
@@ -37,18 +38,28 @@ def _request(endpoint, data=None):
         raise ShippingError("Ongkir belum dapat dimuat. Coba lagi atau pilih ambil di kampus UI.") from exc
 
 
-def search_destinations(query, user_id):
+def get_destinations(query):
+    """Look up IDs for either the collection point or a buyer's destination."""
     rows = _request("destination/domestic-destination?" + urlencode({"search": query, "limit": 10, "offset": 0}))
     try:
-        return [{
-            "label": str(row["label"])[:300],
-            "token": signing.dumps({"id": int(row["id"]), "label": str(row["label"])[:300], "user": user_id}, salt="order.destination"),
-        } for row in rows]
+        destinations = [{"id": int(row["id"]), "label": str(row["label"])[:300]} for row in rows]
+        if any(row["id"] <= 0 or not row["label"].strip() for row in destinations):
+            raise ValueError
+        return destinations
     except (KeyError, TypeError, ValueError) as exc:
         raise ShippingError("Data tujuan pengiriman tidak valid. Silakan coba lagi.") from exc
 
 
+def search_destinations(query, user_id):
+    return [{
+        "label": row["label"],
+        "token": signing.dumps({**row, "user": user_id}, salt="order.destination"),
+    } for row in get_destinations(query)]
+
+
 def calculate_quotes(destination_token, summary, user_id):
+    if not is_configured():
+        raise ShippingError("Pengiriman kurir belum tersedia. Silakan pilih ambil di kampus UI.")
     try:
         destination = signing.loads(destination_token, salt="order.destination", max_age=QUOTE_MAX_AGE)
         if destination["user"] != user_id:

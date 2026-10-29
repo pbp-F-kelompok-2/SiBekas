@@ -10,6 +10,7 @@ from cart.models import Cart, CartItem
 from cart.services import cart_summary
 from product.models import Product
 
+from .forms import CheckoutForm
 from .models import Order, OrderEvent, OrderItem
 from .shipping import ShippingError, validate_quote
 
@@ -35,12 +36,17 @@ def read_checkout_token(token, user):
 
 @transaction.atomic
 def create_order(user, data):
-    payload = read_checkout_token(data["checkout_token"], user)
+    payload = read_checkout_token(data.get("checkout_token", ""), user)
     # Serializes checkout against this user's cart mutations and double submissions.
     cart = Cart.objects.select_for_update().filter(user=user).first()
     existing = Order.objects.filter(checkout_key=payload["key"], buyer=user).first()
     if existing:
         return existing
+    form = CheckoutForm(data)
+    if not form.is_valid():
+        errors = [str(error) for messages in form.errors.values() for error in messages]
+        raise OrderError(" ".join(errors))
+    data = form.cleaned_data
     if cart is None:
         raise OrderError("Keranjangmu masih kosong.")
     summary = cart_summary(user, lock=True)
@@ -48,8 +54,6 @@ def create_order(user, data):
         raise OrderError("Periksa keranjang: hapus produk yang tidak tersedia atau sesuaikan jumlahnya.")
     if payload["fingerprint"] != summary["fingerprint"]:
         raise OrderError("Isi atau harga keranjang berubah. Muat ulang checkout untuk meninjau total terbaru.")
-    if data["payment_method"] == Order.PaymentMethod.DEMO and not settings.ORDER_ENABLE_DEMO_PAYMENT:
-        raise OrderError("Pembayaran simulasi tidak tersedia.")
     quote = {"cost": 0, "service": "Ambil di kampus UI", "etd": "Sesuai kesepakatan", "destination": "Kampus Universitas Indonesia", "destination_id": None}
     if data["delivery_method"] == Order.DeliveryMethod.COURIER:
         try:

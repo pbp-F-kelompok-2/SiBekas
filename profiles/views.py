@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile, Favorite
 from product.models import Product
 from django.contrib import messages
+from django.db.models.deletion import ProtectedError
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
@@ -78,7 +79,7 @@ def edit_profile(request):
             return redirect("profile:index")
 
         messages.error(request, "Profil gagal diperbarui. Periksa kembali data yang kamu masukkan.")
-        return redirect("profile:index")
+        return render_profile(request, form=form)
 
     return redirect("profile:index")
 
@@ -104,11 +105,16 @@ class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
 
 @login_required
 def index(request):
-    profile, created = Profile.objects.get_or_create(
+    return render_profile(request)
+
+
+def render_profile(request, *, form=None):
+    profile, _ = Profile.objects.get_or_create(
         user=request.user
     )
 
-    form = ProfileForm(instance=profile)
+    if form is None:
+        form = ProfileForm(instance=profile)
 
     my_products = Product.objects.filter(
         seller=request.user
@@ -126,6 +132,8 @@ def index(request):
             "form": form,
             "my_products": my_products,
             "total_listings": my_products.count(),
+            "total_orders": request.user.orders.count(),
+            "total_reviews": request.user.reviews.count(),
             "favorites": favorites,
         },
     )
@@ -153,8 +161,12 @@ def toggle_favorite(request, slug):
 def delete_account(request):
     user = request.user
 
+    try:
+        user.delete()
+    except ProtectedError:
+        messages.error(request, "Akun memiliki riwayat pesanan dan belum dapat dihapus. Riwayat transaksi tetap disimpan.")
+        return redirect("profile:index")
     logout(request)
-    user.delete()
 
     messages.success(request, "Akun kamu berhasil dihapus.")
 

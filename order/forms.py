@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.conf import settings
 from django.core.validators import RegexValidator
@@ -5,9 +7,14 @@ from django.core.validators import RegexValidator
 from .models import Order
 
 
+class PhoneNumberField(forms.CharField):
+    def to_python(self, value):
+        return re.sub(r"[\s()-]", "", super().to_python(value))
+
+
 class CheckoutForm(forms.Form):
     recipient_name = forms.CharField(label="Nama penerima", max_length=150, widget=forms.TextInput(attrs={"autocomplete": "name"}))
-    phone_number = forms.CharField(
+    phone_number = PhoneNumberField(
         label="Nomor telepon", max_length=20,
         validators=[RegexValidator(r"^\+?\d{9,15}$", "Gunakan 9–15 digit angka, misalnya 081234567890.")],
         widget=forms.TextInput(attrs={"type": "tel", "autocomplete": "tel", "placeholder": "081234567890"}),

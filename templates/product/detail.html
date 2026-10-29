@@ -36,10 +36,10 @@
                     action="{% url 'profile:toggle_favorite' product.slug %}">
                     {% csrf_token %}
                     <button type="submit">
-                        {% if product.favorited_by.all %}
-                            ♡ Tambah / Hapus Favorit
+                        {% if is_favorite %}
+                            ♡ Hapus dari favorit
                         {% else %}
-                            ♡ Favorit
+                            ♡ Tambah ke favorit
                         {% endif %}
                     </button>
                 </form>
@@ -94,6 +94,18 @@
             {% endif %}
         </div>
     </div>
+
+    <section class="product-reviews" aria-labelledby="product-reviews-heading">
+        <h2 id="product-reviews-heading">Ulasan pembeli</h2>
+        {% if average_rating %}<p>Rata-rata {{ average_rating|floatformat:1 }} / 5 · {{ reviews|length }} ulasan</p>{% endif %}
+        {% for review in reviews %}
+        <article class="product-review">
+            <p><strong>{{ review.user.username }}</strong> · {{ review.rating }} / 5</p>
+            <p>{{ review.comment|linebreaksbr }}</p>
+            <small>{{ review.created_at|date:"d M Y" }}{% if review.edited %} · Diedit{% endif %}</small>
+        </article>
+        {% empty %}<p>Belum ada ulasan dari pembeli.</p>{% endfor %}
+    </section>
 
     {% if related_products %}
     <div class="related-products">

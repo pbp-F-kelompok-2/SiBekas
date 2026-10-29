@@ -15,7 +15,7 @@ from product.models import Category, Product
 
 from .models import Order
 from .services import OrderError, change_status, checkout_token, create_order
-from .shipping import ShippingError, calculate_quotes, search_destinations, validate_quote
+from .shipping import ShippingError, calculate_quotes, get_destinations, search_destinations, validate_quote
 
 
 @override_settings(ORDER_ENABLE_DEMO_PAYMENT=True)
@@ -307,6 +307,22 @@ class RajaOngkirTests(SimpleTestCase):
         self.assertEqual(request.get_header("Key"), "test-key")
         self.assertNotIn("test-key", json.dumps(result))
         self.assertEqual(signing.loads(result[0]["token"], salt="order.destination")["id"], 123)
+
+    @override_settings(RAJAONGKIR_ORIGIN_ID="")
+    @patch("order.shipping.urlopen")
+    def test_origin_can_be_looked_up_with_only_an_api_key(self, urlopen):
+        urlopen.return_value = self.response([{"id": 123, "label": "BEJI, DEPOK"}])
+        self.assertEqual(get_destinations("Beji"), [{"id": 123, "label": "BEJI, DEPOK"}])
+        with self.assertRaises(ShippingError):
+            calculate_quotes("unused", {"weight_grams": 500, "fingerprint": "cart"}, 7)
+        self.assertEqual(urlopen.call_count, 1)
+
+    @override_settings(RAJAONGKIR_ORIGIN_ID="not-a-location-id")
+    @patch("order.shipping.urlopen")
+    def test_invalid_origin_does_not_send_cost_request(self, urlopen):
+        with self.assertRaises(ShippingError):
+            calculate_quotes("unused", {"weight_grams": 500, "fingerprint": "cart"}, 7)
+        urlopen.assert_not_called()
 
     @patch("order.shipping.urlopen")
     def test_cost_uses_weight_and_signed_destination(self, urlopen):

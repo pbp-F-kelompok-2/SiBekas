@@ -18,6 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.style.overflow = "";
     }
 
+    if (modal.classList.contains("is-open")) {
+        document.body.style.overflow = "hidden";
+        modal.querySelector("[aria-invalid='true'], input, textarea, select")?.focus();
+    }
+
     openButton.addEventListener("click", openModal);
     closeButton.addEventListener("click", closeModal);
 

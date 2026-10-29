@@ -115,26 +115,15 @@
                 Penjual
             </h4>
 
-            <span
-                class="sb-footer-disabled"
-                title="Fitur belum tersedia"
-            >
+            <a href="{% url 'product:create' %}">
                 Jual Barang
-            </span>
+            </a>
 
-            <span
-                class="sb-footer-disabled"
-                title="Fitur belum tersedia"
-            >
-                Pasang Listing
-            </span>
+            <a href="{% if user.is_authenticated %}{% url 'profile:index' %}{% else %}{% url 'profile:login' %}?next={% url 'profile:index' %}{% endif %}">
+                Kelola Listing
+            </a>
 
-            <span
-                class="sb-footer-disabled"
-                title="Fitur belum tersedia"
-            >
-                Bantuan
-            </span>
+            <a href="{% url 'order:index' %}">Pantau Pesanan</a>
 
         </div>
 

@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from django.db.models import Avg
 from .models import Category, Product
 from .forms import ProductForm
 from profiles.models import Favorite
@@ -51,11 +52,9 @@ def index(request):
 
     context = {
         "page": page_obj,
-        "products": page_obj.object_list,
         "categories": categories,
         "category_slug": category_slug,
         "query": query,
-        "page_range": paginator.get_elided_page_range(page_obj.number, on_each_side=1, on_ends=1),
         "page_url_prefix": f"?{querystring}&page=" if querystring else "?page=",
         "conditions": Product.CONDITION_CHOICES,
     }
@@ -83,6 +82,8 @@ def detail(request, slug):
         "images": product.images.all(),
         "related_products": related_products,
         "is_favorite": is_favorite,
+        "reviews": product.reviews.select_related("user").order_by("-created_at"),
+        "average_rating": product.reviews.aggregate(average=Avg("rating"))["average"],
     }
     return render(request, "product/detail.html", context)
 
