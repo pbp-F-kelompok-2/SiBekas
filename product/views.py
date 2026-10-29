@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .models import Category, Product
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.shortcuts import redirect
 from .forms import ProductForm
 from profiles.models import Favorite
 
@@ -86,24 +85,12 @@ def detail(request, slug):
     }
     return render(request, "product/detail.html", context)
 
-@login_required
-def create(request):
-    form = ProductForm(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        product = form.save(commit=False)
-        product.seller = request.user
-        save_image(product, form.cleaned_data["image"])
-        product.save()
-        return redirect(product)
-    return render(request, "product/form.html", {"form": form, "title": "Jual barang"})
 
 @login_required
 def update(request, slug):
-    product = get_object_or_404(Product, slug = slug, seller = request.user)
-    form = ProductForm(request.POST or None, request.FILES or None, instance = product)
+    product = get_object_or_404(Product, slug=slug, seller=request.user)
+    form = ProductForm(request.POST or None, request.FILES or None, instance=product)
     if form.is_valid():
-        product = form.save(commit = False)
-        save_image(product, form.cleaned_data["image"])
         form.save()
         return redirect(product)
     return render(request, "product/form.html", {"form": form, "title": "Ubah produk"})
