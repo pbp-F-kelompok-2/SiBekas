@@ -8,6 +8,7 @@ from .models import Category, Product
 from .forms import ProductForm
 from profiles.models import Favorite
 from django.core.cache import cache
+from django.urls import reverse
 
 PRODUCTS_PER_PAGE = 12
 
@@ -164,6 +165,6 @@ def bulk_delete(request):
     else:
         products.delete()
         messages.success(request, f"{count} produk berhasil dihapus")
-    return redirect("/products/?mine=1")
+    return redirect(reverse("product:index") + "?mine=1")
 
 
