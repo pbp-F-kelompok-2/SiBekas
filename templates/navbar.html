@@ -38,11 +38,16 @@
         </form>
 
         <div class="sb-nav-actions">
-            <!-- Dark Mode Toggle -->
-            <button type="button" class="sb-cart-button" onclick="toggleTheme()" aria-label="Ganti mode gelap/terang" title="Ganti mode gelap/terang" style="background: none; border: none; cursor: pointer;">
-                <i data-lucide="moon"></i>
+            <button
+                class="sb-theme-toggle"
+                type="button"
+                id="theme-toggle"
+                aria-label="Aktifkan dark mode"
+                aria-pressed="false"
+            >
+                <i data-lucide="moon" aria-hidden="true"></i>
+                <span class="sb-theme-label">Tema gelap</span>
             </button>
-
             {% if user.is_authenticated %}
                 <a class="sb-cart-button" href="{% url 'cart:index' %}"
                     aria-label="Keranjang, {{ cart_count }} barang">
@@ -93,10 +98,10 @@
                 Ulasan
             </a>
 
-            <button type="button" onclick="toggleTheme()" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.75rem 1rem; background: none; border: none; text-align: left; font-size: 1rem; color: inherit; cursor: pointer;">
+            <!-- <button type="button" onclick="toggleTheme()" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.75rem 1rem; background: none; border: none; text-align: left; font-size: 1rem; color: inherit; cursor: pointer;">
                 <i data-lucide="moon"></i>
                 <span>Ganti Mode Gelap / Terang</span>
-            </button>
+            </button> -->
 
             {% if user.is_authenticated %}
                 <a href="{% url 'profile:index' %}">Profil</a>

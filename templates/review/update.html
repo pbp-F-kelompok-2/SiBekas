@@ -1,31 +1,50 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Ulasan - {{ review.product.name }} | SiBekas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/review.css' %}">
+{% endblock %}
 
 {% block content %}
+<div class="review-form-page">
+    <a href="{% url 'review:index' %}" class="review-back-link">← Kembali ke Ulasan &amp; Rating</a>
 
-<p class="eyebrow">Review</p>
+    <header class="review-form-hero">
+        <span class="review-form-hero__kicker">ULASAN</span>
+        <h1>Edit ulasan</h1>
+        <p>Perbarui rating atau komentar yang sudah kamu berikan.</p>
+    </header>
 
-<h1>Edit Ulasan</h1>
+    <section class="review-form-card">
+        <div class="review-product-box">
+            <div class="review-product-box__icon" aria-hidden="true">
+                <i data-lucide="book-open"></i>
+            </div>
+            <div class="review-product-box__content">
+                <span class="review-product-box__status">ULASAN MILIKMU</span>
+                <h2 class="review-product-box__name">{{ review.product.name }}</h2>
+                <p class="review-product-box__meta">Rating saat ini: {{ review.rating }}/5</p>
+            </div>
+        </div>
 
-<p class="hero-copy">
-    Perbarui rating atau komentar yang sudah kamu berikan.
-</p>
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="review-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="required">*</span>{% endif %}</label>
+                    {{ field }}
+                    {% if field.help_text %}<p class="review-field__hint">{{ field.help_text }}</p>{% endif %}
+                    {% for error in field.errors %}<p class="review-form-error">{{ error }}</p>{% endfor %}
+                </div>
+            {% endfor %}
 
-<section class="modules">
-    <h2>{{ review.product.name }}</h2>
-
-    <form method="POST">
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        <button type="submit" class="button">
-            Simpan Perubahan
-        </button>
-
-        <a href="{% url 'review:index' %}" class="button">
-            Batal
-        </a>
-    </form>
-</section>
-
+            <div class="review-form-actions">
+                <button type="submit" class="button">Simpan perubahan</button>
+                <a href="{% url 'review:index' %}" class="review-cancel-button">Batal</a>
+            </div>
+        </form>
+    </section>
+</div>
 {% endblock %}

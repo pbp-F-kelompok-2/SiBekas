@@ -1,37 +1,41 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Hapus Ulasan - SiBekas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/review.css' %}">
+{% endblock %}
 
 {% block content %}
+<div class="review-form-page">
+    <a href="{% url 'review:index' %}" class="review-back-link">← Kembali ke Ulasan &amp; Rating</a>
 
-<p class="eyebrow">Review</p>
+    <header class="review-form-hero">
+        <span class="review-form-hero__kicker">KONFIRMASI</span>
+        <h1>Hapus ulasan</h1>
+        <p>Pastikan kamu ingin menghapus ulasan ini. Tindakan ini tidak dapat dibatalkan.</p>
+    </header>
 
-<h1>Hapus Ulasan</h1>
+    <section class="review-confirm-card">
+        <div class="review-product-box">
+            <div class="review-product-box__icon" aria-hidden="true">
+                <i data-lucide="message-square-warning"></i>
+            </div>
+            <div class="review-product-box__content">
+                <span class="review-product-box__status">ULASAN YANG AKAN DIHAPUS</span>
+                <h2 class="review-product-box__name">{{ review.product.name }}</h2>
+                <p class="review-product-box__meta">Rating: {{ review.rating }}/5</p>
+            </div>
+        </div>
 
-<p class="hero-copy">
-    Apakah kamu yakin ingin menghapus ulasan ini?
-</p>
+        <blockquote class="review-confirm-comment">“{{ review.comment }}”</blockquote>
 
-<section class="modules">
-    <h2>{{ review.product.name }}</h2>
-
-    <p>
-        Rating: {{ review.rating }}/5
-    </p>
-
-    <p>
-        {{ review.comment }}
-    </p>
-
-    <form method="POST">
-        {% csrf_token %}
-
-        <button type="submit" class="button">
-            Ya, Hapus
-        </button>
-
-        <a href="{% url 'review:index' %}" class="button">
-            Batal
-        </a>
-    </form>
-</section>
-
+        <form method="POST" class="review-form-actions">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete-confirm">Ya, hapus ulasan</button>
+            <a href="{% url 'review:index' %}" class="review-cancel-button">Batal</a>
+        </form>
+    </section>
+</div>
 {% endblock %}

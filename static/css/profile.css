@@ -6,7 +6,7 @@
 .profile-page {
     width: min(100% - 48px, 1376px);
     margin: 20px auto 60px;
-    color: #171717;
+    color: var(--color-text-primary);
 }
 
 /* Header */
@@ -19,15 +19,15 @@
     display: inline-block;
     padding: 4px 13px;
     border-radius: 8px;
-    background: #ffc928;
-    color: #174f2b;
+    background: var(--sun-500);
+    color: var(--forest-700);
     font-size: 14px;
     font-weight: 700;
 }
 
 .profile-header h1 {
     margin: 8px 0 0;
-    color: #19552f;
+    color: var(--forest-500);
     font-size: 42px;
     line-height: 1.2;
     font-weight: 800;
@@ -58,10 +58,10 @@
     flex-direction: column;
     align-items: center;
 
-    background: #ffffff;
-    border: 2px solid #19552f;
-    border-radius: 21px;
-    box-shadow: 5px 6px 0 #19552f;
+    background: var(--cream-0);
+    border: 2px solid var(--forest-500);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pop);
 }
 
 /* Avatar */
@@ -76,19 +76,19 @@
     justify-content: center;
 
     margin-bottom: 14px;
-    border: 2px solid #19552f;
+    border: 2px solid var(--forest-500);
     border-radius: 29px;
-    background: #a2c600;
-    box-shadow: 3px 4px 0 #19552f;
+    background: var(--kiwi-500);
+    box-shadow: var(--shadow-pop-sm);
 
-    color: #174f2b;
+    color: var(--forest-700);
     font-size: 43px;
     font-weight: 800;
 }
 
 .profile-card h2 {
     margin: 0;
-    color: #19552f;
+    color: var(--forest-500);
     font-size: 28px;
     line-height: 1.3;
     font-weight: 800;
@@ -98,7 +98,7 @@
 
 .profile-faculty {
     margin: 13px 0 0;
-    color: #626262;
+    color: var(--color-text-muted);
     font-size: 17px;
     line-height: 1.5;
     text-align: center;
@@ -134,12 +134,12 @@
     align-items: center;
     justify-content: center;
 
-    border-radius: 16px;
-    background: #f7f0dd;
+    border-radius: var(--radius-base);
+    background: var(--cream-400);
 }
 
 .stat-item strong {
-    color: #19552f;
+    color: var(--forest-500);
     font-size: 25px;
     line-height: 1.2;
     font-weight: 800;
@@ -147,7 +147,7 @@
 
 .stat-item span {
     margin-top: 3px;
-    color: #555555;
+    color: var(--color-text-muted);
     font-size: 14px;
 }
 
@@ -168,13 +168,13 @@
 .information-item > span {
     display: block;
     margin-bottom: 2px;
-    color: #666666;
+    color: var(--color-text-muted);
     font-size: 14px;
 }
 
 .information-item p {
     margin: 0;
-    color: #171717;
+    color: var(--color-text-primary);
     font-size: 17px;
     line-height: 1.45;
     font-weight: 600;
@@ -192,9 +192,9 @@
     align-items: center;
     justify-content: center;
 
-    border: 2px solid #19552f;
-    border-radius: 999px;
-    box-shadow: 2px 3px 0 #19552f;
+    border: 2px solid var(--forest-500);
+    border-radius: var(--radius-pill);
+    box-shadow: 2px 3px 0 var(--forest-500);
 
     font-size: 17px;
     font-weight: 700;
@@ -205,22 +205,22 @@
 }
 
 .profile-button-primary {
-    background: #19552f;
-    color: #ffffff;
+    background: var(--forest-500);
+    color: var(--cream-0);
 }
 
 .profile-button-primary:hover {
-    background: #123f23;
+    background: var(--forest-700);
 }
 
 .profile-button-outline {
     margin-top: 14px;
-    background: #ffffff;
-    color: #19552f;
+    background: var(--cream-0);
+    color: var(--forest-500);
 }
 
 .profile-button-outline:hover {
-    background: #f0f5ed;
+    background: var(--forest-50);
 }
 
 /* =========================
@@ -246,11 +246,11 @@
     min-height: 43px;
     padding: 9px 18px;
 
-    border: 2px solid #19552f;
-    border-radius: 999px;
-    background: #ffffff;
+    border: 2px solid var(--forest-500);
+    border-radius: var(--radius-pill);
+    background: var(--cream-0);
 
-    color: #19552f;
+    color: var(--forest-500);
     font-family: inherit;
     font-size: 16px;
     font-weight: 600;
@@ -258,18 +258,18 @@
 }
 
 .profile-tab.active {
-    background: #19552f;
-    color: #ffffff;
+    background: var(--forest-500);
+    color: var(--cream-0);
 }
 
 .profile-tab:hover {
-    background: #eaf1e7;
-    color: #19552f;
+    background: var(--forest-50);
+    color: var(--forest-500);
 }
 
 .profile-tab.active:hover {
-    background: #123f23;
-    color: #ffffff;
+    background: var(--forest-700);
+    color: var(--cream-0);
 }
 
 /* Empty state */
@@ -285,10 +285,10 @@
     align-items: center;
     justify-content: center;
 
-    border: 2px solid #19552f;
-    border-radius: 20px;
-    box-shadow: 4px 5px 0 #19552f;
-    background: #ffffff;
+    border: 2px solid var(--forest-500);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-pop);
+    background: var(--cream-0);
     text-align: center;
 }
 
@@ -302,14 +302,14 @@
     justify-content: center;
 
     border-radius: 50%;
-    background: #f7f0dd;
-    color: #19552f;
+    background: var(--cream-400);
+    color: var(--forest-500);
     font-size: 34px;
 }
 
 .profile-empty-state h3 {
     margin: 0 0 8px;
-    color: #19552f;
+    color: var(--forest-500);
     font-size: 21px;
     font-weight: 800;
 }
@@ -317,7 +317,7 @@
 .profile-empty-state p {
     max-width: 350px;
     margin: 0;
-    color: #666666;
+    color: var(--color-text-muted);
     font-size: 15px;
     line-height: 1.6;
 }
@@ -366,7 +366,7 @@
 
     .profile-card {
         padding: 24px 20px 26px;
-        border-radius: 18px;
+        border-radius: var(--radius-base);
     }
 
     .profile-avatar {
@@ -391,7 +391,7 @@
 
     .stat-item {
         min-height: 70px;
-        border-radius: 13px;
+        border-radius: var(--radius-sm);
     }
 
     .stat-item strong {
@@ -444,12 +444,12 @@
 }
 
 .my-listings-header h2 {
-    color: #155c3b;
+    color: var(--forest-500);
     margin: 14px 0 6px;
 }
 
 .my-listings-header p {
-    color: #777;
+    color: var(--color-text-muted);
     margin-top: 0;
 }
 
@@ -462,9 +462,9 @@
 .my-listing-card {
     overflow: hidden;
     background: white;
-    border: 1px solid #155c3b;
-    border-radius: 14px;
-    box-shadow: 4px 4px 0 #155c3b;
+    border: 1px solid var(--forest-500);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-pop);
 }
 
 .my-listing-image {
@@ -472,13 +472,13 @@
     width: 100%;
     height: 190px;
     object-fit: cover;
-    background: #f6efd9;
+    background: var(--cream-300);
 }
 
 .my-listing-placeholder {
     display: grid;
     place-items: center;
-    color: #777;
+    color: var(--color-text-muted);
 }
 
 .my-listing-info {
@@ -487,12 +487,12 @@
 
 .my-listing-condition {
     font-size: 12px;
-    color: #155c3b;
+    color: var(--forest-500);
 }
 
 .my-listing-info h3 {
     margin: 8px 0;
-    color: #155c3b;
+    color: var(--forest-500);
     overflow-wrap: anywhere;
 }
 
@@ -503,12 +503,12 @@
 }
 
 .my-listing-stock {
-    color: #777;
+    color: var(--color-text-muted);
     font-size: 13px;
 }
 
 .my-listing-info a {
-    color: #155c3b;
+    color: var(--forest-500);
     font-weight: 700;
     text-decoration: none;
 }
@@ -517,9 +517,9 @@
     padding: 40px 20px;
     text-align: center;
     background: white;
-    border: 1px solid #155c3b;
-    border-radius: 18px;
-    box-shadow: 4px 4px 0 #155c3b;
+    border: 1px solid var(--forest-500);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-pop);
 }
 
 .profile-actions {
@@ -572,10 +572,10 @@
 .delete-account-btn {
     width: 100%;
     padding: 14px 20px;
-    border: 1px solid #dc2626;
-    border-radius: 999px;
-    background-color: #fff;
-    color: #dc2626;
+    border: 1px solid var(--color-error);
+    border-radius: var(--radius-pill);
+    background-color: var(--cream-0);
+    color: var(--color-error);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -583,6 +583,97 @@
 }
 
 .delete-account-btn:hover {
-    background-color: #dc2626;
-    color: #fff;
+    background-color: var(--color-error);
+    color: var(--cream-0);
+}
+
+
+/* Shared typography and responsive polish */
+.profile-page { font-family: var(--font-body); }
+.profile-header h1 { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 2.5rem); line-height: 1.1; letter-spacing: -0.03em; }
+.profile-label { background: var(--sun-500); color: var(--forest-700); font-size: 0.75rem; letter-spacing: 0.06em; }
+.profile-card, .profile-empty-state, .my-listing-card, .my-listings-empty { box-shadow: var(--shadow-pop); }
+.profile-button, .delete-account-btn { font-family: var(--font-body); }
+
+
+/* =========================================
+   PROFILE - DARK MODE FIX
+   ========================================= */
+
+html[data-theme="dark"] .profile-header h1,
+html[data-theme="dark"] .profile-card h2,
+html[data-theme="dark"] .profile-empty-state h3,
+html[data-theme="dark"] .my-listings-header h2 {
+    color: var(--color-text-primary);
+}
+
+html[data-theme="dark"] .profile-card,
+html[data-theme="dark"] .profile-empty-state,
+html[data-theme="dark"] .my-listing-card,
+html[data-theme="dark"] .my-listings-empty {
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+}
+
+html[data-theme="dark"] .stat-item,
+html[data-theme="dark"] .empty-state-icon {
+    background: var(--bg-surface-alt);
+    color: var(--color-text-primary);
+}
+
+html[data-theme="dark"] .stat-item strong,
+html[data-theme="dark"] .my-listing-condition,
+html[data-theme="dark"] .my-listing-info h3,
+html[data-theme="dark"] .my-listing-info a {
+    color: var(--color-primary);
+}
+
+html[data-theme="dark"] .profile-button-outline,
+html[data-theme="dark"] .profile-tab {
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+}
+
+html[data-theme="dark"] .profile-button-outline:hover,
+html[data-theme="dark"] .profile-tab:hover {
+    background: var(--bg-surface-alt);
+}
+
+html[data-theme="dark"] .profile-tab.active {
+    background: var(--color-primary);
+    color: var(--text-on-primary);
+}
+
+html[data-theme="dark"] .profile-tab.active:hover {
+    background: var(--color-primary-hover);
+}
+
+html[data-theme="dark"] .profile-button-primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--text-on-primary);
+    box-shadow: 2px 3px 0 var(--color-border);
+}
+
+html[data-theme="dark"] .profile-button-primary:hover {
+    background: var(--color-primary-hover);
+}
+
+html[data-theme="dark"] .delete-account-btn {
+    background: var(--color-surface);
+    color: var(--color-error);
+}
+
+html[data-theme="dark"] .delete-account-btn:hover {
+    background: var(--color-error);
+    color: var(--color-background);
+}
+
+html[data-theme="dark"] .profile-card,
+html[data-theme="dark"] .profile-empty-state,
+html[data-theme="dark"] .my-listing-card,
+html[data-theme="dark"] .my-listings-empty {
+    box-shadow: var(--shadow-card);
 }

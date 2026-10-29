@@ -17,87 +17,19 @@
   <header class="review-hero">
 
     <div class="review-hero__kicker">
-        REVIEW & FEEDBACK
+        ULASAN
     </div>
 
     <h1 class="review-hero__title">
-      Ulasan &amp; Rating
+      Ulasan &amp; rating
     </h1>
 
     <p class="review-hero__subtitle">
-      Bagikan pengalamanmu bertransaksi dan bantu sesama mahasiswa UI menemukan
-      produk preloved yang tepat dan berkualitas.
+      Bagikan pengalamanmu agar komunitas SiBekas makin terpercaya.
     </p>
 
-    <div class="review-summary">
 
-      <div class="summary-pill summary-pill--active">
-        <svg
-          class="summary-pill__icon--green"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-
-        <span>
-          Menunggu ulasanmu:
-          <strong>{{ products_to_review|length }} Produk</strong>
-        </span>
-      </div>
-
-      <div class="summary-pill">
-        <svg
-          class="summary-pill__icon--green"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-          <polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
-
-        <span>
-          Sudah kamu ulas:
-          <strong>{{ my_reviews|length }} Ulasan</strong>
-        </span>
-      </div>
-
-      <div class="summary-pill">
-        <svg
-          class="summary-pill__icon--gold"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="8" r="6" />
-          <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
-        </svg>
-
-        <span>
-          Rata-rata rating kamu:
-          <strong>{{ average_rating|default:"-" }} / 5</strong>
-        </span>
-      </div>
-
-    </div>
   </header>
-
-  <hr class="review-divider" />
 
   <!-- Section 1: Menunggu Ulasanmu -->
   <section
@@ -155,29 +87,9 @@
 
           <div class="pending-card__content">
 
-            <span class="pending-card__status">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-
-              PESANAN SELESAI
-            </span>
-
             <h3 class="pending-card__title">
               {{ product.name }}
             </h3>
-
-            <p class="pending-card__meta">
-              Pesanan telah selesai &bull; Siap untuk dinilai
-            </p>
 
           </div>
 
@@ -200,14 +112,7 @@
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
           </svg>
 
-          <span>Tulis Ulasan</span>
-
-          <span
-            class="btn-write-review__arrow"
-            aria-hidden="true"
-          >
-            &rarr;
-          </span>
+          <span>Tulis</span>
         </a>
 
       </article>
@@ -234,12 +139,11 @@
         </div>
 
         <h3 class="empty-state__title">
-          Semua produk sudah kamu ulas!
+          Tidak ada produk yang menunggu ulasan
         </h3>
 
         <p class="empty-state__text">
-          Belum ada produk yang menunggu ulasanmu saat ini. Terus bertransaksi
-          barang preloved berkualitas di SiBekas!
+          Produk dari pesanan yang selesai akan muncul di sini ketika sudah siap untuk dinilai.
         </p>
 
       </div>
@@ -248,8 +152,6 @@
 
     </div>
   </section>
-
-  <hr class="review-divider" />
 
   <!-- Section 2: Ulasan yang Kutulis -->
   <section
@@ -265,7 +167,7 @@
           id="heading-my-reviews"
           class="review-section__title"
         >
-          ULASAN YANG SUDAH DITULIS
+          ULASAN YANG KUTULIS
         </h2>
 
         <span class="review-section__count">
@@ -275,7 +177,7 @@
       </div>
 
       <p class="review-section__subtitle">
-        Riwayat feedback dan penilaian yang telah kamu publikasikan.
+        Ulasanmu akan tampil di sini dan di halaman produk terkait.
       </p>
 
     </div>
@@ -612,12 +514,11 @@
         </div>
 
         <h3 class="empty-state__title">
-          Belum ada ulasan yang ditulis!
+          Belum ada ulasan
         </h3>
 
         <p class="empty-state__text">
-          Riwayat ulasan dan penilaian produk yang kamu publikasikan akan
-          muncul di bagian ini.
+          Ulasanmu akan tampil di sini dan di halaman produk terkait.
         </p>
 
       </div>

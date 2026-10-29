@@ -195,3 +195,41 @@
         font-size: 13px;
     }
 }
+
+
+
+
+
+/* AUTH SIDEBAR - dark mode harmony */
+html[data-theme="dark"] .auth-intro {
+    background-color: #202B23;
+    background-image: radial-gradient(
+        rgba(143, 201, 155, 0.12) 1.2px,
+        transparent 1.2px
+    );
+    border-right-color: #55745C;
+}
+
+html[data-theme="dark"] .auth-brand {
+    color: #A8D5AE;
+}
+
+html[data-theme="dark"] .auth-intro-card {
+    background-color: #26372B;
+    border-color: #55745C;
+    box-shadow: 7px 7px 0 #35563D;
+}
+
+html[data-theme="dark"] .auth-intro-card h1,
+html[data-theme="dark"] .auth-intro-footer {
+    color: #F3F5EF;
+}
+
+html[data-theme="dark"] .auth-intro-card h1 span,
+html[data-theme="dark"] .auth-intro-eyebrow {
+    color: #A8D5AE;
+}
+
+html[data-theme="dark"] .auth-intro-description {
+    color: #D0D8CF;
+}

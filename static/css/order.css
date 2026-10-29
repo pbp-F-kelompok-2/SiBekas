@@ -142,3 +142,38 @@
     .order-summary { padding: 1.25rem; }
     .order-search-row { flex-direction: column; }
 }
+
+
+/* ORDER SUMMARY - DARK MODE */
+html[data-theme="dark"] .order-summary {
+    background: #202B23;
+    border-color: #55745C;
+    color: #F3F5EF;
+}
+
+html[data-theme="dark"] .order-summary .eyebrow {
+    color: #A8D5AE;
+}
+
+html[data-theme="dark"] .order-summary h2,
+html[data-theme="dark"] .order-grand-total dt,
+html[data-theme="dark"] .order-grand-total dd {
+    color: #F3F5EF;
+}
+
+html[data-theme="dark"] .order-totals dt,
+html[data-theme="dark"] .order-summary-note {
+    color: #C1CBBF;
+}
+
+html[data-theme="dark"] .order-totals dd {
+    color: #E1E9DF;
+}
+
+html[data-theme="dark"] .order-totals .order-grand-total {
+    border-color: #55745C;
+}
+
+html[data-theme="dark"] .order-summary-note svg {
+    color: #A8D5AE;
+}
