@@ -13,28 +13,6 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
 
 
-@login_required
-def index(request):
-    profile, created = Profile.objects.get_or_create(
-        user=request.user
-    )
-
-    form = ProfileForm(instance=profile)
-
-    my_products = Product.objects.filter(
-        seller=request.user
-    ).select_related("category")
-
-    return render(
-        request,
-        "profiles/index.html",
-        {
-            "profile": profile,
-            "form": form,
-            "my_products": my_products,
-            "total_listings": my_products.count(),
-        },
-    )
 
 def register(request):
     if request.method == "POST":

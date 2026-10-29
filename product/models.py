@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
+from sibekas.utils import format_rupiah
 
 
 def build_unique_slug(model, text):
@@ -96,7 +97,7 @@ class Product(models.Model):
         return reverse("product:detail", args=[self.slug])
 
     def price_display(self):
-        return f"Rp {self.price:,}".replace(",", ".")
+        return format_rupiah(self.price)
 
     def is_sold_out(self):
         return self.stock == 0
