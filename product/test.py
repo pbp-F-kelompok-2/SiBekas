@@ -59,3 +59,9 @@ class ProductTest(TestCase):
         response = self.client.post(reverse("product:bulk_delete"), {"ids": [self.product.pk]})
         messages = [str(m) for m in get_messages(response.wsgi_request)]
         self.assertIn("1 produk berhasil dihapus", messages)
+
+    def test_403_mengubah(self):
+        self.client.force_login(self.other)
+        response = self.client.get(reverse("product": "update", args = [self.product.slug]))
+        self.assertContains(response, "mengubah", status_code = 403)
+        self.assertContains(response, "Kembali ke produk", status_code = 403)
