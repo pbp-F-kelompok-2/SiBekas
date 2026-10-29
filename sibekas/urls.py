@@ -3,6 +3,8 @@
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
+from django.conf import settings
+from django.views.static import serve
 
 from .views import health_check
 
@@ -15,4 +17,6 @@ urlpatterns = [
     path("cart/", include("cart.urls")),
     path("orders/", include("order.urls")),
     path("reviews/", include("review.urls")),
+    path("media/<path:path>", serve, {"document_root": settings.MEDIA_ROOT}),
+
 ]
