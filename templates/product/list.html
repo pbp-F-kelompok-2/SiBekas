@@ -15,9 +15,7 @@
         <p>Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
     </div>
     <a href = "{% url 'product:create' %}" class = "button">Jual barang</a>
-    {% if user.is_authenticated %}
-    <a href = "?mine=1" class = "button">Produk saya</a>
-    {% endif %}
+
 
     <form class="product-search" method="get">
         <input type="text" name="q" value="{{ query }}" placeholder="Cari produk...">
@@ -37,6 +35,12 @@
             <option value="cheap" {% if request.GET.sort == "cheap" %}selected{% endif %}>Termurah</option>
             <option value="expensive" {% if request.GET.sort == "expensive" %}selected{% endif %}>Termahal</option>
         </select>
+        {% if user.is_authenticated %}
+        <label>
+            <input type="checkbox" name="mine" value="1" {% if request.GET.mine %}checked{% endif %}>
+            Produk saya
+        </label>
+        {% endif %}
         <button type="submit" class="button">Cari</button>
     </form>
 

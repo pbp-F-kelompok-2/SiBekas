@@ -23,7 +23,7 @@ def index(request):
     if category_slug:
         products = products.filter(category__slug=category_slug)
 
-        condition = request.GET.get("condition", "")
+    condition = request.GET.get("condition", "")
 
     if condition:
         products = products.filter(condition=condition)
@@ -110,3 +110,4 @@ def delete(request, slug):
 def save_image(product, image):
     if image:
         path = default_storage.save(f"products/{image.name}", image)
+        product.thumbnail = default_storage.url(path)
