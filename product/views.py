@@ -120,8 +120,9 @@ def delete(request, product):
 def rate_limit(limit, seconds):
     def decorator(view):
         def wrapper(request, *args, **kwargs):
-            key = f"rate:{view.__name__}:{request.user.pk}"
-            cache.add(key, 0, seconds)
+            if request.method == "POST":
+                key = f"rate:{view.__name__}:{request.user.pk}"
+                cache.add(key, 0, seconds)
             if cache.incr(key) > limit:
                 messages.error(request, "Terlalu banyak permintaan")
                 return redirect("product:index")
