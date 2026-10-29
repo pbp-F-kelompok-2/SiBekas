@@ -4,7 +4,7 @@
 
 **SiBekas** adalah platform marketplace barang *preloved* khusus mahasiswa Universitas Indonesia (UI). Aplikasi ini memungkinkan mahasiswa UI untuk membeli dan menjual barang yang masih layak digunakan dalam lingkungan kampus.
 
-Pengguna dapat melakukan autentikasi menggunakan **SSO UI**, melihat dan mencari produk berdasarkan kategori, mengelola profil, memasukkan barang ke keranjang, melakukan transaksi pembelian, serta memberikan ulasan terhadap barang yang telah dibeli.
+Pengguna dapat melihat dan mencari produk berdasarkan kategori, mengelola profil, memasukkan barang ke keranjang, melakukan transaksi pembelian, serta memberikan ulasan terhadap barang yang telah dibeli. Autentikasi saat ini menggunakan akun lokal dengan email `@ui.ac.id`; integrasi **SSO UI** merupakan pengembangan lanjutan modul Profile/User.
 
 SiBekas hadir untuk mendukung penggunaan kembali barang dan mendorong kebiasaan **conscious shopping** di lingkungan mahasiswa UI.
 
@@ -51,6 +51,9 @@ digunakan untuk memastikan aplikasi dan database siap.
 > `.env.example`.
 
 ### Pemeriksaan sebelum push
+
+Untuk pekerjaan Faris (Order, integrasi, dan deployment), ikuti
+[panduan manual dan uji alur pesanan](order/PANDUAN_MANUAL.md).
 
 ```bash
 python manage.py check
@@ -121,7 +124,7 @@ produksi, dan `DATABASE_URL` PostgreSQL dari penyedia hosting.
 
 ## Peran Pengguna
 
-Mahasiswa UI menjadi pengguna utama aplikasi dan melakukan autentikasi menggunakan **SSO UI**. Setiap pengguna dapat berperan sebagai **Penjual** maupun **Pembeli**.
+Mahasiswa UI menjadi pengguna utama aplikasi. Login/register sementara menggunakan akun lokal dengan email `@ui.ac.id`, sesuai fondasi Checkpoint 2. Setiap pengguna dapat berperan sebagai **Penjual** maupun **Pembeli**; SSO UI belum diaktifkan.
 
 ### Penjual
 
@@ -302,7 +305,7 @@ Dokumentasi resmi: [DummyJSON Products API](https://dummyjson.com/docs/products)
 
 ## Ringkasan Fitur Utama
 
-- Autentikasi mahasiswa menggunakan SSO UI.
+- Autentikasi akun lokal dengan email UI; SSO UI masih direncanakan.
 - Marketplace barang *preloved* khusus mahasiswa UI.
 - Pencarian, kategori, filter, dan detail produk.
 - Pengelolaan profil pengguna.

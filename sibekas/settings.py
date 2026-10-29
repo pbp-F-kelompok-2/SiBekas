@@ -79,7 +79,6 @@ ROOT_URLCONF = "sibekas.urls"
 
 LOGIN_URL = "profile:login"
 
-import os
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST = os.getenv("MAIL_HOST", "smtp.gmail.com")
@@ -90,7 +89,7 @@ EMAIL_USE_SSL = True
 
 EMAIL_HOST_USER = os.getenv("MAIL_USERNAME", "")
 EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD", "")
-DEFAULT_FROM_EMAIL = os.getenv("MAIL_FROM_EMAIL", EMAIL_HOST_USER)
+DEFAULT_FROM_EMAIL = os.getenv("MAIL_FROM_EMAIL") or EMAIL_HOST_USER
 
 EMAIL_TIMEOUT = 15
 PASSWORD_RESET_TIMEOUT = 3600
@@ -154,6 +153,10 @@ RAJAONGKIR_API_KEY = os.getenv("RAJAONGKIR_API_KEY", "")
 RAJAONGKIR_ORIGIN_ID = os.getenv("RAJAONGKIR_ORIGIN_ID", "")
 RAJAONGKIR_COURIERS = os.getenv("RAJAONGKIR_COURIERS", "jne:jnt:sicepat")
 ORDER_ENABLE_DEMO_PAYMENT = env_bool("ORDER_ENABLE_DEMO_PAYMENT", default=DEBUG)
+SEED_INITIAL_PRODUCTS = env_bool("DJANGO_SEED_INITIAL_PRODUCTS", default=False)
+ORDER_STAFF_USERNAME = os.getenv("ORDER_STAFF_USERNAME", "").strip()
+ORDER_STAFF_EMAIL = os.getenv("ORDER_STAFF_EMAIL", "").strip()
+ORDER_STAFF_PASSWORD = os.getenv("ORDER_STAFF_PASSWORD", "")
 
 # Secure defaults are enabled automatically outside local development.
 if not DEBUG:

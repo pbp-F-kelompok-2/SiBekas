@@ -80,13 +80,13 @@
     {% if page.has_other_pages %}
     <div class="pagination">
         {% if page.has_previous %}
-        <a href="?page={{ page.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}">&laquo; Sebelumnya</a>
+        <a href="{{ page_url_prefix }}{{ page.previous_page_number }}">&laquo; Sebelumnya</a>
         {% endif %}
 
         <span>Halaman {{ page.number }} dari {{ page.paginator.num_pages }}</span>
 
         {% if page.has_next %}
-        <a href="?page={{ page.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}{% if category_slug %}&category={{ category_slug }}{% endif %}">Selanjutnya &raquo;</a>
+        <a href="{{ page_url_prefix }}{{ page.next_page_number }}">Selanjutnya &raquo;</a>
         {% endif %}
     </div>
     {% endif %}

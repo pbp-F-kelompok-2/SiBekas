@@ -5,6 +5,17 @@ pembayaran, pembaruan status, pembatalan, dan pencatatan perjalanan pesanan.
 Semua halaman memakai `base.html`, navbar/footer bersama, dan design token yang
 sudah ada pada `static/css/variables.css`.
 
+Panduan konfigurasi RajaOngkir, akun petugas, pemeriksaan integrasi, dan deployment
+PWS tersedia di [PANDUAN_MANUAL.md](PANDUAN_MANUAL.md). Perintah tambahan:
+`python manage.py lookup_shipping_destination "Pondok Cina"` dan
+`python manage.py check_order_readiness --strict --require-shipping`.
+
+Panduan khusus: [aktivasi RajaOngkir](PANDUAN_RAJAONGKIR.md) dan
+[database PostgreSQL persisten](PANDUAN_POSTGRESQL.md). Akun petugas dapat dibuat
+saat release melalui `bootstrap_order_staff` dengan ketiga environment privat
+`ORDER_STAFF_USERNAME`, `ORDER_STAFF_EMAIL`, dan `ORDER_STAFF_PASSWORD`.
+Akun lama tidak diubah dan akun baru tidak diberi hak superuser.
+
 ## Menjalankan
 
 ```bash
@@ -111,8 +122,11 @@ CSRF, transisi status, pengembalian stok, pembayaran simulasi, eligibility ulasa
 serta kontrak dan kegagalan API RajaOngkir dengan response mock. Tarif live tetap
 perlu diuji memakai akun dan API key RajaOngkir yang valid.
 
-`Procfile` menjalankan migration dan collectstatic saat release, kemudian
-Gunicorn. Gunakan konfigurasi produksi pada `.env.example` dengan secret key
+`Procfile` menyediakan migration, bootstrap katalog/petugas, dan collectstatic
+untuk hosting yang mendukung phase release. PWS yang diperiksa membangun Docker
+dan tidak mengeksekusi phase itu; jalankan `migrate`, `bootstrap_catalog`,
+`bootstrap_order_staff`, dan `collectstatic` melalui tab Terminal PWS sesudah deploy.
+Gunakan konfigurasi produksi pada `.env.example` dengan secret key
 kuat, `DJANGO_DEBUG=False`, HTTPS, dan database PWS. Untuk demo ongkir kurir,
 aktifkan simulasi dan isi konfigurasi RajaOngkir di PWS.
 
@@ -127,5 +141,9 @@ git push pws HEAD:master
 PWS menjalankan build/release setelah push. Periksa status Running dan
 `https://faris-salman-sibekas.pws.cs.ui.ac.id/health/`, lalu ulangi alur pengguna
 di deployment. Jangan menjalankan ulang `seed_products` pada setiap release:
-command seed yang ada memakai `update_or_create` dan akan mengatur ulang stok
+command seed tanpa `--skip-existing` memakai `update_or_create` dan akan mengatur ulang stok
 contoh dari DummyJSON, termasuk stok yang sudah berkurang karena transaksi.
+Untuk data awal pada PWS, aktifkan `DJANGO_SEED_INITIAL_PRODUCTS=True` dan jalankan
+`python manage.py bootstrap_catalog` melalui Terminal. Bootstrap hanya berjalan
+jika katalog belum mencapai 50 produk dan mempertahankan
+produk yang sudah ada. Nonaktifkan opsi setelah data awal terisi.
