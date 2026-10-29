@@ -52,8 +52,8 @@ digunakan untuk memastikan aplikasi dan database siap.
 
 ### Pemeriksaan sebelum push
 
-Untuk pekerjaan Faris (Order, integrasi, dan deployment), ikuti
-[panduan manual dan uji alur pesanan](order/PANDUAN_MANUAL.md).
+Panduan kerja lokal Faris (Order, integrasi, dan deployment) disimpan di
+`../output/panduan-sibekas/`, di luar repository SiBekas.
 
 ```bash
 python manage.py check
@@ -83,13 +83,13 @@ SiBekas/
 Semua app utama telah didaftarkan di `INSTALLED_APPS` dan memiliki namespace URL
 sendiri:
 
-| App | URL awal | Namespace |
-|---|---|---|
-| Product | `/products/` | `product` |
-| Profile / User | `/profile/` | `profile` |
-| Cart | `/cart/` | `cart` |
-| Order / Transaction | `/orders/` | `order` |
-| Review | `/reviews/` | `review` |
+| App                 | URL awal       | Namespace   |
+| ------------------- | -------------- | ----------- |
+| Product             | `/products/` | `product` |
+| Profile / User      | `/profile/`  | `profile` |
+| Cart                | `/cart/`     | `cart`    |
+| Order / Transaction | `/orders/`   | `order`   |
+| Review              | `/reviews/`  | `review`  |
 
 ### Environment dan database
 
@@ -97,13 +97,13 @@ Pengembangan lokal menggunakan SQLite secara default. Deployment dapat memakai
 PostgreSQL cukup dengan mengubah `DATABASE_URL`, tanpa mengubah `settings.py`.
 Server PostgreSQL perlu menyediakan library client `libpq` untuk driver `psycopg`.
 
-| Variabel | Kegunaan | Nilai lokal |
-|---|---|---|
-| `DJANGO_SECRET_KEY` | Kunci kriptografi Django | kunci development dari `.env.example` |
-| `DJANGO_DEBUG` | Mode debug | `True` |
-| `DJANGO_ALLOWED_HOSTS` | Host yang diizinkan, dipisahkan koma | `localhost,127.0.0.1` |
-| `DJANGO_CSRF_TRUSTED_ORIGINS` | Origin HTTPS tepercaya, dipisahkan koma | kosong |
-| `DATABASE_URL` | Koneksi database | `sqlite:///db.sqlite3` |
+| Variabel                        | Kegunaan                                | Nilai lokal                             |
+| ------------------------------- | --------------------------------------- | --------------------------------------- |
+| `DJANGO_SECRET_KEY`           | Kunci kriptografi Django                | kunci development dari `.env.example` |
+| `DJANGO_DEBUG`                | Mode debug                              | `True`                                |
+| `DJANGO_ALLOWED_HOSTS`        | Host yang diizinkan, dipisahkan koma    | `localhost,127.0.0.1`                 |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Origin HTTPS tepercaya, dipisahkan koma | kosong                                  |
+| `DATABASE_URL`                | Koneksi database                        | `sqlite:///db.sqlite3`                |
 
 Saat deployment, gunakan `DJANGO_DEBUG=False`, secret key yang kuat, host/origin
 produksi, dan `DATABASE_URL` PostgreSQL dari penyedia hosting.
@@ -112,13 +112,13 @@ produksi, dan `DATABASE_URL` PostgreSQL dari penyedia hosting.
 
 ## Anggota Kelompok
 
-| No. | Nama | NPM |
-|---|---|---|
-| 1 | Alfan Kurnia Karim | 2506537814 |
-| 2 | Faris Salman Azhari | 2506615223 |
-| 3 | Jehezkiel Jefferson I Latupeirissa | 2506611156 |
-| 4 | Rachelin Miyuki Hendratmo | 2506536553 |
-| 5 | Rheza Abdilla | 2506612184 |
+| No. | Nama                               | NPM        |
+| --- | ---------------------------------- | ---------- |
+| 1   | Alfan Kurnia Karim                 | 2506537814 |
+| 2   | Faris Salman Azhari                | 2506615223 |
+| 3   | Jehezkiel Jefferson I Latupeirissa | 2506611156 |
+| 4   | Rachelin Miyuki Hendratmo          | 2506536553 |
+| 5   | Rheza Abdilla                      | 2506612184 |
 
 ---
 
@@ -164,14 +164,14 @@ Modul **Product** digunakan untuk mengelola data barang yang dijual di dalam apl
 
 **Operasi CRUD:**
 
-| Operasi | Deskripsi |
-|---|---|
-| Create | Menambahkan data produk |
-| Read | Melihat daftar produk, kategori, filter, dan detail produk |
-| Update | Mengubah data produk |
-| Delete | Menghapus data produk |
+| Operasi | Deskripsi                                                  |
+| ------- | ---------------------------------------------------------- |
+| Create  | Menambahkan data produk                                    |
+| Read    | Melihat daftar produk, kategori, filter, dan detail produk |
+| Update  | Mengubah data produk                                       |
+| Delete  | Menghapus data produk                                      |
 
-**Penanggung Jawab:**  
+**Penanggung Jawab:**
 `Jehezkiel Jefferson I`
 
 ---
@@ -187,14 +187,14 @@ Modul **Profile / User** digunakan untuk mengelola data dan personalisasi penggu
 
 **Operasi CRUD:**
 
-| Operasi | Deskripsi |
-|---|---|
-| Create | Membuat data profil pengguna |
-| Read | Melihat data profil pengguna |
-| Update | Mengubah data profil dan personalisasi |
-| Delete | Menghapus data pengguna |
+| Operasi | Deskripsi                              |
+| ------- | -------------------------------------- |
+| Create  | Membuat data profil pengguna           |
+| Read    | Melihat data profil pengguna           |
+| Update  | Mengubah data profil dan personalisasi |
+| Delete  | Menghapus data pengguna                |
 
-**Penanggung Jawab:**  
+**Penanggung Jawab:**
 `Rachelin Miyuki`
 
 ---
@@ -212,14 +212,14 @@ Modul **Cart** digunakan untuk mengelola barang yang ingin dibeli sebelum proses
 
 **Operasi CRUD:**
 
-| Operasi | Deskripsi |
-|---|---|
-| Create | Menambahkan produk ke keranjang |
-| Read | Melihat isi keranjang |
-| Update | Mengubah jumlah barang dalam keranjang |
-| Delete | Menghapus produk dari keranjang |
+| Operasi | Deskripsi                              |
+| ------- | -------------------------------------- |
+| Create  | Menambahkan produk ke keranjang        |
+| Read    | Melihat isi keranjang                  |
+| Update  | Mengubah jumlah barang dalam keranjang |
+| Delete  | Menghapus produk dari keranjang        |
 
-**Penanggung Jawab:**  
+**Penanggung Jawab:**
 `Rheza Abdilla`
 
 ---
@@ -237,14 +237,14 @@ Modul **Order / Transaction** digunakan untuk menangani proses pembelian dan tra
 
 **Operasi CRUD:**
 
-| Operasi | Deskripsi |
-|---|---|
-| Create | Membuat order atau transaksi |
-| Read | Melihat detail dan riwayat order atau transaksi |
-| Update | Mengubah status order atau transaksi |
-| Delete | Membatalkan order atau transaksi |
+| Operasi | Deskripsi                                       |
+| ------- | ----------------------------------------------- |
+| Create  | Membuat order atau transaksi                    |
+| Read    | Melihat detail dan riwayat order atau transaksi |
+| Update  | Mengubah status order atau transaksi            |
+| Delete  | Membatalkan order atau transaksi                |
 
-**Penanggung Jawab:**  
+**Penanggung Jawab:**
 `Faris Salman Azhari`
 
 ---
@@ -257,14 +257,14 @@ Ulasan akan tersedia pada **menu profil** serta dapat diakses melalui **bar navi
 
 **Operasi CRUD:**
 
-| Operasi | Deskripsi |
-|---|---|
-| Create | Menambahkan ulasan dan rating |
-| Read | Melihat ulasan dan rating |
-| Update | Mengubah ulasan dan rating |
-| Delete | Menghapus ulasan dan rating |
+| Operasi | Deskripsi                     |
+| ------- | ----------------------------- |
+| Create  | Menambahkan ulasan dan rating |
+| Read    | Melihat ulasan dan rating     |
+| Update  | Mengubah ulasan dan rating    |
+| Delete  | Menghapus ulasan dan rating   |
 
-**Penanggung Jawab:**  
+**Penanggung Jawab:**
 `Alfan Kurnia Karim`
 
 ---
