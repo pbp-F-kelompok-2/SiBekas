@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class = "product-page">
+    <h1>{{ title }}</h1>
+    <form method = "post enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type = "submit" class = "button">Simpan</button>
+    </form>
+</section>
+{% endblock %}

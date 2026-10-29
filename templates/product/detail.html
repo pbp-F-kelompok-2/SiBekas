@@ -68,6 +68,13 @@
                 <button type="submit" class="order-button"><i data-lucide="shopping-cart" aria-hidden="true"></i>Tambah ke keranjang</button>
             </form>
             {% elif not product.stock %}<p class="order-notice">Produk ini sudah habis terjual.</p>{% endif %}
+            {% if product.seller_id == request.user %}
+            <a class = "button" href = "{% url 'product:update' product.slug %}">Ubah</a>
+            <form method = "post" action = "{% url 'product:delete' product.slug %}">
+                {% csrf_token %}
+                <button type = "submit" class = "button">Hapus</button>
+            </form>
+            {% endif %}
         </div>
     </div>
 
