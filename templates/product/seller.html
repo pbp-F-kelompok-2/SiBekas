@@ -33,7 +33,7 @@
             {% for product in products %}
             <article class="overflow-hidden bg-[var(--color-surface)] border border-solid border-[var(--color-border)] rounded-[var(--radius-sm)] shadow-[var(--shadow-pop)] [[data-theme=dark]_&]:shadow-[var(--shadow-card)]">
                 {% if product.thumbnail %}
-                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="block w-full h-[190px] object-cover bg-[var(--cream-300)]">
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" onerror="this.remove()" class="block w-full h-[190px] object-cover bg-[var(--cream-300)]">
                 {% else %}
                 <div class="grid place-items-center w-full h-[190px] bg-[var(--cream-300)] text-[var(--color-text-muted)]">Belum ada foto</div>
                 {% endif %}
