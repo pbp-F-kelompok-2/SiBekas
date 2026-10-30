@@ -35,10 +35,8 @@ def login_view(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            user = None
+        user = User.objects.filter(email__iexact=email).first()
+
 
         if user is not None:
             user = authenticate(

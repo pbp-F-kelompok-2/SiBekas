@@ -4,24 +4,203 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/order.css' %}">{% endblock %}
 {% block content %}
 <section class="order-page">
+    {% if is_seller and not is_buyer %}
+    <a class="order-back" href="{% url 'order:seller_dashboard' %}">← Kembali ke Toko Saya (Dashboard Penjual)</a>
+    {% else %}
     <a class="order-back" href="{% url 'order:index' %}{% if not is_buyer %}?view=manage{% endif %}">← Kembali ke pesanan</a>
-    <header class="order-heading order-heading-row"><div><p class="eyebrow">{{ order.number }}</p><h1>Detail <span>pesanan.</span></h1><p>Dibuat {{ order.created_at|date:"d M Y, H:i" }} WIB</p></div><span class="order-badge order-badge-{{ order.status }}">{{ order.get_status_display }}</span></header>
-    {% if order.status == 'cancelled' %}<p class="order-notice">Pesanan dibatalkan dan stok barang telah dikembalikan.{% if order.payment_status == 'refunded' %} Pembayaran simulasi juga telah dikembalikan.{% endif %}</p>{% endif %}
+    {% endif %}
+    <header class="order-heading order-heading-row">
+        <div>
+            <p class="eyebrow">{{ order.number }}</p>
+            <h1>Detail <span>pesanan.</span></h1>
+            <p>Dibuat {{ order.created_at|date:"d M Y, H:i" }} WIB</p>
+        </div>
+        <span class="order-badge order-badge-{{ order.status }}">{{ order.get_status_display }}</span>
+    </header>
+    {% if order.status == 'cancelled' %}
+    <p class="order-notice">Pesanan dibatalkan dan stok barang telah dikembalikan.{% if order.payment_status == 'refunded' %} Pembayaran simulasi juga telah dikembalikan.{% endif %}</p>
+    {% endif %}
     <div class="order-layout">
         <div class="order-main">
-            <section class="order-panel"><div class="order-panel-heading"><span class="order-icon"><i data-lucide="package" aria-hidden="true"></i></span><div><h2>Rincian barang</h2><p>Harga dan rincian barang saat pesanan dibuat.</p></div></div>
-                {% for item in order.items.all %}<div class="order-item"><div class="order-product-image">{% if item.thumbnail %}<img src="{{ item.thumbnail }}" alt="" loading="lazy">{% else %}<i data-lucide="package" aria-hidden="true"></i>{% endif %}</div><div class="order-product-info"><p class="order-seller">{{ item.seller_name }}</p><h3>{% if item.product %}<a href="{{ item.product.get_absolute_url }}">{{ item.product_name }}</a>{% else %}{{ item.product_name }}{% endif %}</h3><p>{{ item.condition }} · {{ item.quantity }} × {{ item.unit_price|rupiah }}</p>{% if order.status == 'completed' and item.product and is_buyer %}<a class="order-text-link" href="{% url 'review:create' item.product_id %}">Tulis / lihat ulasan →</a>{% endif %}</div><strong class="order-line-total">{{ item.line_total|rupiah }}</strong></div>{% endfor %}
+            <section class="order-panel">
+                <div class="order-panel-heading">
+                    <span class="order-icon"><i data-lucide="package" aria-hidden="true"></i></span>
+                    <div>
+                        <h2>Rincian barang</h2>
+                        <p>Harga dan rincian barang saat pesanan dibuat.</p>
+                    </div>
+                </div>
+                {% for item in order.items.all %}
+                <div class="order-item">
+                    <div class="order-product-image">
+                        {% if item.thumbnail %}
+                        <img src="{{ item.thumbnail }}" alt="" loading="lazy">
+                        {% else %}
+                        <i data-lucide="package" aria-hidden="true"></i>
+                        {% endif %}
+                    </div>
+                    <div class="order-product-info">
+                        <p class="order-seller">Penjual: {{ item.seller_name }}</p>
+                        <h3>
+                            {% if item.product %}
+                            <a href="{{ item.product.get_absolute_url }}">{{ item.product_name }}</a>
+                            {% else %}
+                            {{ item.product_name }}
+                            {% endif %}
+                        </h3>
+                        <p>{{ item.condition }} · {{ item.quantity }} × {{ item.unit_price|rupiah }}</p>
+                        {% if order.status == 'completed' and item.product and is_buyer %}
+                        <a class="order-text-link" href="{% url 'review:create' item.product_id %}">Tulis / lihat ulasan →</a>
+                        {% endif %}
+                    </div>
+                    <strong class="order-line-total">{{ item.line_total|rupiah }}</strong>
+                </div>
+                {% endfor %}
             </section>
-            <section class="order-panel"><div class="order-panel-heading"><span class="order-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span><div><h2>{{ order.get_delivery_method_display }}</h2><p>{{ order.shipping_service }}</p></div></div><div class="order-panel-content"><strong>{{ order.recipient_name }}</strong><p>{{ order.phone_number }}</p><p class="order-address">{{ order.address|linebreaksbr }}<br>{{ order.destination }}</p><dl class="order-facts"><div><dt>Berat barang</dt><dd>{{ order.weight_grams }} gram</dd></div><div><dt>Estimasi</dt><dd>{{ order.shipping_etd }}</dd></div>{% if order.tracking_number %}<div><dt>Nomor resi</dt><dd>{{ order.tracking_number }}</dd></div>{% endif %}</dl>{% if order.notes %}<div class="order-note"><strong>Catatan pesanan</strong><p>{{ order.notes|linebreaksbr }}</p></div>{% endif %}</div></section>
-            <section class="order-panel"><div class="order-panel-heading"><span class="order-icon"><i data-lucide="clock-3" aria-hidden="true"></i></span><div><h2>Perjalanan pesanan</h2><p>Setiap langkah tercatat di sini.</p></div></div><ol class="order-timeline">{% for event in order.events.all %}<li><span class="order-timeline-dot" aria-hidden="true"></span><div><strong>{{ event.get_status_display }}</strong><p>{{ event.description }}</p><time datetime="{{ event.created_at|date:'c' }}">{{ event.created_at|date:"d M Y, H:i" }} WIB</time></div></li>{% endfor %}</ol></section>
+            <section class="order-panel">
+                <div class="order-panel-heading">
+                    <span class="order-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span>
+                    <div>
+                        <h2>{{ order.get_delivery_method_display }}</h2>
+                        <p>{{ order.shipping_service }}</p>
+                    </div>
+                </div>
+                <div class="order-panel-content">
+                    <strong>Penerima: {{ order.recipient_name }}</strong>
+                    <p>Telepon: {{ order.phone_number }}</p>
+                    <p class="order-address">{{ order.address|linebreaksbr }}<br>{{ order.destination }}</p>
+                    <dl class="order-facts">
+                        <div>
+                            <dt>Berat barang</dt>
+                            <dd>{{ order.weight_grams }} gram</dd>
+                        </div>
+                        <div>
+                            <dt>Estimasi tiba</dt>
+                            <dd>{{ order.shipping_etd }}</dd>
+                        </div>
+                        {% if order.tracking_number %}
+                        <div>
+                            <dt>Nomor resi</dt>
+                            <dd><strong>{{ order.tracking_number }}</strong></dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+                    {% if order.notes %}
+                    <div class="order-note">
+                        <strong>Catatan pesanan</strong>
+                        <p>{{ order.notes|linebreaksbr }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+            <section class="order-panel">
+                <div class="order-panel-heading">
+                    <span class="order-icon"><i data-lucide="clock-3" aria-hidden="true"></i></span>
+                    <div>
+                        <h2>Perjalanan pesanan</h2>
+                        <p>Setiap langkah tercatat di sini.</p>
+                    </div>
+                </div>
+                <ol class="order-timeline">
+                    {% for event in order.events.all %}
+                    <li>
+                        <span class="order-timeline-dot" aria-hidden="true"></span>
+                        <div>
+                            <strong>{{ event.get_status_display }}</strong>
+                            <p>{{ event.description }}</p>
+                            <time datetime="{{ event.created_at|date:'c' }}">{{ event.created_at|date:"d M Y, H:i" }} WIB</time>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </section>
         </div>
-        <aside class="order-summary"><p class="eyebrow">PEMBAYARAN</p><h2>{{ order.get_payment_status_display }}</h2><p class="order-hint">{{ order.get_payment_method_display }}</p><dl class="order-totals"><div><dt>Subtotal barang</dt><dd>{{ order.subtotal|rupiah }}</dd></div><div><dt>Ongkos kirim</dt><dd>{{ order.shipping_cost|rupiah }}</dd></div><div class="order-grand-total"><dt>Total pembayaran</dt><dd>{{ order.total|rupiah }}</dd></div></dl>
-            {% if order.payment_method == 'demo' %}<p class="order-notice">Transaksi simulasi proyek. Tidak ada uang yang ditransfer.</p>{% elif order.payment_status == 'unpaid' %}<p class="order-hint">Bayar saat pengambilan. Konfirmasi penerimaan setelah barang dan pembayaran selesai.</p>{% endif %}
-            {% if is_buyer and order.status == 'pending' and demo_enabled and order.payment_method == 'demo' %}<form method="post" action="{% url 'order:update_status' order.id %}">{% csrf_token %}<button class="order-button order-button-wide" name="action" value="pay" type="submit">Simulasikan pembayaran<i data-lucide="wallet" aria-hidden="true"></i></button></form>{% endif %}
-            {% if request.user.is_staff and order.status == 'processing' %}<form class="order-action-form" method="post" action="{% url 'order:update_status' order.id %}">{% csrf_token %}{% if order.delivery_method == 'courier' %}<div class="order-field"><label for="tracking-number">Nomor resi</label><input id="tracking-number" name="tracking_number" maxlength="100" required></div>{% endif %}<button class="order-button order-button-wide" name="action" value="ship" type="submit">{% if order.delivery_method == 'courier' %}Kirim pesanan{% else %}Tandai siap diambil{% endif %}</button></form>{% endif %}
-            {% if is_buyer and order.status == 'shipped' %}<form class="order-action-form" method="post" action="{% url 'order:update_status' order.id %}">{% csrf_token %}<p class="order-hint">Konfirmasikan setelah barang diterima dalam kondisi baik{% if order.payment_method == 'cod' %} dan pembayaran COD selesai{% endif %}.</p><button class="order-button order-button-wide" name="action" value="complete" type="submit">Pesanan diterima<i data-lucide="check" aria-hidden="true"></i></button></form>{% endif %}
-            {% if order.status == 'completed' %}<p class="order-summary-note"><i data-lucide="circle-check" aria-hidden="true"></i>Terima kasih sudah berbelanja! Bagikan pengalamanmu melalui ulasan produk.</p>{% endif %}
-            {% if order.can_cancel %}<details class="order-cancel"><summary>Batalkan pesanan</summary><p>Pesanan akan dibatalkan dan stok barang dikembalikan.{% if order.payment_status == 'paid' %} Pembayaran simulasi akan dikembalikan.{% endif %}</p><form method="post" action="{% url 'order:update_status' order.id %}">{% csrf_token %}<button class="order-button order-button-danger order-button-wide" name="action" value="cancel" type="submit">Ya, batalkan pesanan</button></form></details>{% endif %}
+        <aside class="order-summary">
+            <p class="eyebrow">PEMBAYARAN</p>
+            <h2>{{ order.get_payment_status_display }}</h2>
+            <p class="order-hint">{{ order.get_payment_method_display }}</p>
+            <dl class="order-totals">
+                <div>
+                    <dt>Subtotal barang</dt>
+                    <dd>{{ order.subtotal|rupiah }}</dd>
+                </div>
+                <div>
+                    <dt>Ongkos kirim</dt>
+                    <dd>{{ order.shipping_cost|rupiah }}</dd>
+                </div>
+                <div class="order-grand-total">
+                    <dt>Total pembayaran</dt>
+                    <dd>{{ order.total|rupiah }}</dd>
+                </div>
+            </dl>
+            {% if order.payment_method == 'demo' %}
+            <p class="order-notice">Transaksi simulasi proyek. Tidak ada uang yang ditransfer.</p>
+            {% elif order.payment_status == 'unpaid' %}
+            <p class="order-hint">Bayar saat serah terima. Konfirmasi penerimaan setelah barang dan pembayaran selesai.</p>
+            {% endif %}
+
+            <!-- Buyer Pay Action (Demo) -->
+            {% if is_buyer and order.status == 'pending' and demo_enabled and order.payment_method == 'demo' %}
+            <form method="post" action="{% url 'order:update_status' order.id %}">
+                {% csrf_token %}
+                <button class="order-button order-button-wide" name="action" value="pay" type="submit">
+                    Simulasikan pembayaran<i data-lucide="wallet" aria-hidden="true"></i>
+                </button>
+            </form>
+            {% endif %}
+
+            <!-- Seller or Staff Ship Action -->
+            {% if order.status == 'processing' and is_seller or order.status == 'processing' and request.user.is_staff %}
+            <form class="order-action-form" method="post" action="{% url 'order:update_status' order.id %}">
+                {% csrf_token %}
+                {% if order.delivery_method == 'courier' %}
+                <div class="order-field" style="margin-bottom: 0.75rem;">
+                    <label for="tracking-number">Nomor resi kurir (opsional)</label>
+                    <input id="tracking-number" name="tracking_number" maxlength="100" placeholder="Contoh: JNT123456789">
+                </div>
+                {% endif %}
+                <button class="order-button order-button-wide" name="action" value="ship" type="submit">
+                    {% if order.delivery_method == 'courier' %}
+                    Kirim pesanan (Serahkan ke kurir)
+                    {% else %}
+                    Tandai siap diserahterimakan
+                    {% endif %}
+                </button>
+            </form>
+            {% endif %}
+
+            <!-- Buyer Complete Action (Selesaikan Barang) -->
+            {% if is_buyer and order.status == 'shipped' or is_buyer and order.status == 'processing' and order.payment_method == 'cod' %}
+            <form class="order-action-form" method="post" action="{% url 'order:update_status' order.id %}">
+                {% csrf_token %}
+                <p class="order-hint">
+                    Konfirmasikan setelah barang diterima dalam kondisi baik{% if order.payment_method == 'cod' %} dan pembayaran COD selesai{% endif %}.
+                </p>
+                <button class="order-button order-button-wide" name="action" value="complete" type="submit">
+                    Selesaikan pesanan (Barang diterima)<i data-lucide="check" aria-hidden="true"></i>
+                </button>
+            </form>
+            {% endif %}
+
+            {% if order.status == 'completed' %}
+            <p class="order-summary-note">
+                <i data-lucide="circle-check" aria-hidden="true"></i>
+                Transaksi selesai! Barang telah diterima dan masuk ke riwayat penjualan.
+            </p>
+            {% endif %}
+
+            {% if order.can_cancel and is_buyer %}
+            <details class="order-cancel" style="margin-top: 1rem;">
+                <summary>Batalkan pesanan</summary>
+                <p>Pesanan akan dibatalkan dan stok barang dikembalikan ke penjual.{% if order.payment_status == 'paid' %} Pembayaran simulasi akan dikembalikan.{% endif %}</p>
+                <form method="post" action="{% url 'order:update_status' order.id %}">
+                    {% csrf_token %}
+                    <button class="order-button order-button-danger order-button-wide" name="action" value="cancel" type="submit">
+                        Ya, batalkan pesanan
+                    </button>
+                </form>
+            </details>
+            {% endif %}
         </aside>
     </div>
 </section>

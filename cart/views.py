@@ -582,3 +582,189 @@ def remove_item(
     return redirect(
         "cart:index"
     )
+
+@require_POST
+@login_required
+def bulk_delete(request):
+    bulk_action = request.POST.get(
+        "bulk_action",
+        "selected",
+    )
+
+    if bulk_action not in {
+        "selected",
+        "all",
+    }:
+        message = "Aksi hapus tidak valid."
+
+        if is_ajax(request):
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": message,
+                },
+                status=400,
+            )
+
+        messages.error(
+            request,
+            message,
+        )
+
+        return redirect(
+            "cart:index"
+        )
+
+
+    selected_ids = []
+
+    for value in request.POST.getlist(
+        "item_ids"
+    ):
+        try:
+            item_id = int(value)
+
+        except (
+            TypeError,
+            ValueError,
+        ):
+            continue
+
+        if (
+            item_id > 0
+            and item_id not in selected_ids
+        ):
+            selected_ids.append(
+                item_id
+            )
+
+
+    if (
+        bulk_action == "selected"
+        and not selected_ids
+    ):
+        message = (
+            "Pilih minimal satu barang "
+            "untuk dihapus."
+        )
+
+        if is_ajax(request):
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": message,
+                },
+                status=400,
+            )
+
+        messages.error(
+            request,
+            message,
+        )
+
+        return redirect(
+            "cart:index"
+        )
+
+
+    with transaction.atomic():
+        cart = get_object_or_404(
+            Cart.objects.select_for_update(),
+            user=request.user,
+        )
+
+        items = (
+            CartItem.objects
+            .select_for_update()
+            .filter(
+                cart=cart
+            )
+        )
+
+        if bulk_action == "all":
+            removed_ids = list(
+                items.values_list(
+                    "pk",
+                    flat=True,
+                )
+            )
+
+        else:
+            removed_ids = list(
+                items
+                .filter(
+                    pk__in=selected_ids
+                )
+                .values_list(
+                    "pk",
+                    flat=True,
+                )
+            )
+
+        if removed_ids:
+            items.filter(
+                pk__in=removed_ids
+            ).delete()
+
+
+    if (
+        bulk_action == "selected"
+        and not removed_ids
+    ):
+        message = (
+            "Tidak ada barang valid "
+            "yang dapat dihapus."
+        )
+
+        if is_ajax(request):
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": message,
+                },
+                status=400,
+            )
+
+        messages.error(
+            request,
+            message,
+        )
+
+        return redirect(
+            "cart:index"
+        )
+
+
+    payload = cart_state_payload(
+        request.user
+    )
+
+    payload.update(
+        {
+            "success": True,
+            "removed_ids": removed_ids,
+            "removed_count":
+                len(removed_ids),
+            "message":
+                (
+                    f"{len(removed_ids)} "
+                    "barang berhasil dihapus."
+                ),
+        }
+    )
+
+
+    if is_ajax(request):
+        return JsonResponse(
+            payload
+        )
+
+
+    messages.success(
+        request,
+        payload["message"],
+    )
+
+    return redirect(
+        "cart:index"
+    )

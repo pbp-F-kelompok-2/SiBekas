@@ -1,14 +1,13 @@
+/* Navigation tokens map to the shared SiBekas design system. */
 :root {
-    --sb-forest: #19532b;
-    --sb-forest-dark: #10391c;
-    --sb-kiwi: #9abc04;
-    --sb-kiwi-light: #e2ecb8;
-    --sb-carrot: #f86015;
-    --sb-cream: #fcf8f0;
-    --sb-white: #ffffff;
+    --sb-forest: var(--forest-500);
+    --sb-forest-dark: var(--forest-700);
+    --sb-kiwi: var(--kiwi-500);
+    --sb-kiwi-light: var(--kiwi-200);
+    --sb-carrot: var(--carrot-500);
+    --sb-cream: var(--cream-200);
+    --sb-white: var(--cream-0);
 }
-
-
 /* =========================
    HEADER
    ========================= */
@@ -82,7 +81,7 @@
 
 
 .sb-brand-name {
-    font-family: Poppins, sans-serif;
+    font-family: var(--font-heading);
 
     font-size: 1.25rem;
     font-weight: 800;
@@ -112,7 +111,7 @@
 
     color: var(--sb-forest);
 
-    font-family: Poppins, sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.875rem;
     font-weight: 600;
 
@@ -159,7 +158,7 @@
     width: 16px;
     height: 16px;
 
-    color: #8b8575;
+    color: var(--cream-700);
 
     transform: translateY(-50%);
 
@@ -185,7 +184,7 @@
 
     background: white;
 
-    color: #24231f;
+    color: var(--cream-950);
 
     font: inherit;
     font-size: 0.875rem;
@@ -269,7 +268,7 @@
     background: white;
     color: var(--sb-forest);
 
-    font-family: Poppins, sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.875rem;
     font-weight: 600;
 
@@ -313,7 +312,7 @@
     box-shadow:
         2px 2px 0 var(--sb-forest-dark);
 
-    font-family: Poppins, sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.82rem;
     font-weight: 600;
 
@@ -400,7 +399,7 @@
 
 
 .sb-mobile-logout {
-    color: #a21c12 !important;
+    color: var(--tomato-600) !important;
 }
 
 
@@ -525,16 +524,16 @@
     border: none;
     border-radius: 8px;
     background: transparent;
-    color: #dc2626;
+    color: var(--color-error);
     box-shadow: none;
-    font-family: Poppins, sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
 }
 
 .sb-logout-button:hover {
-    color: #b91c1c;
+    color: var(--tomato-600);
     background: rgba(220, 38, 38, 0.08);
 }
 
@@ -553,7 +552,7 @@
     background: var(--sb-forest);
     color: var(--sb-white) !important;
     box-shadow: 2px 2px 0 var(--sb-forest-dark);
-    font-family: Poppins, sans-serif;
+    font-family: var(--font-heading);
     font-size: 0.82rem;
     font-weight: 600;
     text-decoration: none;
@@ -573,3 +572,112 @@
     }
 }
 
+
+/* Theme toggle */
+.sb-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 180ms ease,
+                color 180ms ease,
+                border-color 180ms ease;
+}
+
+.sb-theme-toggle:hover {
+    background: var(--color-primary-soft);
+}
+
+.sb-theme-toggle:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+.sb-theme-toggle i,
+.sb-theme-toggle svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .sb-theme-toggle {
+        width: 40px;
+        min-width: 40px;
+        padding: 8px;
+    }
+
+    .sb-theme-label {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sb-theme-toggle {
+        transition: none;
+    }
+}
+
+/* Dark mode: navbar SiBekas */
+html[data-theme="dark"] .sb-header {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+}
+
+html[data-theme="dark"] .sb-navbar {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+}
+
+html[data-theme="dark"] .sb-desktop-links a,
+html[data-theme="dark"] .sb-mobile-menu a {
+    color: var(--color-text-primary);
+}
+
+
+html[data-theme="dark"] .sb-nav-search {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: var(--color-text-primary);
+}
+
+html[data-theme="dark"] .sb-nav-search input,
+html[data-theme="dark"] .sb-nav-search input:focus {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: 999px;
+    box-shadow: none;
+    color: var(--color-text-primary);
+    outline: none;
+}
+
+html[data-theme="dark"] .sb-nav-search input::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+}
+
+html[data-theme="dark"] .sb-nav-search input {
+    background-color: transparent;
+    color: var(--color-text-primary);
+}
+
+html[data-theme="dark"] .sb-nav-search input::placeholder {
+    color: var(--color-text-muted);
+}
+
+/* Dark mode: navbar brand contrast */
+html[data-theme="dark"] .sb-brand-name {
+    color: #A8D5AE;
+}

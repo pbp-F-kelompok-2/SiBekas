@@ -112,62 +112,97 @@
 
     --shadow-pop-lg:
         6px 6px 0 0 var(--forest-500);
+
+
+    /* Semantic aliases shared by all modules. Keep legacy names mapped here. */
+    --ink: var(--color-text-primary);
+    --muted: var(--color-text-muted);
+    --cream: var(--cream-300);
+    --paper: var(--color-background);
+    --green: var(--color-primary);
+    --lime: var(--color-accent);
+    --line: var(--color-border);
+
+    --radius-pill: 9999px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+
+    --bg-card: var(--color-surface);
+    --bg-surface: var(--cream-300);
+    --bg-surface-alt: var(--cream-400);
+    --border-color: var(--color-border);
+    --border-subtle: var(--cream-500);
+    --text-primary: var(--color-text-primary);
+    --text-secondary: var(--color-text-muted);
+    --text-muted: var(--cream-700);
+    --text-on-primary: var(--cream-0);
+
+    --color-primary-soft: var(--forest-50);
+    --color-primary-border: var(--forest-200);
+    --color-accent-lime: var(--kiwi-500);
+    --color-danger: var(--tomato-500);
+    --color-danger-soft: var(--tomato-50);
+    --color-star: var(--sun-600);
+    --color-star-empty: var(--cream-600);
+    --color-rating-bg: var(--sun-100);
+    --color-rating-border: var(--sun-300);
+    --shadow-card: 0 2px 10px rgba(4, 21, 10, 0.04);
+    --shadow-hover: var(--shadow-pop);
 }
 
 
-/* Dark Mode Theme Support (WCAG AA Compliant) */
-:root.dark, html.dark {
-    --color-background: #0b1120;
-    --color-surface: #1e293b;
-    --color-text-primary: #f8fafc;
-    --color-text-muted: #94a3b8;
-    --color-border: #334155;
+/* Dark theme */
+html[data-theme="dark"] {
+    color-scheme: dark;
 
-    --cream-0: #1e293b;
-    --cream-50: #1e293b;
-    --cream-100: #1e293b;
-    --cream-200: #0f172a;
-    --cream-300: #1e293b;
-    --cream-950: #f8fafc;
-    --cream-900: #f1f5f9;
-    --cream-800: #cbd5e1;
+    --color-primary: #8fc99b;
+    --color-primary-hover: #b0dfb8;
 
-    --forest-50: #0f2918;
-    --forest-100: #143d23;
-    --forest-500: #10b981;
-    --forest-600: #059669;
+    --color-accent: #bbd957;
+    --color-accent-300: #d0e08b;
 
-    --shadow-pop: 4px 4px 0 0 #047857;
-    --shadow-pop-sm: 2px 2px 0 0 #047857;
-    --shadow-pop-lg: 6px 6px 0 0 #047857;
-}
+    --color-background: #151c18;
+    --color-surface: #202a23;
 
-html.dark body {
-    background-color: #0b1120;
-    color: #f8fafc;
-}
+    --color-text-primary: #f3f5ef;
+    --color-text-muted: #c1cbbf;
 
-html.dark .sb-header,
-html.dark .sb-footer,
-html.dark .product-card,
-html.dark .order-panel,
-html.dark .order-summary,
-html.dark .profile-sidebar,
-html.dark .my-listing-card,
-html.dark .product-detail,
-html.dark .product-info,
-html.dark .product-reviews,
-html.dark .cart-card,
-html.dark .auth-card {
-    background-color: #1e293b !important;
-    color: #f8fafc;
-    border-color: #334155;
-}
+    --color-border: #55745c;
 
-html.dark input,
-html.dark select,
-html.dark textarea {
-    background-color: #0f172a;
-    color: #f8fafc;
-    border-color: #334155;
+    --color-success: #8fc99b;
+    --color-warning: #ffdc6e;
+    --color-error: #ff8c82;
+
+    /* Legacy aliases used by existing modules */
+    --ink: var(--color-text-primary);
+    --muted: var(--color-text-muted);
+    --cream: #28342b;
+    --paper: var(--color-background);
+    --green: var(--color-primary);
+    --lime: var(--color-accent);
+    --line: var(--color-border);
+
+    --bg-card: var(--color-surface);
+    --bg-surface: #28342b;
+    --bg-surface-alt: #303d33;
+    --border-color: var(--color-border);
+    --border-subtle: #3d4b40;
+
+    --text-primary: var(--color-text-primary);
+    --text-secondary: var(--color-text-muted);
+    --text-muted: #aab6a9;
+    --text-on-primary: #102015;
+
+    --color-primary-soft: #24382a;
+    --color-primary-border: #55745c;
+    --color-danger: #ff8c82;
+    --color-danger-soft: #482a28;
+    --color-star: #ffdc6e;
+    --color-star-empty: #657064;
+    --color-rating-bg: #3e3825;
+    --color-rating-border: #75643b;
+
+    --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.2);
+    --shadow-hover: 4px 4px 0 #55745c;
 }

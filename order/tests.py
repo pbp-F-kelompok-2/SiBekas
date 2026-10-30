@@ -166,3 +166,90 @@ class OrderFlowTests(TestCase):
         self.assertEqual(dest_res.status_code, 200)
         quote_res = self.client.post(reverse("order:shipping_quotes"))
         self.assertEqual(quote_res.status_code, 200)
+
+    def test_checkout_selected_items_only(self):
+        second_product = Product.objects.create(
+            name="Mouse PBP",
+            category=self.category,
+            price=100000,
+            stock=4,
+            weight_grams=200,
+            seller=self.other,
+        )
+        second_item = self.cart.items.create(
+            product=second_product,
+            quantity=1,
+        )
+        selected_ids = [self.item.pk]
+        summary = cart_summary(self.buyer, item_ids=selected_ids)
+        token = checkout_token(self.buyer, summary, item_ids=selected_ids)
+        response = self.client.post(
+            reverse("order:checkout"),
+            self.payload(checkout_token=token),
+        )
+        order = Order.objects.get()
+        self.assertRedirects(response, order.get_absolute_url())
+        self.assertEqual(order.items.count(), 1)
+        self.assertEqual(order.items.get().product_name, "Buku PBP")
+        self.assertFalse(self.cart.items.filter(pk=self.item.pk).exists())
+        self.assertTrue(self.cart.items.filter(pk=second_item.pk).exists())
+        self.assertEqual(order.subtotal, 150000)
+
+    def test_courier_shipping_with_agenwebsite_quote(self):
+        data = self.payload(
+            delivery_method="courier",
+            destination_postal_code="10110",
+            address="Jl. Medan Merdeka Barat No. 1, Jakarta Pusat",
+        )
+        response = self.client.post(reverse("order:checkout"), data)
+        order = Order.objects.get()
+        self.assertRedirects(response, order.get_absolute_url())
+        self.assertEqual(order.delivery_method, "courier")
+        self.assertGreater(order.shipping_cost, 0)
+        self.assertEqual(order.total, order.subtotal + order.shipping_cost)
+
+    def test_two_person_checkout_seller_ship_and_buyer_complete(self):
+        # 1. Product owned by self.other (seller) with stock=2
+        Product.objects.filter(pk=self.product.pk).update(stock=2)
+        # Buyer checks out 2 items (emptying remaining stock)
+        data = self.payload()
+        response = self.client.post(reverse("order:checkout"), data)
+        order = Order.objects.get()
+        self.assertRedirects(response, order.get_absolute_url())
+        self.assertEqual(order.status, "processing")
+        self.assert_stock(0)
+
+        # 2. Check seller dashboard for seller (self.other)
+        self.client.force_login(self.other)
+        seller_dash = self.client.get(reverse("order:seller_dashboard"))
+        self.assertEqual(seller_dash.status_code, 200)
+        # Because stock is 0, it is no longer in active selling_products
+        self.assertNotIn(self.product, seller_dash.context["selling_products"])
+        # The order is in in_checkout_orders
+        self.assertIn(order, seller_dash.context["in_checkout_orders"])
+
+        # 3. Seller marks order as shipped / handed over
+        self.client.post(
+            reverse("order:update_status", args=[order.pk]),
+            {"action": "ship", "tracking_number": "JNT-CAMPUS-999"},
+        )
+        order.refresh_from_db()
+        self.assertEqual(order.status, "shipped")
+        self.assertEqual(order.tracking_number, "JNT-CAMPUS-999")
+
+        # 4. Buyer completes the order (Selesaikan Barang)
+        self.client.force_login(self.buyer)
+        self.client.post(
+            reverse("order:update_status", args=[order.pk]),
+            {"action": "complete"},
+        )
+        order.refresh_from_db()
+        self.assertEqual(order.status, "completed")
+        self.assertEqual(order.payment_status, "paid")
+
+        # 5. Seller checks dashboard: order is now in completed_orders (history)
+        self.client.force_login(self.other)
+        seller_dash_after = self.client.get(reverse("order:seller_dashboard"))
+        self.assertNotIn(order, seller_dash_after.context["in_checkout_orders"])
+        self.assertIn(order, seller_dash_after.context["completed_orders"])
+        self.assertGreater(seller_dash_after.context["total_revenue"], 0)

@@ -1,124 +1,100 @@
+/* Product creation form, aligned with the shared Order design system. */
 .sell-page {
+    width: 100%;
     max-width: 850px;
-    margin: 40px auto;
-    padding: 0 20px 60px;
+    margin: 2.5rem auto 4rem;
 }
 
 .sell-label {
-    display: inline-block;
-    padding: 7px 13px;
-    border-radius: 8px;
-    background: #ffca28;
-    color: #155c3b;
-    font-weight: 700;
-    font-size: 13px;
+    display: inline-flex;
+    padding: 0.2rem 0.65rem;
+    margin-bottom: 0.75rem;
+    border-radius: 6px;
+    background: var(--sun-500);
+    color: var(--forest-700);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: rotate(-1deg);
 }
 
 .sell-page h1 {
-    color: #155c3b;
-    margin: 20px 0 14px;
+    max-width: 100%;
+    margin: 0 0 0.75rem;
+    color: var(--forest-500);
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
 }
 
 .sell-description {
-    color: #6b7280;
-    margin-top: 0;
-    margin-bottom: 32px;
-    line-height: 1.6;
+    max-width: 650px;
+    margin: 0 0 1.5rem;
+    color: var(--muted);
+    line-height: 1.7;
 }
 
 .sell-card {
-    background: white;
-    border: 1px solid #155c3b;
-    border-radius: 18px;
-    padding: 28px;
-    box-shadow: 5px 5px 0 #155c3b;
+    padding: 1.5rem;
+    border: 2px solid var(--forest-500);
+    border-radius: var(--radius-base);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-pop);
 }
 
-.sell-field {
-    margin-bottom: 20px;
-}
-
-.sell-field label {
-    display: block;
-    margin-bottom: 8px;
-    color: #155c3b;
-    font-weight: 700;
-}
-
-.sell-field input,
+.sell-field { margin-bottom: 1.25rem; min-width: 0; }
+.sell-field label { display: block; margin-bottom: 0.45rem; color: var(--green); font-size: 0.85rem; font-weight: 700; }
+.sell-field input:not([type="checkbox"]),
 .sell-field select,
 .sell-field textarea {
+    display: block;
     width: 100%;
-    box-sizing: border-box;
-    padding: 12px 14px;
-    border: 1px solid #d6d9d3;
-    border-radius: 10px;
-    background: #fffdf8;
-    font: inherit;
+    min-height: var(--button-lg);
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-base);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
 }
+.sell-field textarea { min-height: 140px; resize: vertical; }
+.sell-field input:focus-visible,
+.sell-field select:focus-visible,
+.sell-field textarea:focus-visible { outline: 3px solid var(--kiwi-300); outline-offset: 1px; border-color: var(--green); }
+.sell-field .help-text,
+.sell-field small { display: block; margin-top: 0.35rem; color: var(--muted); font-size: 0.78rem; line-height: 1.6; }
+.sell-error { margin: 0.4rem 0 0; color: var(--color-error); font-size: 0.8rem; }
+.sell-error ul { margin: 0; padding-left: 1.2rem; }
 
-.sell-field input:focus,
-.sell-field select:focus,
-.sell-field textarea:focus {
-    outline: 2px solid #cde86b;
-    border-color: #155c3b;
-}
-
-.sell-error {
-    color: #c62828;
-    font-size: 13px;
-    margin-top: 6px;
-}
-
-.sell-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 28px;
-}
-
+.sell-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--cream-500); }
 .sell-button {
     display: inline-flex;
-    justify-content: center;
     align-items: center;
-    padding: 13px 20px;
-    border-radius: 30px;
-    text-decoration: none;
+    justify-content: center;
+    min-height: var(--button-lg);
+    padding: 0.65rem 1.1rem;
+    border: 2px solid var(--green);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
     font-weight: 700;
+    line-height: 1.4;
+    text-decoration: none;
     cursor: pointer;
-    font: inherit;
+    transition: background-color 0.15s ease, transform 0.15s ease;
 }
-
-.sell-submit {
-    flex: 1;
-    border: 1px solid #155c3b;
-    background: #155c3b;
-    color: white;
-}
-
-.sell-cancel {
-    border: 1px solid #155c3b;
-    color: #155c3b;
-    background: white;
-}
-
-.sell-button:hover {
-    opacity: 0.9;
-}
-
-.sell-field .help-text,
-.sell-field small {
-    display: block;
-    margin-top: 6px;
-    color: #6b7280;
-    font-size: 12px;
-}
+.sell-submit { flex: 1; background: var(--green); color: var(--cream-0); box-shadow: var(--shadow-pop-sm); }
+.sell-submit:hover { background: var(--color-primary-hover); }
+.sell-cancel { background: transparent; color: var(--green); }
+.sell-cancel:hover { background: var(--forest-50); }
 
 @media (max-width: 600px) {
-    .sell-card {
-        padding: 18px;
-    }
-
-    .sell-actions {
-        flex-direction: column;
-    }
+    .sell-page { margin: 2rem auto 3rem; }
+    .sell-card { padding: 1rem; }
+    .sell-actions { align-items: stretch; flex-direction: column-reverse; }
+    .sell-button { width: 100%; }
 }

@@ -3,55 +3,52 @@
 {% load static %}
 
 {% block title %}Jual Produk | SiBekas{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/create_product.css' %}">
-{% endblock %}
 
 
 {% block content %}
-<main class="sell-page">
-    <span class="sell-label">JUAL BARANG</span>
-    <h1>Tambah produk</h1>
-    <p class="sell-description">
+<main class="w-full max-w-[850px] mx-auto mt-10 mb-16 max-[600px]:mt-8 max-[600px]:mb-12">
+    <span class="inline-flex py-[0.2rem] px-[0.65rem] mb-3 rounded-md bg-[var(--sun-500)] text-[var(--forest-700)] text-[0.75rem] font-extrabold tracking-[0.08em] uppercase -rotate-1">JUAL BARANG</span>
+    <h1 class="max-w-full mt-0 mb-3 text-[var(--forest-500)] text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-[1.1] tracking-[-0.03em]">Tambah produk</h1>
+    <p class="max-w-[650px] mt-0 mb-6 text-[var(--muted)] leading-[1.7]">
         Yuk, isi informasi barang yang ingin kamu jual di SiBekas.
     </p>
 
-    <section class="sell-card">
-        <form method="POST">
+    <section class="p-6 max-[600px]:p-4 border-2 border-solid border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]">
+        <form method="POST" hx-boost = "true">
             {% csrf_token %}
 
             {% if form.non_field_errors %}
-                <div class="sell-error">
+                <div class="mt-[0.4rem] mb-0 text-[var(--color-error)] text-[0.8rem] [&_ul]:m-0 [&_ul]:pl-[1.2rem]">
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
 
             {% for field in form %}
-                <div class="sell-field">
-                    <label for="{{ field.id_for_label }}">
+                <div class="mb-5 min-w-0">
+                    <label for="{{ field.id_for_label }}" class="block mb-[0.45rem] text-[var(--green)] text-[0.85rem] font-bold">
                         {{ field.label }}
                     </label>
 
                     {{ field }}
 
                     {% if field.help_text %}
-                        <small>{{ field.help_text }}</small>
+                        <small class="block mt-[0.35rem] text-[var(--muted)] text-[0.78rem] leading-[1.6]">{{ field.help_text }}</small>
                     {% endif %}
 
                     {% for error in field.errors %}
-                        <p class="sell-error">{{ error }}</p>
+                        <p class="mt-[0.4rem] mb-0 text-[var(--color-error)] text-[0.8rem]">{{ error }}</p>
                     {% endfor %}
                 </div>
             {% endfor %}
 
-            <div class="sell-actions">
+            <div class="flex items-center flex-wrap gap-[0.7rem] mt-6 pt-4 border-0 border-t border-solid border-[var(--cream-500)] max-[600px]:items-stretch max-[600px]:flex-col-reverse">
                 <a href="{% url 'profile:index' %}"
-                   class="sell-button sell-cancel">
+                   class="inline-flex items-center justify-center min-h-[var(--button-lg)] py-[0.65rem] px-[1.1rem] border-2 border-solid border-[var(--green)] rounded-full bg-transparent text-[var(--green)] text-[0.85rem] font-bold leading-[1.4] no-underline transition-colors hover:bg-[var(--forest-50)] max-[600px]:w-full">
                     Batal
                 </a>
 
                 <button type="submit"
-                        class="sell-button sell-submit">
+                        class="flex-1 inline-flex items-center justify-center min-h-[var(--button-lg)] py-[0.65rem] px-[1.1rem] border-2 border-solid border-[var(--green)] rounded-full bg-[var(--green)] text-[var(--cream-0)] text-[0.85rem] font-bold leading-[1.4] cursor-pointer shadow-[var(--shadow-pop-sm)] transition-colors hover:bg-[var(--color-primary-hover)] max-[600px]:w-full">
                     Tambahkan produk
                 </button>
             </div>
