@@ -8,7 +8,8 @@ from product.forms import ProductForm
 import json
 from io import BytesIO, StringIO
 from unittest.mock import patch
-from django.core.management import call_command
+from django.core.management import call_command, CommandError
+from urllib.error import URLError
 
 # from django.core.exceptions import PermissionDenied
 from django.test import TestCase
@@ -99,6 +100,11 @@ class ProductTest(TestCase):
         self.product.save()
         response = self.client.get(reverse("product:index"))
         self.assertContains(response, 'onerror="this.remove()"')
+
+    def test_seed_sellers_handles_dummyjson_down(self):
+        with patch("product.management.commands.seed_sellers.urlopen", side_effect=URLError("down")):
+            with self.assertRaises(CommandError):
+                call_command("seed_sellers")
 
 class ProductModelTests(TestCase):
     @classmethod
