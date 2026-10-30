@@ -1,41 +1,25 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}Hapus Ulasan - SiBekas{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/review.css' %}">
-{% endblock %}
-
 {% block content %}
-<div class="review-form-page">
-    <a href="{% url 'review:index' %}" class="review-back-link">← Kembali ke Ulasan &amp; Rating</a>
-
-    <header class="review-form-hero">
-        <span class="review-form-hero__kicker">KONFIRMASI</span>
-        <h1>Hapus ulasan</h1>
-        <p>Pastikan kamu ingin menghapus ulasan ini. Tindakan ini tidak dapat dibatalkan.</p>
-    </header>
-
-    <section class="review-confirm-card">
-        <div class="review-product-box">
-            <div class="review-product-box__icon" aria-hidden="true">
-                <i data-lucide="message-square-warning"></i>
-            </div>
-            <div class="review-product-box__content">
-                <span class="review-product-box__status">ULASAN YANG AKAN DIHAPUS</span>
-                <h2 class="review-product-box__name">{{ review.product.name }}</h2>
-                <p class="review-product-box__meta">Rating: {{ review.rating }}/5</p>
-            </div>
-        </div>
-
-        <blockquote class="review-confirm-comment">“{{ review.comment }}”</blockquote>
-
-        <form method="POST" class="review-form-actions">
-            {% csrf_token %}
-            <button type="submit" class="btn-delete-confirm">Ya, hapus ulasan</button>
-            <a href="{% url 'review:index' %}" class="review-cancel-button">Batal</a>
-        </form>
-    </section>
+<div class="w-full max-w-[1120px] mx-auto py-8 pb-14 text-[var(--ink)]">
+  <a href="{% url 'review:index' %}" class="inline-flex mb-6 text-sm font-bold text-[var(--green)] hover:underline">← Kembali ke Ulasan &amp; Rating</a>
+  <header class="mb-6">
+    <span class="inline-flex mb-3 px-3 py-1 rounded-md bg-[var(--sun-500)] text-[var(--forest-700)] text-xs font-extrabold tracking-wider">KONFIRMASI</span>
+    <h1 class="mb-3 text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] text-[var(--forest-500)]">Hapus ulasan</h1>
+    <p class="text-sm text-[var(--muted)]">Pastikan kamu ingin menghapus ulasan ini. Tindakan ini tidak dapat dibatalkan.</p>
+  </header>
+  <section class="w-full max-w-[720px] min-w-0 p-5 md:p-6 border-2 border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]">
+    <div class="flex items-center gap-3 p-4 border border-[var(--forest-200)] rounded-[var(--radius-base)] bg-[var(--sun-100)]">
+      <div class="flex items-center justify-center w-[46px] h-[46px] shrink-0 border border-[var(--forest-500)] rounded-lg bg-[var(--kiwi-200)] text-[var(--green)]" aria-hidden="true"><i data-lucide="message-square-warning"></i></div>
+      <div class="min-w-0"><span class="block text-[10px] font-extrabold text-[var(--green)]">ULASAN YANG AKAN DIHAPUS</span><h2 class="m-0 text-base font-extrabold break-words">{{ review.product.name }}</h2><p class="m-0 mt-1 text-xs text-[var(--muted)]">Rating: {{ review.rating }}/5</p></div>
+    </div>
+    <blockquote class="p-4 my-5 border-l-[3px] border-[var(--green)] rounded-r-lg bg-[var(--cream-200)] text-sm leading-relaxed break-words">“{{ review.comment }}”</blockquote>
+    <form method="POST" class="flex flex-wrap items-center gap-3 pt-4 border-t border-[var(--cream-500)]">
+      {% csrf_token %}
+      <button type="submit" class="inline-flex items-center justify-center min-h-[42px] px-5 border-2 border-[var(--color-error)] rounded-full bg-[var(--color-error)] text-sm font-bold text-white">Ya, hapus ulasan</button>
+      <a href="{% url 'review:index' %}" class="inline-flex items-center justify-center min-h-[42px] px-5 border-2 border-[var(--green)] rounded-full text-sm font-bold text-[var(--green)]">Batal</a>
+    </form>
+  </section>
 </div>
 {% endblock %}
