@@ -1,0 +1,20 @@
+{% for quote in quotes %}
+<label class="order-shipping-choice">
+    <input type="radio" name="selected_courier_rate" value="{{ quote.id }}"
+           data-cost="{{ quote.cost }}"
+           data-service="{{ quote.courier }} - {{ quote.service }}"
+           data-etd="{{ quote.etd }}"
+           data-courier="{{ quote.courier }}"
+           {% if forloop.first %}checked{% endif %}>
+    <div>
+        <strong>{{ quote.courier }} — {{ quote.service }}</strong>
+        <p style="margin: 0; font-size: 0.75rem; color: var(--muted);">
+            Estimasi: {{ quote.etd }} · <strong>{{ quote.cost_formatted }}</strong>
+        </p>
+    </div>
+</label>
+{% empty %}
+<p style="font-size: 0.8rem; color: var(--color-error); padding: 0.5rem 0;">
+    Tidak ada layanan kurir yang tersedia untuk kode pos tersebut.
+</p>
+{% endfor %}
