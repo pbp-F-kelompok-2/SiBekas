@@ -20,8 +20,8 @@
         <p class="profile-bio">{{ profile.bio|default:"Belum ada deskripsi." }}</p>
     </section>
 
-    <section class="mb-6">
-        <div class="my-listings-header">
+    <section class="mt-10 pb-[50px]">
+        <div class="mb-6">
             <div>
                 <span class="inline-block py-1 px-[13px] rounded-lg bg-[var(--sun-500)] text-[var(--forest-700)] text-[0.75rem] font-bold tracking-[0.06em]">TOKO</span>
                 <h2 class="mt-3.5 mb-1.5 text-[var(--forest-500)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">Produk yang dijual</h2>
@@ -33,7 +33,7 @@
             {% for product in products %}
             <article class="overflow-hidden bg-[var(--color-surface)] border border-solid border-[var(--color-border)] rounded-[var(--radius-sm)] shadow-[var(--shadow-pop)] [[data-theme=dark]_&]:shadow-[var(--shadow-card)]">
                 {% if product.thumbnail %}
-                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="block w-full h-[190px] object-cover bg-[var(--cream-300)]>
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="block w-full h-[190px] object-cover bg-[var(--cream-300)]">
                 {% else %}
                 <div class="grid place-items-center w-full h-[190px] bg-[var(--cream-300)] text-[var(--color-text-muted)]">Belum ada foto</div>
                 {% endif %}
@@ -50,6 +50,29 @@
         <div class="py-10 px-5 text-center bg-[var(--color-surface)] border border-solid border-[var(--color-border)] rounded-[var(--radius-base)] shadow-[var(--shadow-pop)] [[data-theme=dark]_&]:shadow-[var(--shadow-card)]">
             <h3>Belum ada produk yang dijual</h3>
         </div>
+        {% endif %}
+    </section>
+        <section class="pb-[50px]">
+        <div class="mb-6">
+            <span class="inline-block py-1 px-[13px] rounded-lg bg-[var(--sun-500)] text-[var(--forest-700)] text-[0.75rem] font-bold tracking-[0.06em]">ULASAN</span>
+            <h2 class="mt-3.5 mb-1.5 text-[var(--forest-500)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">Ulasan pembeli</h2>
+            {% if review_stats.total %}
+            <p class="text-[var(--muted)] text-[0.875rem]">Rata-rata {{ review_stats.average|floatformat:1 }} / 5 · {{ review_stats.total }} ulasan</p>
+            {% endif %}
+        </div>
+
+        {% for product in products %}
+        {% for review in product.reviews.all %}
+        <article class="p-4 mt-3 border border-solid border-[var(--cream-500)] rounded-[var(--radius-base)] bg-[var(--cream-200)] [overflow-wrap:anywhere] [[data-theme=dark]_&]:bg-[#26372B] [[data-theme=dark]_&]:border-[#55745C] [[data-theme=dark]_&]:text-[#F3F5EF]">
+            <p class="mb-2 text-[var(--green)] [[data-theme=dark]_&]:text-[#A8D5AE]"><strong>{{ review.user.username }}</strong> · {{ review.rating }} / 5 · <a href="{{ product.get_absolute_url }}" class="text-inherit font-bold">{{ product.name }}</a></p>
+            <p class="mb-2 [[data-theme=dark]_&]:text-[#F3F5EF]">{{ review.comment|linebreaksbr }}</p>
+            <small class="text-[var(--muted)] text-[0.75rem] [[data-theme=dark]_&]:text-[#C1CBBF]">{{ review.created_at|date:"d M Y" }}{% if review.edited %} · Diedit{% endif %}</small>
+        </article>
+        {% endfor %}
+        {% endfor %}
+
+        {% if not review_stats.total %}
+        <p class="text-[var(--muted)] text-[0.875rem]">Belum ada ulasan untuk penjual ini.</p>
         {% endif %}
     </section>
 </main>

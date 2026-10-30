@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_POST
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from .models import Category, Product
 from .forms import ProductForm
 from profiles.models import Favorite, Profile
@@ -173,9 +173,10 @@ def bulk_delete(request):
 
 def seller_profile(request, username):
     seller = get_object_or_404(get_user_model(), username=username)
-    products = Product.objects.filter(seller=seller).select_related("category")
+    products = Product.objects.filter(seller=seller).select_related("category").prefetch_related("reviews__user")
     return render(request, "product/seller.html", {
         "seller": seller,
         "profile": Profile.objects.filter(user=seller).first(),
         "products": products,
+        "review_stats": products.aggregate(average=Avg("reviews__rating"), total=Count("reviews")),
     })
