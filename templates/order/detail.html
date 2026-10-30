@@ -169,12 +169,22 @@
             </form>
             {% endif %}
 
-            <!-- Buyer Complete Action (Selesaikan Barang) -->
-            {% if is_buyer and order.status == 'shipped' or is_buyer and order.status == 'processing' and order.payment_method == 'cod' %}
+            <!-- Buyer in PROCESSING: Waiting for Seller/Sender to Ship -->
+            {% if is_buyer and order.status == 'processing' %}
+            <div class="order-notice" style="margin-top: 1rem;">
+                <p>
+                    <i data-lucide="clock" class="inline w-4 h-4 mr-1"></i>
+                    <strong>Menunggu konfirmasi pengirim:</strong> Pesanan sedang dipersiapkan. Tombol konfirmasi penerimaan akan aktif setelah akun pengirim (penjual/petugas) menandai barang telah dikirim atau siap diserahterimakan.
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Buyer Complete Action (Selesaikan Barang) - ONLY when SHIPPED -->
+            {% if is_buyer and order.status == 'shipped' %}
             <form class="order-action-form" method="post" action="{% url 'order:update_status' order.id %}">
                 {% csrf_token %}
                 <p class="order-hint">
-                    Konfirmasikan setelah barang diterima dalam kondisi baik{% if order.payment_method == 'cod' %} dan pembayaran COD selesai{% endif %}.
+                    Barang telah dikirim/disiapkan oleh pengirim. Konfirmasikan setelah barang diterima dalam kondisi baik{% if order.payment_method == 'cod' %} dan pembayaran COD selesai{% endif %}.
                 </p>
                 <button class="order-button order-button-wide" name="action" value="complete" type="submit">
                     Selesaikan pesanan (Barang diterima)<i data-lucide="check" aria-hidden="true"></i>
