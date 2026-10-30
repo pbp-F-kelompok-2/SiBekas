@@ -88,6 +88,12 @@ class ProductTest(TestCase):
         product.refresh_from_db()
         self.assertEqual(product.seller.username, "emilys")
 
+    def test_category_list_is_cached(self):
+        self.client.get(reverse("product:index"))
+        Category.objects.create(name="Elektronik Langka")
+        response = self.client.get(reverse("product:index"))
+        self.assertNotContains(response, "Elektronik Langka")
+        
 class ProductModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -272,3 +278,5 @@ class ProductViewTests(TestCase):
     def test_detail_links_to_seller_profile(self):
         response = self.client.get(self.product.get_absolute_url())
         self.assertContains(response, reverse("product:seller", args = [self.owner.username]))
+
+    
