@@ -219,6 +219,12 @@ class OrderFlowTests(TestCase):
         self.assertEqual(order.status, "processing")
         self.assert_stock(0)
 
+        # Buyer CANNOT complete order while status is still 'processing'
+        with self.assertRaises(OrderError):
+            change_status(order.pk, self.buyer, "complete")
+        order.refresh_from_db()
+        self.assertEqual(order.status, "processing")
+
         # 2. Check seller dashboard for seller (self.other)
         self.client.force_login(self.other)
         seller_dash = self.client.get(reverse("order:seller_dashboard"))
@@ -237,7 +243,7 @@ class OrderFlowTests(TestCase):
         self.assertEqual(order.status, "shipped")
         self.assertEqual(order.tracking_number, "JNT-CAMPUS-999")
 
-        # 4. Buyer completes the order (Selesaikan Barang)
+        # 4. Buyer completes the order (Selesaikan Barang) now that status is shipped
         self.client.force_login(self.buyer)
         self.client.post(
             reverse("order:update_status", args=[order.pk]),
