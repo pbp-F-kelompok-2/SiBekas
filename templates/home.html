@@ -1,33 +1,323 @@
-{% extends "base.html" %}
 
-{% block title %}SiBekas - Marketplace Preloved UI{% endblock %}
+{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Marketplace mahasiswa UI</p>
-    <h1>Barang lama,<br><span>cerita baru.</span></h1>
-    <p class="hero-copy">
-        Temukan barang preloved dari sesama mahasiswa UI. Simpan barang favorit,
-        belanja lewat keranjang, dan pantau pesananmu sampai diterima.
-    </p>
-    <a class="button" href="{% url 'product:index' %}">Jelajahi produk</a>
-</section>
 
-<section class="modules" aria-labelledby="modules-heading">
-    <h2 id="modules-heading">Modul utama</h2>
-    <div class="module-grid">
-        <a href="{% url 'product:index' %}">Product</a>
-        {% if user.is_authenticated %}
-            <a href="{% url 'profile:index' %}">Profile / User</a>
-            <a href="{% url 'cart:index' %}">Cart</a>
-            <a href="{% url 'order:index' %}">Order / Transaction</a>
-            <a href="{% url 'review:index' %}">Review</a>
-        {% else %}
-            <a href="{% url 'profile:login' %}">Profile / User</a>
-            <a href="{% url 'profile:login' %}">Cart</a>
-            <a href="{% url 'profile:login' %}">Order / Transaction</a>
-            <a href="{% url 'profile:login' %}">Review</a>
-        {% endif %}
-    </div>
-</section>
+<div class="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden bg-[var(--cream-200)] font-[var(--font-body)] text-[var(--color-text-primary)]">
+
+    <!-- HERO -->
+    <section class="flex min-h-[650px] items-center border-b-4 border-[var(--forest-500)] bg-[var(--cream-200)] py-[65px] max-sm:min-h-0 max-sm:py-[45px] sm:py-[75px]">
+        <div class="mx-auto grid w-[calc(100%-120px)] max-w-[1500px] grid-cols-2 items-center gap-[70px] max-[900px]:w-[calc(100%-60px)] max-[900px]:gap-[30px] max-sm:w-[calc(100%-36px)] max-sm:grid-cols-1 max-sm:gap-0">
+
+            <div class="min-w-0">
+                <span class="inline-block rotate-[-1deg] rounded-[5px] bg-[var(--sun-500)] px-[15px] py-[7px] font-[var(--font-heading)] text-[13px] font-black uppercase tracking-[0.3px] text-[var(--forest-950)] max-sm:text-[11px]">
+                    Khusus Mahasiswa UI
+                </span>
+
+                <h1 class="mt-6 font-[var(--font-heading)] text-[clamp(66px,5.2vw,86px)] font-black leading-[1.02] tracking-[-3.5px] text-[var(--forest-500)] max-[900px]:text-[clamp(48px,6.5vw,65px)] max-[900px]:tracking-[-2px] max-sm:text-[clamp(44px,11vw,60px)] max-sm:leading-[1.04]">
+                    Barang lama<br>
+                    kamu,<br>
+                    <span class="text-[var(--carrot-600)] underline decoration-[var(--kiwi-500)] decoration-[7px] underline-offset-[5px] [text-decoration-skip-ink:none]">
+                        kebutuhan baru
+                    </span><br>
+                    temanmu.
+                </h1>
+
+                <p class="mt-7 max-w-[620px] text-[18px] leading-[1.75] text-[var(--cream-800)] max-[900px]:text-[15px] max-sm:mt-[22px] max-sm:text-[15px] max-sm:leading-[1.7]">
+                    SiBekas mempertemukan penjual dan pembeli barang
+                    preloved sesama mahasiswa Universitas Indonesia.
+                    Aman, hemat, dan ramah lingkungan.
+                </p>
+
+                <div class="mt-[25px] flex flex-wrap items-center gap-[14px] max-sm:gap-[10px]">
+                    <a href="{% url 'product:index' %}"
+                       class="inline-flex min-h-[58px] items-center justify-center gap-[10px] rounded-full border-2 border-[var(--forest-500)] bg-[var(--forest-500)] px-[30px] py-[15px] font-[var(--font-heading)] text-[15px] font-extrabold text-[var(--cream-0)] no-underline transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--forest-700)] hover:text-[var(--cream-0)] max-sm:min-h-12 max-sm:px-[19px] max-sm:py-3 max-sm:text-[13px]">
+                        Mulai Belanja <span class="text-[17px]">→</span>
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'product:create' %}"
+                           class="inline-flex min-h-[58px] items-center justify-center gap-[10px] rounded-full border-2 border-[var(--forest-500)] bg-[var(--kiwi-500)] px-[30px] py-[15px] font-[var(--font-heading)] text-[15px] font-extrabold text-[var(--forest-950)] no-underline shadow-[2px_2px_0_var(--forest-500)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--kiwi-400)] hover:text-[var(--forest-950)] hover:shadow-[3px_3px_0_var(--forest-500)] max-sm:min-h-12 max-sm:px-[19px] max-sm:py-3 max-sm:text-[13px]">
+                            Jual Barangmu
+                        </a>
+                    {% else %}
+                        <a href="{% url 'profile:login' %}"
+                           class="inline-flex min-h-[58px] items-center justify-center gap-[10px] rounded-full border-2 border-[var(--forest-500)] bg-[var(--kiwi-500)] px-[30px] py-[15px] font-[var(--font-heading)] text-[15px] font-extrabold text-[var(--forest-950)] no-underline shadow-[2px_2px_0_var(--forest-500)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--kiwi-400)] hover:text-[var(--forest-950)] hover:shadow-[3px_3px_0_var(--forest-500)] max-sm:min-h-12 max-sm:px-[19px] max-sm:py-3 max-sm:text-[13px]">
+                            Jual Barangmu
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="mt-[30px] flex flex-wrap gap-[38px] max-[900px]:gap-[22px] max-sm:mt-[25px]">
+                    <div class="flex flex-col gap-[2px]">
+                        <strong class="font-[var(--font-heading)] text-[25px] font-black text-[var(--forest-500)] max-sm:text-[19px]">50+</strong>
+                        <span class="text-[13px] text-[var(--cream-800)] max-sm:text-[11px]">Barang tersedia</span>
+                    </div>
+                    <div class="flex flex-col gap-[2px]">
+                        <strong class="font-[var(--font-heading)] text-[25px] font-black text-[var(--forest-500)] max-sm:text-[19px]">UI Only</strong>
+                        <span class="text-[13px] text-[var(--cream-800)] max-sm:text-[11px]">Login akun UI</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INLINE SVG ILLUSTRATION -->
+            <div class="flex w-full min-w-0 items-center justify-center max-sm:hidden" aria-label="Ilustrasi buku, lampu meja, dan kalkulator">
+                <svg class="block h-auto w-full max-w-[760px] overflow-visible min-[1600px]:max-w-[820px]"
+                     viewBox="0 0 760 330"
+                     xmlns="http://www.w3.org/2000/svg"
+                     role="img"
+                     aria-labelledby="hero-svg-title">
+
+                    <title id="hero-svg-title">
+                        Ilustrasi barang preloved berupa buku, lampu meja, dan kalkulator
+                    </title>
+
+                    <circle cx="380" cy="155" r="145" fill="var(--kiwi-200)" opacity="0.85"/>
+                    <circle cx="495" cy="190" r="27" fill="var(--sun-200)"/>
+
+                    <rect x="65" y="242" width="225" height="45"
+                          rx="5" fill="var(--kiwi-300)"
+                          stroke="var(--forest-500)" stroke-width="4"/>
+
+                    <path d="M83 263 H112"
+                          stroke="var(--forest-500)"
+                          stroke-width="4" stroke-linecap="round"/>
+
+                    <rect x="90" y="197" width="194" height="47"
+                          rx="5" fill="var(--carrot-300)"
+                          stroke="var(--forest-500)" stroke-width="4"/>
+
+                    <path d="M112 220 H138"
+                          stroke="var(--forest-500)"
+                          stroke-width="4" stroke-linecap="round"/>
+
+                    <g transform="rotate(-4 170 180)">
+                        <rect x="58" y="148" width="200" height="43"
+                              rx="5" fill="var(--sun-300)"
+                              stroke="var(--forest-500)" stroke-width="4"/>
+                    </g>
+
+                    <path d="M390 269 L367 174 L421 128"
+                          fill="none" stroke="var(--forest-500)"
+                          stroke-width="9" stroke-linecap="round"
+                          stroke-linejoin="round"/>
+
+                    <path d="M425 69 L511 98 L472 157 L387 126 Z"
+                          fill="var(--kiwi-500)"
+                          stroke="var(--forest-500)"
+                          stroke-width="4"
+                          stroke-linejoin="round"/>
+
+                    <rect x="340" y="267" width="116" height="22"
+                          rx="8" fill="var(--forest-500)"/>
+
+                    <rect x="560" y="116" width="135" height="171"
+                          rx="17" fill="var(--forest-200)"
+                          stroke="var(--forest-500)" stroke-width="4"/>
+
+                    <rect x="576" y="132" width="103" height="39"
+                          rx="5" fill="var(--cream-0)"
+                          stroke="var(--forest-500)" stroke-width="4"/>
+
+                    <g fill="var(--forest-500)">
+                        <circle cx="591" cy="201" r="11"/>
+                        <circle cx="625" cy="201" r="11"/>
+                        <circle cx="659" cy="201" r="11"/>
+                        <circle cx="591" cy="235" r="11"/>
+                        <circle cx="625" cy="235" r="11"/>
+                        <circle cx="659" cy="235" r="11"/>
+                        <circle cx="591" cy="269" r="11"/>
+                        <circle cx="625" cy="269" r="11"/>
+                    </g>
+
+                    <circle cx="659" cy="269" r="11"
+                            fill="var(--sun-500)"
+                            stroke="var(--forest-500)" stroke-width="3"/>
+
+                    <circle cx="659" cy="201" r="9"
+                            fill="var(--carrot-500)"
+                            stroke="var(--forest-500)" stroke-width="3"/>
+
+                    <circle cx="659" cy="235" r="9"
+                            fill="var(--carrot-500)"
+                            stroke="var(--forest-500)" stroke-width="3"/>
+
+                    <path d="M15 288 H735"
+                          stroke="var(--forest-500)"
+                          stroke-width="4"
+                          stroke-linecap="round"/>
+
+                    <circle cx="710" cy="45" r="34"
+                            fill="var(--kiwi-500)"
+                            stroke="var(--forest-500)"
+                            stroke-width="4"/>
+
+                    <path d="M697 56 C696 35 712 23 730 27
+                             C730 45 717 59 697 56 Z"
+                          fill="var(--cream-0)"
+                          stroke="var(--forest-500)"
+                          stroke-width="3"
+                          stroke-linejoin="round"/>
+
+                    <path d="M698 55 L719 34"
+                          stroke="var(--forest-500)"
+                          stroke-width="3"
+                          stroke-linecap="round"/>
+
+                </svg>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- THREE STEPS -->
+    <section class="border-b-[3px] border-[var(--forest-500)] bg-[var(--kiwi-300)] py-[65px] max-sm:py-[45px]">
+        <div class="mx-auto w-[calc(100%-120px)] max-w-[1500px] max-[900px]:w-[calc(100%-60px)] max-sm:w-[calc(100%-36px)]">
+            <h2 class="mb-[42px] text-center font-[var(--font-heading)] text-[36px] font-black tracking-[-0.8px] text-[var(--forest-500)] max-sm:mb-[35px] max-sm:text-[27px]">
+                Tiga langkah, selesai.
+            </h2>
+
+            <div class="grid grid-cols-3 gap-6 max-sm:grid-cols-1 max-sm:gap-[22px]">
+                <article class="relative min-h-[185px] rounded-2xl border-2 border-[var(--forest-500)] bg-[var(--cream-200)] px-7 pb-[25px] pt-[38px] shadow-[5px_5px_0_var(--forest-500)] max-sm:min-h-[150px] max-sm:px-[22px] max-sm:pb-[22px] max-sm:pt-8">
+                    <span class="absolute left-[22px] top-[-19px] flex h-[38px] w-[38px] items-center justify-center rounded-full border-2 border-[var(--forest-500)] bg-[var(--carrot-500)] font-[var(--font-heading)] text-[17px] font-black text-white">
+                        1
+                    </span>
+                    <i data-lucide="search" class="mb-[10px] h-6 w-6 text-[var(--forest-500)]"></i>
+                    <h3 class="mb-[7px] font-[var(--font-heading)] text-[19px] font-black text-[var(--forest-500)] max-sm:text-[17px]">
+                        Cari & pilih
+                    </h3>
+                    <p class="text-[15px] leading-[1.65] text-[var(--cream-800)] max-sm:text-[13px]">
+                        Telusuri katalog berdasarkan kategori,
+                        kondisi, dan rentang harga.
+                    </p>
+                </article>
+
+                <article class="relative min-h-[185px] rounded-2xl border-2 border-[var(--forest-500)] bg-[var(--cream-200)] px-7 pb-[25px] pt-[38px] shadow-[5px_5px_0_var(--forest-500)] max-sm:min-h-[150px] max-sm:px-[22px] max-sm:pb-[22px] max-sm:pt-8">
+                    <span class="absolute left-[22px] top-[-19px] flex h-[38px] w-[38px] items-center justify-center rounded-full border-2 border-[var(--forest-500)] bg-[var(--carrot-500)] font-[var(--font-heading)] text-[17px] font-black text-white">
+                        2
+                    </span>
+                    <i data-lucide="shopping-bag" class="mb-[10px] h-6 w-6 text-[var(--forest-500)]"></i>
+                    <h3 class="mb-[7px] font-[var(--font-heading)] text-[19px] font-black text-[var(--forest-500)] max-sm:text-[17px]">
+                        Checkout mudah
+                    </h3>
+                    <p class="text-[15px] leading-[1.65] text-[var(--cream-800)] max-sm:text-[13px]">
+                        Pilih kurir, cek ongkir otomatis lewat
+                        RajaOngkir, lalu bayar.
+                    </p>
+                </article>
+
+                <article class="relative min-h-[185px] rounded-2xl border-2 border-[var(--forest-500)] bg-[var(--cream-200)] px-7 pb-[25px] pt-[38px] shadow-[5px_5px_0_var(--forest-500)] max-sm:min-h-[150px] max-sm:px-[22px] max-sm:pb-[22px] max-sm:pt-8">
+                    <span class="absolute left-[22px] top-[-19px] flex h-[38px] w-[38px] items-center justify-center rounded-full border-2 border-[var(--forest-500)] bg-[var(--carrot-500)] font-[var(--font-heading)] text-[17px] font-black text-white">
+                        3
+                    </span>
+                    <i data-lucide="message-square-heart" class="mb-[10px] h-6 w-6 text-[var(--forest-500)]"></i>
+                    <h3 class="mb-[7px] font-[var(--font-heading)] text-[19px] font-black text-[var(--forest-500)] max-sm:text-[17px]">
+                        Beri ulasan
+                    </h3>
+                    <p class="text-[15px] leading-[1.65] text-[var(--cream-800)] max-sm:text-[13px]">
+                        Bantu mahasiswa lain dengan rating dan
+                        ulasan jujur setelah barang tiba.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- BENEFITS -->
+    <section class="bg-[var(--cream-200)] py-[70px] max-sm:py-10">
+        <div class="mx-auto w-[calc(100%-120px)] max-w-[1500px] max-[900px]:w-[calc(100%-60px)] max-sm:w-[calc(100%-36px)]">
+            <div class="grid grid-cols-4 gap-[35px] max-[900px]:grid-cols-2 max-[900px]:gap-[25px] max-sm:grid-cols-1">
+                <article class="flex items-start gap-4">
+                    <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[11px] border-2 border-[var(--forest-500)] bg-[var(--sun-200)] text-[var(--forest-500)]">
+                        <i data-lucide="badge-check" class="h-[23px] w-[23px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-[5px] font-[var(--font-heading)] text-base font-black text-[var(--forest-500)] max-sm:text-sm">
+                            Akun mahasiswa UI
+                        </h3>
+                        <p class="text-sm leading-[1.65] text-[var(--cream-800)] max-sm:text-[13px]">
+                            Platform khusus untuk mahasiswa UI.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="flex items-start gap-4">
+                    <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[11px] border-2 border-[var(--forest-500)] bg-[var(--sun-200)] text-[var(--forest-500)]">
+                        <i data-lucide="recycle" class="h-[23px] w-[23px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-[5px] font-[var(--font-heading)] text-base font-black text-[var(--forest-500)] max-sm:text-sm">
+                            Hemat & berkelanjutan
+                        </h3>
+                        <p class="text-sm leading-[1.65] text-[var(--cream-800)] max-sm:text-[13px]">
+                            Perpanjang usia pakai barang, kurangi limbah.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="flex items-start gap-4">
+                    <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[11px] border-2 border-[var(--forest-500)] bg-[var(--sun-200)] text-[var(--forest-500)]">
+                        <i data-lucide="truck" class="h-[23px] w-[23px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-[5px] font-[var(--font-heading)] text-base font-black text-[var(--forest-500)] max-sm:text-sm">
+                            Kirim atau COD
+                        </h3>
+                        <p class="text-sm leading-[1.65] text-[var(--cream-800)] max-sm:text-[13px]">
+                            Pengiriman ke seluruh Indonesia atau temu di kampus.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="flex items-start gap-4">
+                    <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[11px] border-2 border-[var(--forest-500)] bg-[var(--sun-200)] text-[var(--forest-500)]">
+                        <i data-lucide="wallet" class="h-[23px] w-[23px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-[5px] font-[var(--font-heading)] text-base font-black text-[var(--forest-500)] max-sm:text-sm">
+                            Harga ramah kantong
+                        </h3>
+                        <p class="text-sm leading-[1.65] text-[var(--cream-800)] max-sm:text-[13px]">
+                            Barang bagus dengan harga mahasiswa.
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SELLER CTA -->
+    <section class="bg-[var(--cream-200)] pb-[120px] max-sm:pb-[55px]">
+        <div class="mx-auto w-[calc(100%-120px)] max-w-[1500px] max-[900px]:w-[calc(100%-60px)] max-sm:w-[calc(100%-36px)]">
+            <div class="flex min-h-[205px] items-center justify-between gap-10 rounded-[18px] border-2 border-[var(--forest-500)] bg-[var(--forest-500)] px-[55px] py-[45px] max-sm:min-h-0 max-sm:flex-col max-sm:items-start max-sm:gap-5 max-sm:px-[25px] max-sm:py-[30px]">
+                <div>
+                    <h2 class="mb-3 font-[var(--font-heading)] text-[34px] font-black tracking-[-0.5px] text-[var(--cream-0)] max-sm:text-[26px]">
+                        Punya barang menganggur di kos?
+                    </h2>
+                    <p class="max-w-[650px] text-base leading-[1.7] text-[var(--forest-100)] max-sm:text-sm">
+                        Pasang listing dalam hitungan menit dan ubah
+                        jadi uang jajan tambahan.
+                    </p>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'product:create' %}"
+                       class="inline-flex min-h-[55px] min-w-[190px] shrink-0 items-center justify-center gap-[9px] rounded-full border-2 border-[var(--forest-500)] bg-[var(--kiwi-500)] px-[25px] py-[14px] font-[var(--font-heading)] text-[15px] font-black text-[var(--forest-950)] no-underline transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--kiwi-400)] hover:text-[var(--forest-950)] max-sm:min-h-12 max-sm:w-full">
+                        Pasang Listing <span>→</span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'profile:login' %}"
+                       class="inline-flex min-h-[55px] min-w-[190px] shrink-0 items-center justify-center gap-[9px] rounded-full border-2 border-[var(--forest-500)] bg-[var(--kiwi-500)] px-[25px] py-[14px] font-[var(--font-heading)] text-[15px] font-black text-[var(--forest-950)] no-underline transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--kiwi-400)] hover:text-[var(--forest-950)] max-sm:min-h-12 max-sm:w-full">
+                        Pasang Listing <span>→</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+</div>
 {% endblock %}
