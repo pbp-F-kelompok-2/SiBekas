@@ -83,8 +83,8 @@ Keranjang - SiBekas
 
     {% if cart_has_items %}
 
-    <form id="cart-bulk-form" class="cart-bulk-toolbar" method="post" action="{% url 'cart:bulk_delete' %}"
-        data-cart-bulk-form>
+    <form id="cart-bulk-form" class="cart-bulk-toolbar transition-shadow duration-200 hover:shadow-md" method="post"
+        action="{% url 'cart:bulk_delete' %}" data-cart-bulk-form>
 
         {% csrf_token %}
 
@@ -100,7 +100,7 @@ Keranjang - SiBekas
         </label>
 
 
-        <span class="cart-selected-count" data-cart-selected-count>
+        <span class="cart-selected-count !font-semibold !text-emerald-800" data-cart-selected-count>
             0 dipilih
         </span>
 
@@ -110,13 +110,15 @@ Keranjang - SiBekas
 
 
             <button type="submit" id="cart-delete-selected" name="bulk_action" value="selected"
-                class="cart-delete-selected" disabled>
+                class="cart-delete-selected transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                disabled>
                 <i data-lucide="trash-2"></i>
                 Hapus dipilih
             </button>
 
 
-            <button type="submit" name="bulk_action" value="all" class="cart-delete-all">
+            <button type="submit" name="bulk_action" value="all"
+                class="cart-delete-all transition-colors duration-150 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2">
                 Hapus semua
             </button>
 
@@ -215,7 +217,8 @@ Keranjang - SiBekas
 
             {% for item in display_available_items %}
 
-            <article class="cart-card" data-cart-item-id="{{ item.id }}">
+            <article class="cart-card transition-transform duration-200 hover:-translate-y-0.5"
+                data-cart-item-id="{{ item.id }}">
 
                 <label class="cart-item-select" aria-label="Pilih {{ item.name }}">
                     <input type="checkbox" name="item_ids" value="{{ item.id }}" form="cart-bulk-form"
@@ -340,7 +343,7 @@ Keranjang - SiBekas
         </div>
 
 
-        <aside class="cart-summary">
+        <aside class="cart-summary transition-shadow duration-200 hover:shadow-lg">
 
             <h2>
                 Ringkasan
