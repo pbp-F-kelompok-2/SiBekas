@@ -3,53 +3,51 @@
 
 {% block title %}Produk - SiBekas{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/product.css' %}">
-{% endblock %}
+
 
 {% block content %}
-<section class="product-page" id = "product-page" hx-target = "#product-page" hx-select = "#product-page" hx-swap = "outerHTML" hx-indicator = "#product-page" hx-select-oob = "#messages">
-    <div class = "product-heading-row">
-        <div class="product-heading">
-            <p class="eyebrow">Katalog Preloved</p>
-            <h1>Produk</h1>
-            <p>Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
+<section class="pt-10 pb-16 max-[700px]:pt-8 max-[700px]:pb-12 transition-opacity [&.htmx-request]:opacity-60 [&.htmx-request_.bulk-id:checked]:hidden [&.htmx-request_.bulk-id:checked+a]:hidden" id = "product-page" hx-target = "#product-page" hx-select = "#product-page" hx-swap = "outerHTML" hx-indicator = "#product-page" hx-select-oob = "#messages">
+    <div class="flex items-end justify-between gap-6 flex-wrap mb-8 max-[700px]:items-start max-[700px]:flex-col max-[700px]:gap-4">
+        <div class="min-w-0 mb-0">
+            <p class="inline-block py-[2px] px-[10px] mt-0 mb-[0.8rem] rounded-md bg-[var(--sun-500)] text-[var(--forest-700)] text-[0.75rem] font-extrabold tracking-[0.08em] uppercase -rotate-1">Katalog Preloved</p>
+            <h1 class="max-w-full mt-0 mb-3 text-[var(--forest-500)] text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-[1.1] tracking-[-0.03em] [overflow-wrap:anywhere]">Produk</h1>
+            <p class="max-w-[620px] m-0 text-[var(--muted)]">Temukan barang bekas berkualitas dari sesama mahasiswa UI.</p>
         </div>
-        <a href = "{% url 'product:create' %}" class = "button">Jual barang</a>
+        <a href = "{% url 'product:create' %}" class="button mt-0 mb-1 shrink-0">Jual barang</a>
     </div>
 
 
-    <form class="product-search" method="get" hx-get = "{% url 'product:index' %}" hx-push-url="true">
-        <input type="text" name="q" value="{{ query }}" placeholder="Cari produk...">
+    <form class="grid grid-cols-[repeat(4,minmax(0,1fr))_auto] items-center gap-3 mb-4 p-5 border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)] max-[700px]:grid-cols-2 max-[700px]:p-4" method="get" hx-get = "{% url 'product:index' %}" hx-push-url="true">
+        <input type="text" name="q" value="{{ query }}" placeholder="Cari produk..." class="w-full min-w-0 min-h-[var(--button-lg)] py-[0.7rem] px-[0.85rem] border border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-[var(--ink)] text-[0.875rem] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--kiwi-300)] focus-visible:outline-offset-1 focus-visible:border-[var(--green)] col-[1/5] row-[1] max-[700px]:col-[1/-1] max-[700px]:row-auto">
         {% if category_slug %}
         <input type="hidden" name="category" value="{{ category_slug }}">
         {% endif %}
-        <select name="condition">
+        <select name="condition" class="w-full min-w-0 min-h-[var(--button-lg)] py-[0.7rem] px-[0.85rem] border border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-[var(--ink)] text-[0.875rem] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--kiwi-300)] focus-visible:outline-offset-1 focus-visible:border-[var(--green)]">
             <option value="">Semua kondisi</option>
             {% for value, label in conditions %}
             <option value="{{ value }}" {% if request.GET.condition == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
-        <input type="number" name="min_price" value="{{ request.GET.min_price }}" placeholder="Harga min">
-        <input type="number" name="max_price" value="{{ request.GET.max_price }}" placeholder="Harga maks">
-        <select name="sort">
+        <input type="number" name="min_price" value="{{ request.GET.min_price }}" placeholder="Harga min" class="w-full min-w-0 min-h-[var(--button-lg)] py-[0.7rem] px-[0.85rem] border border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-[var(--ink)] text-[0.875rem] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--kiwi-300)] focus-visible:outline-offset-1 focus-visible:border-[var(--green)]">
+        <input type="number" name="max_price" value="{{ request.GET.max_price }}" placeholder="Harga maks" class="w-full min-w-0 min-h-[var(--button-lg)] py-[0.7rem] px-[0.85rem] border border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-[var(--ink)] text-[0.875rem] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--kiwi-300)] focus-visible:outline-offset-1 focus-visible:border-[var(--green)]">
+        <select name="sort" class="w-full min-w-0 min-h-[var(--button-lg)] py-[0.7rem] px-[0.85rem] border border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-[var(--ink)] text-[0.875rem] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--kiwi-300)] focus-visible:outline-offset-1 focus-visible:border-[var(--green)]">
             <option value="">Terbaru</option>
             <option value="cheap" {% if request.GET.sort == "cheap" %}selected{% endif %}>Termurah</option>
             <option value="expensive" {% if request.GET.sort == "expensive" %}selected{% endif %}>Termahal</option>
         </select>
         {% if user.is_authenticated %}
-        <label class = "product-mine">
-            <input type="checkbox" name="mine" value="1" {% if request.GET.mine %}checked{% endif %}>
+        <label class="flex items-center gap-2 min-h-[var(--button-lg)] text-[var(--ink)] text-[0.875rem] whitespace-nowrap cursor-pointer max-[700px]:col-[1/-1]">
+            <input type="checkbox" name="mine" value="1" {% if request.GET.mine %}checked{% endif %} class="w-[18px] h-[18px] accent-[var(--green)]">
             Produk saya
         </label>
         {% endif %}
-        <button type="submit" class="button">Cari</button>
+        <button type="submit" class="button col-[5] row-[1] min-w-[118px] m-0 max-[700px]:col-[1/-1] max-[700px]:row-auto max-[700px]:w-full">Cari</button>
     </form>
 
-    <div class="category-list" hx-boost="true">
-        <a href="{% url 'product:index' %}" class="{% if not category_slug %}active{% endif %}">Semua</a>
+    <div class="flex flex-wrap gap-2 mb-6" hx-boost="true">
+        <a href="{% url 'product:index' %}" class="inline-flex items-center justify-center min-h-[36px] py-[0.35rem] px-[0.9rem] border border-solid rounded-full text-[0.85rem] font-semibold no-underline transition-colors hover:border-[var(--green)] hover:bg-[var(--green)] hover:text-[var(--cream-0)] {% if not category_slug %}border-[var(--green)] bg-[var(--green)] text-[var(--cream-0)]{% else %}border-[var(--line)] bg-transparent text-[var(--ink)]{% endif %}">Semua</a>
         {% for category in categories %}
-        <a href="?category={{ category.slug }}" class="{% if category.slug == category_slug %}active{% endif %}">
+        <a href="?category={{ category.slug }}" class="inline-flex items-center justify-center min-h-[36px] py-[0.35rem] px-[0.9rem] border border-solid rounded-full text-[0.85rem] font-semibold no-underline transition-colors hover:border-[var(--green)] hover:bg-[var(--green)] hover:text-[var(--cream-0)] {% if category.slug == category_slug %}border-[var(--green)] bg-[var(--green)] text-[var(--cream-0)]{% else %}border-[var(--line)] bg-transparent text-[var(--ink)]{% endif %}">
             {{ category.name }}
         </a>
         {% endfor %}
@@ -60,49 +58,49 @@
     <form id = "bulk" method = "post" action = "{% url 'product:bulk_delete' %}" hx-post = "{% url 'product:bulk_delete' %}" hx-confirm = "Hapus produk terpilih?">
         {% csrf_token %}
         <label><input type = "checkbox" id = "select-all">Pilih semua</label>
-        <button class = "button">Hapus yang dipilih</button>
+        <button class="button disabled:opacity-50 disabled:cursor-not-allowed">Hapus yang dipilih</button>
     </form>
     {% endif %}
-    <div class="product-grid">
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] items-stretch gap-5 max-[700px]:grid-cols-2 max-[700px]:gap-[0.8rem] max-[420px]:grid-cols-1">
         {% for product in page.object_list %}
         {% if request.GET.mine and user.is_authenticated %}
-        <input type = "checkbox" name = "ids" value ="{{ product.pk }}" form = "bulk">
+                <input type = "checkbox" name = "ids" value ="{{ product.pk }}" form = "bulk" class="bulk-id">
         {% endif %}
-        <a href="{{ product.get_absolute_url }}" class="product-card">
-            <div class="product-card-image">
+        <a href="{{ product.get_absolute_url }}" class="min-w-0 flex flex-col overflow-hidden border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop-sm)] text-[var(--ink)] no-underline transition hover:-translate-y-0.5 hover:border-[var(--green)] hover:shadow-[var(--shadow-pop)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--sun-500)] focus-visible:outline-offset-[3px]">
+            <div class="relative grid place-items-center overflow-hidden aspect-square bg-[var(--cream-300)] text-[var(--green)] max-[420px]:aspect-[4/3]">
                 {% if product.thumbnail %}
-                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" loading="lazy">
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" loading="lazy" class="block w-full h-full object-cover">
                 {% endif %}
                 {% if product.is_sold_out %}
-                <span class="sold-out">Terjual</span>
+                <span class="absolute top-3 left-3 py-[0.3rem] px-[0.65rem] rounded-full bg-[var(--color-error)] text-[var(--cream-0)] text-[0.72rem] font-bold">Terjual</span>
                 {% endif %}
             </div>
-            <div class="product-card-info">
-                <p class="product-category">{{ product.category.name }}</p>
-                <h3>{{ product.name }}</h3>
-                <p class="product-price">{{ product.price_display }}</p>
-                <p class="product-condition">{{ product.get_condition_display }}</p>
+            <div class="flex-1 p-4 max-[700px]:p-[0.8rem]">
+                <p class="m-0 text-[var(--muted)] text-[0.78rem]">{{ product.category.name }}</p>
+                <h3 class="mt-[0.2rem] mb-[0.45rem] text-[var(--ink)] text-base font-bold leading-[1.4] [overflow-wrap:anywhere]">{{ product.name }}</h3>
+                <p class="my-[0.35rem] text-[var(--green)] font-[family-name:var(--font-heading)] text-base font-extrabold">{{ product.price_display }}</p>
+                <p class="m-0 text-[var(--muted)] text-[0.78rem]">{{ product.get_condition_display }}</p>
             </div>
         </a>
         {% endfor %}
     </div>
 
     {% if page.has_other_pages %}
-    <div class="pagination" hx-boost = "true">
+    <div class="flex flex-wrap items-center justify-center gap-4 mt-8 text-[var(--muted)] text-[0.85rem]" hx-boost = "true">
         {% if page.has_previous %}
-        <a href="{{ page_url_prefix }}{{ page.previous_page_number }}">&laquo; Sebelumnya</a>
+        <a href="{{ page_url_prefix }}{{ page.previous_page_number }}" class="text-[var(--green)] font-bold no-underline hover:underline">&laquo; Sebelumnya</a>
         {% endif %}
 
         <span>Halaman {{ page.number }} dari {{ page.paginator.num_pages }}</span>
 
         {% if page.has_next %}
-        <a href="{{ page_url_prefix }}{{ page.next_page_number }}">Selanjutnya &raquo;</a>
+        <a href="{{ page_url_prefix }}{{ page.next_page_number }}" class="text-[var(--green)] font-bold no-underline hover:underline">Selanjutnya &raquo;</a>
         {% endif %}
     </div>
     {% endif %}
 
     {% else %}
-    <p class="empty-message">Belum ada produk yang cocok.</p>
+    <p class="text-[var(--muted)]">Belum ada produk yang cocok.</p>
     {% endif %}
 </section>
 {% endblock %}

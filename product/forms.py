@@ -38,7 +38,12 @@ class ProductForm(forms.ModelForm):
             ),
         }
 
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        base = "block w-full py-[0.7rem] px-[0.85rem] border border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-[var(--ink)] text-[0.875rem] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--kiwi-300)] focus-visible:outline-offset-1 focus-visible:border-[var(--green)]"
+        for field in self.fields.values():
+            tall = isinstance(field.widget, forms.Textarea)
+            field.widget.attrs["class"] = base + (" min-h-[140px] resize-y" if tall else " min-h-[var(--button-lg)]")
 
     def clean_price(self):
         price = self.cleaned_data["price"]

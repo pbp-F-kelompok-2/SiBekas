@@ -3,39 +3,36 @@
 
 {% block title %}{{ product.name }} - SiBekas{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/product.css' %}">
-<link rel="stylesheet" href="{% static 'css/order.css' %}">
-{% endblock %}
+
 
 {% block content %}
-<section class="product-page">
-    <a href="{% url 'product:index' %}" class="back-link">&larr; Kembali ke katalog</a>
+<section class="pt-10 pb-16 max-[700px]:pt-8 max-[700px]:pb-12">
+    <a href="{% url 'product:index' %}" class="inline-flex items-center gap-[0.4rem] mb-6 text-[var(--green)] text-[0.85rem] font-bold no-underline hover:underline">&larr; Kembali ke katalog</a>
 
-    <div class="product-detail">
-        <div class="product-images">
+    <div class="grid grid-cols-2 items-start gap-8 max-[850px]:grid-cols-1 max-[850px]:gap-5">
+        <div class="min-w-0">
             {% if product.thumbnail %}
-            <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="main-image">
+            <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="block w-full max-h-[620px] border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-300)] object-contain">
             {% endif %}
 
             {% if images %}
-            <div class="image-list">
+            <div class="flex gap-[0.6rem] mt-3 overflow-x-auto">
                 {% for image in images %}
-                <img src="{{ image.image_url }}" alt="{{ product.name }}" loading="lazy">
+                <img src="{{ image.image_url }}" alt="{{ product.name }}" loading="lazy" class="w-[76px] h-[76px] flex-none border border-solid border-[var(--line)] rounded-[10px] bg-[var(--cream-300)] object-cover">
                 {% endfor %}
             </div>
             {% endif %}
         </div>
 
-        <div class="product-info">
-            <p class="eyebrow">{{ product.category.name }}</p>
-            <h1>{{ product.name }}</h1>
-            <p class="product-price">{{ product.price_display }}</p>
+        <div class="min-w-0 p-6 max-[850px]:p-5 border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]">
+            <p class="inline-block mt-0 mb-3 py-[0.2rem] px-[0.65rem] rounded-md bg-[var(--sun-500)] text-[var(--forest-700)] text-[0.72rem] font-extrabold tracking-[0.07em] uppercase">{{ product.category.name }}</p>
+            <h1 class="max-w-full mt-0 mb-3 text-[var(--forest-500)] text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-[1.1] tracking-[-0.03em] [overflow-wrap:anywhere]">{{ product.name }}</h1>
+            <p class="mt-2 mb-4 text-[var(--green)] font-[family-name:var(--font-heading)] text-[1.4rem] font-extrabold">{{ product.price_display }}</p>
             {% if request.user.is_authenticated %}
                 <form method="POST"
                     action="{% url 'profile:toggle_favorite' product.slug %}">
                     {% csrf_token %}
-                    <button type="submit">
+                    <button type="submit" class="inline-flex items-center justify-center min-h-[var(--button-md)] mt-[0.1rem] mb-3 py-[0.55rem] px-[0.85rem] border-2 border-solid border-[var(--green)] rounded-full bg-transparent text-[var(--green)] text-[0.82rem] font-bold cursor-pointer hover:bg-[var(--forest-50)]">
                         {% if is_favorite %}
                             ♡ Hapus dari favorit
                         {% else %}
@@ -44,12 +41,12 @@
                     </button>
                 </form>
             {% else %}
-                <a class="product-login-link" href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">
+                <a class="inline-block mt-[0.1rem] mb-3 text-[var(--green)] text-[0.85rem] font-bold no-underline hover:underline" href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">
                     Masuk untuk menambahkan favorit
                 </a>
             {% endif %}
 
-            <table class="product-table">
+            <table class="w-full my-5 border-collapse text-[0.875rem] [&_td]:py-3 [&_td]:px-1 [&_td]:border-0 [&_td]:border-b [&_td]:border-solid [&_td]:border-[var(--cream-500)] [&_td]:align-top [&_td]:[overflow-wrap:anywhere] [&_td:first-child]:w-[35%] [&_td:first-child]:text-[var(--muted)] [&_td:last-child]:text-[var(--ink)] [&_td:last-child]:font-semibold">
                 <tr>
                     <td>Kondisi</td>
                     <td>{{ product.get_condition_display }}</td>
@@ -70,21 +67,27 @@
                 </tr>
                 <tr>
                     <td>Penjual</td>
-                    <td>{{ product.seller_name }}</td>
+                    <td>{% if product.seller %}<a href="{% url 'product:seller' product.seller.username %}">{{ product.seller_name }}</a>{% else %}{{ product.seller_name }}{% endif %}</td>
                 </tr>
+                {% if product.seller.email %}
+                <tr>
+                    <td>Kontak</td>
+                    <td>{% if request.user.is_authenticated %}<a href="mailto:{{ product.seller.email }}">{{ product.seller.email }}</a>{% else %}<a href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">Masuk untuk melihat kontak</a>{% endif %}</td>
+                </tr>
+                {% endif %}
             </table>
 
-            <h2>Deskripsi</h2>
-            <p>{{ product.description|linebreaksbr }}</p>
+            <h2 class="mt-6 mb-[0.6rem] text-[var(--green)] text-[1.15rem]">Deskripsi</h2>
+            <p class="text-[var(--muted)]">{{ product.description|linebreaksbr }}</p>
             {% if product.stock and not request.user.is_authenticated %}
-            <a class="order-button" href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">Masuk untuk membeli</a>
+            <a class="inline-flex items-center gap-2 min-h-[var(--button-lg)] py-[.7rem] px-[1.1rem] border-2 border-solid border-[var(--green)] rounded-full bg-[var(--green)] text-white shadow-[var(--shadow-pop-sm)] text-[.85rem] font-bold no-underline" href="{% url 'profile:login' %}?next={{ request.path|urlencode }}">Masuk untuk membeli</a>
             {% elif product.stock and product.seller_id != request.user.pk %}
-            <form method="post" action="{% url 'cart:add_item' %}" class="order-cart-form">
+            <form method="post" action="{% url 'cart:add_item' %}" class="flex flex-wrap items-end gap-3 mt-6">
                 {% csrf_token %}<input type="hidden" name="product_id" value="{{ product.pk }}">
-                <div class="order-field"><label for="product-quantity">Jumlah</label><input id="product-quantity" type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" required></div>
-                <button type="submit" class="order-button"><i data-lucide="shopping-cart" aria-hidden="true"></i>Tambah ke keranjang</button>
+                <div><label for="product-quantity" class="block mb-1.5 text-[.8rem] font-semibold">Jumlah</label><input id="product-quantity" class="w-[100px] min-h-[var(--button-lg)] py-[.7rem] px-[.8rem] border border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-[var(--ink)]" type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" required></div>
+                <button type="submit" class="inline-flex items-center gap-2 min-h-[var(--button-lg)] py-[.7rem] px-[1.1rem] border-2 border-solid border-[var(--green)] rounded-full bg-[var(--green)] text-white shadow-[var(--shadow-pop-sm)] text-[.85rem] font-bold cursor-pointer hover:bg-[var(--color-primary-hover)] hover:border-[var(--color-primary-hover)]"><i data-lucide="shopping-cart" aria-hidden="true"></i>Tambah ke keranjang</button>
             </form>
-            {% elif not product.stock %}<p class="order-notice">Produk ini sudah habis terjual.</p>{% endif %}
+            {% elif not product.stock %}<p class="p-4 border border-solid border-[var(--line)] border-l-[3px] border-l-[var(--green)] rounded-[var(--radius-base)] bg-[var(--cream)] text-[.82rem]">Produk ini sudah habis terjual.</p>{% endif %}
             {% if product.seller == request.user %}
             <a class = "button" href = "{% url 'product:update' product.slug %}">Ubah</a>
             <form method = "post" action = "{% url 'product:delete' product.slug %}" hx-boost = "true" hx-confirm = "Yakin ingin menghapus produk ini?">
@@ -95,32 +98,32 @@
         </div>
     </div>
 
-    <section class="product-reviews" aria-labelledby="product-reviews-heading">
-        <h2 id="product-reviews-heading">Ulasan pembeli</h2>
-        {% if average_rating %}<p>Rata-rata {{ average_rating|floatformat:1 }} / 5 · {{ reviews|length }} ulasan</p>{% endif %}
+    <section class="my-8 p-6 border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]" aria-labelledby="product-reviews-heading">
+        <h2 id="product-reviews-heading" class="mt-0 mb-3 text-[var(--green)] text-[clamp(1.25rem,3vw,1.6rem)] leading-[1.25]">Ulasan pembeli</h2>
+        {% if average_rating %}<p class="text-[var(--muted)] text-[0.875rem]">Rata-rata {{ average_rating|floatformat:1 }} / 5 · {{ reviews|length }} ulasan</p>{% endif %}
         {% for review in reviews %}
-        <article class="product-review">
-            <p><strong>{{ review.user.username }}</strong> · {{ review.rating }} / 5</p>
-            <p>{{ review.comment|linebreaksbr }}</p>
-            <small>{{ review.created_at|date:"d M Y" }}{% if review.edited %} · Diedit{% endif %}</small>
+        <article class="py-4 px-0 mt-3 border border-solid border-[var(--cream-500)] border-b-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-200)] [overflow-wrap:anywhere] [[data-theme=dark]_&]:bg-[#26372B] [[data-theme=dark]_&]:border-[#55745C] [[data-theme=dark]_&]:text-[#F3F5EF]">
+            <p class="mb-2 text-[var(--green)] [[data-theme=dark]_&]:text-[#A8D5AE]"><strong>{{ review.user.username }}</strong> · {{ review.rating }} / 5</p>
+            <p class="mb-2 [[data-theme=dark]_&]:text-[#F3F5EF]">{{ review.comment|linebreaksbr }}</p>
+            <small class="text-[var(--muted)] text-[0.75rem] [[data-theme=dark]_&]:text-[#C1CBBF]">{{ review.created_at|date:"d M Y" }}{% if review.edited %} · Diedit{% endif %}</small>
         </article>
-        {% empty %}<p>Belum ada ulasan dari pembeli.</p>{% endfor %}
+        {% empty %}<p class="text-[var(--muted)] text-[0.875rem]">Belum ada ulasan dari pembeli.</p>{% endfor %}
     </section>
 
     {% if related_products %}
-    <div class="related-products">
-        <h2>Produk serupa</h2>
-        <div class="product-grid">
+    <div class="mt-12">
+        <h2 class="mt-0 mb-3 text-[var(--green)] text-[clamp(1.25rem,3vw,1.6rem)] leading-[1.25]">Produk serupa</h2>
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] items-stretch gap-5 max-[700px]:grid-cols-2 max-[700px]:gap-[0.8rem] max-[420px]:grid-cols-1">
             {% for item in related_products %}
-            <a href="{{ item.get_absolute_url }}" class="product-card">
-                <div class="product-card-image">
+            <a href="{{ item.get_absolute_url }}" class="min-w-0 flex flex-col overflow-hidden border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop-sm)] text-[var(--ink)] no-underline transition hover:-translate-y-0.5 hover:border-[var(--green)] hover:shadow-[var(--shadow-pop)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--sun-500)] focus-visible:outline-offset-[3px]">
+                <div class="relative grid place-items-center overflow-hidden aspect-square bg-[var(--cream-300)] text-[var(--green)] max-[420px]:aspect-[4/3]">
                     {% if item.thumbnail %}
-                    <img src="{{ item.thumbnail }}" alt="{{ item.name }}" loading="lazy">
+                    <img src="{{ item.thumbnail }}" alt="{{ item.name }}" loading="lazy" class="block w-full h-full object-cover">
                     {% endif %}
                 </div>
-                <div class="product-card-info">
-                    <h3>{{ item.name }}</h3>
-                    <p class="product-price">{{ item.price_display }}</p>
+                <div class="flex-1 p-4 max-[700px]:p-[0.8rem]">
+                    <h3 class="mt-[0.2rem] mb-[0.45rem] text-[var(--ink)] text-base font-bold leading-[1.4] [overflow-wrap:anywhere]">{{ item.name }}</h3>
+                    <p class="my-[0.35rem] text-[var(--green)] font-[family-name:var(--font-heading)] text-base font-extrabold">{{ item.price_display }}</p>
                 </div>
             </a>
             {% endfor %}
