@@ -105,6 +105,12 @@ class ProductTest(TestCase):
         with patch("product.management.commands.seed_sellers.urlopen", side_effect=URLError("down")):
             with self.assertRaises(CommandError):
                 call_command("seed_sellers")
+    
+    def test_product_forms_do_full_page_reload(self):
+        self.client.force_login(self.seller)
+        for url in [reverse("product:create"), reverse("product:update", args=[self.product.slug])]:
+            self.assertNotContains(self.client.get(url), "hx-boost")
+
 
 class ProductModelTests(TestCase):
     @classmethod
