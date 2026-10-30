@@ -9,7 +9,8 @@
 ### Tautan Proyek
 - **Aplikasi Web (PWS):** [https://faris-salman-sibekas.pws.cs.ui.ac.id/](https://faris-salman-sibekas.pws.cs.ui.ac.id/)
 - **Desain & Prototype (Figma):** [https://www.figma.com/design/sibekas-preloved-ui-pbp](https://www.figma.com/design/sibekas-preloved-ui-pbp)
-- **Dokumentasi API Publik (DummyJSON):** [https://dummyjson.com/docs/products](https://dummyjson.com/docs/products)
+- **Dokumentasi API Publik Katalog (DummyJSON):** [https://dummyjson.com/docs/products](https://dummyjson.com/docs/products)
+- **API Tarif Pengiriman Kurir (AgenWebsite Rate API):** [https://api.agenwebsite.com/v1](https://api.agenwebsite.com/v1)
 
 ---
 
@@ -19,8 +20,8 @@ SiBekas (*Sistem Informasi Barang Bekas*) dikembangkan untuk menjawab persoalan 
 
 Di bawah payung tema **Sustainable Living** (sub-tema: *Slow Fashion, Waste Management, & Conscious Shopping*), SiBekas memfasilitasi pertukaran barang secara sirkular antar-mahasiswa dengan pendekatan berbasis komunitas kampus:
 - **Pengurangan Sampah Kampus:** Memperpanjang masa pakai barang guna menekan konsumerisme berlebih dan timbulan limbah kosan.
-- **Titik Temu Kampus (Zero Shipping Cost):** Transaksi difokuskan pada penjemputan langsung di titik temu kampus UI (seperti Kantin Fasilkom, Perpustakaan Pusat UI, atau Halte Bikun) dengan opsi Cash-on-Delivery (COD) maupun simulasi pembayaran tanpa biaya ongkos kirim.
-- **Ekosistem Terpercaya:** Akun terikat dengan identitas mahasiswa dan sistem ulasan hanya dapat diberikan oleh pembeli yang transaksinya telah selesai.
+- **Opsi Serah Terima Fleksibel (COD & Kurir API):** Transaksi mendukung opsi Cash-on-Delivery (COD) / serah terima langsung di titik temu kampus UI (Kantin Fasilkom, Perpustakaan Pusat UI, Halte Bikun) dengan biaya pengiriman Rp 0, maupun opsi pengiriman kurir domestik dengan tarif ongkir real-time via AgenWebsite Rate API.
+- **Ekosistem Terpercaya & Transaksi Dua Pihak:** Alur checkout dirancang dengan sistem dua orang: pembeli melakukan checkout, penjual menyerahkan barang/resi, dan pembeli mengonfirmasi penyelesaian barang hingga transaksi tuntas masuk ke riwayat penjualan.
 
 ---
 
@@ -31,7 +32,7 @@ Di bawah payung tema **Sustainable Living** (sub-tema: *Slow Fashion, Waste Mana
 | **Jehezkiel Jefferson I Latupeirissa** | 2506611156 | **Product** | Katalog barang, pencarian, filter kategori & harga, CRUD produk penjual, integrasi seeder DummyJSON | `feat/product-kiel` |
 | **Rachelin Miyuki Hendratmo** | 2506536553 | **Profile** | Autentikasi user, profil akun, wishlist / barang favorit, riwayat listing, proteksi penghapusan akun | `feat/profile-miyuki` |
 | **Rheza Abdilla** | 2506612184 | **Cart** | Keranjang belanja multi-item, update kuantitas asinkron (HTMX/AJAX), subtotal dinamis, layout base template | `feat/cart-rheza` |
-| **Faris Salman Azhari** | 2506615223 | **Order** | Checkout serah terima kampus (Rp 0), state machine pesanan, pembatalan aman, portal petugas, deployment PWS | `feat/order-faris` |
+| **Faris Salman Azhari** | 2506615223 | **Order** | Checkout serah terima kampus (COD) & kurir AgenWebsite, state machine dua pihak, dashboard penjual, deployment PWS | `feat/order-faris` |
 | **Alfan Kurnia Karim** | 2506537814 | **Review** | Ulasan & rating (1-5 bintang) verified purchase, validasi teks ulasan, agregat rating produk, Dark Mode toggle | `feat/review-alfan` |
 
 ---
@@ -42,17 +43,21 @@ Di bawah payung tema **Sustainable Living** (sub-tema: *Slow Fashion, Waste Mana
    - Menjelajahi katalog barang dengan filter kategori, kondisi, dan harga.
    - Menyimpan barang ke daftar favorit (*wishlist*).
    - Memasukkan barang ke keranjang belanja dan mengatur kuantitas.
-   - Melakukan checkout dengan menentukan lokasi titik serah terima di kampus UI.
+   - Melakukan checkout dengan memilih metode penerimaan: COD / Ambil Kampus (Rp 0) atau Pengiriman Kurir via API.
    - Memantau status pesanan dan membatalkan pesanan selama masih berstatus *Pending*.
+   - Menyelesaikan pesanan (*Selesaikan Barang*) saat pesanan telah diserahterimakan/diterima.
    - Memberikan ulasan dan rating pada barang yang transaksinya telah *Completed*.
 
 2. **Penjual (Seller):**
    - Mendaftarkan barang preloved miliknya (judul, deskripsi, foto, harga, kondisi, stok).
-   - Mengelola (*update* dan *delete*) listing produk yang dibuatnya sendiri.
-   - Memantau barang yang terjual dan melihat rating reputasi penjual.
+   - Memantau **Toko Saya (Dashboard Penjual)** dengan tiga bagian utama:
+     1. Barang yang sedang ingin dijual (katalog barang aktif dengan sisa stok).
+     2. Barang yang sedang di-checkout pembeli (pesanan aktif yang sedang diproses/dikirim).
+     3. Riwayat penjualan selesai (catatan barang yang telah berhasil diselesaikan pembeli).
+   - Menyiapkan barang pesanan dan menandai barang telah diserahterimakan atau dikirim via kurir (lengkap dengan input nomor resi).
 
 3. **Petugas Kampus / Admin (Staff):**
-   - Memantau antrean pesanan yang masuk.
+   - Memantau antrean pesanan yang masuk di kampus.
    - Menandai pesanan yang telah disiapkan di titik temu (*Shipped* / *Ready for Pickup*).
    - Mengelola master data melalui panel Django Admin.
 
@@ -79,10 +84,10 @@ Di bawah payung tema **Sustainable Living** (sub-tema: *Slow Fashion, Waste Mana
 - **Delete:** Menghapus item dari keranjang belanja secara instan.
 
 ### Modul Order (Faris Salman Azhari)
-- **Create:** Form checkout atomik (`select_for_update`) dengan pemilihan titik temu kampus UI (Kantin Fasilkom, Perpustakaan Pusat, Halte Bikun) dengan tarif Rp 0.
-- **Read:** Daftar riwayat pesanan dan halaman invoice detail yang mencatat log perubahan status (`OrderEvent`).
-- **Update:** Penyelesaian pembayaran simulasi oleh pembeli, serta perubahan status pesanan menjadi *Shipped* atau *Completed* oleh petugas.
-- **Delete:** Pembatalan pesanan berstatus *Pending* oleh pembeli dengan pengembalian stok barang secara otomatis ke etalase.
+- **Create:** Form checkout atomik (`select_for_update`) dengan 2 opsi metode: COD / Ambil Kampus UI (Ongkir Rp 0) atau Kirim Lewat Sistem Kurir (Ongkir via AgenWebsite Rate API).
+- **Read:** Riwayat pesanan pembeli, detail invoice transaksi, serta Dashboard Penjual (`/order/seller/`) untuk memantau barang yang sedang dijual, pesanan yang sedang di-checkout pembeli, dan riwayat penjualan selesai.
+- **Update:** Alur transaksi sistem dua orang: penjual mengirim barang/resi (`action="ship"`), pembeli menyelesaikan transaksi (`action="complete"`).
+- **Delete:** Pembatalan pesanan berstatus *Pending* oleh pembeli dengan pengembalian stok barang secara otomatis ke etalase penjual.
 
 ### Modul Review (Alfan Kurnia Karim)
 - **Create:** Form rating bintang 1-5 dan komentar (maksimal 500 karakter). Dilindungi verifikasi: hanya pembeli yang telah menyelesaikan transaksi pesanan yang dapat mengirim ulasan.
@@ -92,13 +97,20 @@ Di bawah payung tema **Sustainable Living** (sub-tema: *Slow Fashion, Waste Mana
 
 ---
 
-## 5. Integrasi Public API (DummyJSON)
+## 5. Integrasi Public API
 
-Sesuai spesifikasi proyek, SiBekas mengintegrasikan Public API **DummyJSON Products** sebagai sumber katalog awal:
+SiBekas mengintegrasikan dua layanan API eksternal:
+
+### A. DummyJSON Products API (Katalog Awal)
 - **Endpoint API:** `https://dummyjson.com/products?limit=60`
 - **Seeder Otomatis:** Perintah `python manage.py seed_products` mengambil 60 produk, mengonversi harga ke estimasi Rupiah mahasiswa, dan memetakan nama kategori ke dalam Bahasa Indonesia (misal: *beauty* &rarr; Perawatan Diri, *laptops* &rarr; Laptop & Komputer).
 - **Idempotensi Data:** Menggunakan `update_or_create` sehingga aman dijalankan berulang kali tanpa membuat duplikasi data, disertai opsi `--skip-existing`.
-- **Mitigasi Jaringan:** Penanganan exception graceful agar proses *build* atau migrasi server tidak terhenti jika koneksi eksternal lambat.
+
+### B. AgenWebsite Rate API (Tarif Ongkos Kirim Real-Time)
+- **Base URL:** `https://api.agenwebsite.com/v1` (Autentikasi Header: `x-api-key: awk_live_e6e09877d20c7e20409c3c486a979577`)
+- **Fitur Cek Ongkir:** Endpoint `POST /v1/rates` menghitung ongkir secara real-time dari Kampus UI Depok (16424) ke kode pos tujuan pembeli untuk kurir J&T Express, POS Indonesia, dan SiCepat.
+- **Pencarian Lokasi:** Endpoint `GET /v1/locations/search` mendukung pencarian nama kecamatan/kota untuk mencocokkan kode pos tujuan.
+- **Caching & Fallback:** Menggunakan Django cache untuk efisiensi kuota request serta menyediakan fallback tarif standar jika API eksternal mengalami timeout jaringan.
 
 ---
 
@@ -152,7 +164,7 @@ Akses aplikasi melalui browser di `http://127.0.0.1:8000/`.
 ```bash
 python manage.py test
 ```
-Seluruh 98 pengujian unit (mencakup modul product, profile, cart, order, review, dan integrasi) terverifikasi berjalan tanpa error.
+Seluruh 129 pengujian unit (mencakup modul product, profile, cart, order, review, kurir AgenWebsite, seller dashboard, dan integrasi) terverifikasi berjalan tanpa error (100% passed).
 
 ---
 
