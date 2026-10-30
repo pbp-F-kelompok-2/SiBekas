@@ -227,6 +227,22 @@
     background: var(--forest-50);
 }
 
+/* Logout button */
+.logout-form {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+}
+
+.logout-form .profile-button {
+    display: flex;
+    width: 100%;
+    min-height: 50px;
+    margin: 0;
+    box-sizing: border-box;
+    justify-content: center;
+}
+
 .profile-actions {
     display: flex;
     flex-direction: column;
@@ -513,6 +529,7 @@
         border-radius: 25px;
         font-size: 36px;
     }
+    
 
     .profile-card h2 {
         font-size: 24px;

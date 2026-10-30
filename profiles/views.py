@@ -12,7 +12,7 @@ from django.db.models.deletion import ProtectedError
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
-
+from django.http import HttpResponse
 
 
 def register(request):
@@ -67,22 +67,46 @@ def logout_view(request):
     return redirect("profile:login")
 
 @login_required
+@require_POST
 def edit_profile(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    form = ProfileForm(request.POST, instance=profile)
 
-    if request.method == "POST":
-        form = ProfileForm(request.POST, instance=profile)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Profil berhasil diperbarui!")
 
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profil berhasil diperbarui!")
-            return redirect("profile:index")
+        if request.headers.get("HX-Request"):
+            response = render(
+                request,
+                "profiles/partials/profile_card.html",
+                {
+                    "profile": profile,
+                    "total_orders": request.user.orders.count(),
+                    "total_listings": Product.objects.filter(
+                        seller=request.user
+                    ).count(),
+                    "total_reviews": request.user.reviews.count(),
+                },
+            )
+            response["HX-Trigger"] = "profileUpdated"
+            return response
 
-        messages.error(request, "Profil gagal diperbarui. Periksa kembali data yang kamu masukkan.")
-        return render_profile(request, form=form)
+        return redirect("profile:index")
 
-    return redirect("profile:index")
+    if request.headers.get("HX-Request"):
+        return render(
+            request,
+            "profiles/partials/edit_profile_form.html",
+            {"form": form},
+            status=422,
+        )
 
+    messages.error(
+        request,
+        "Profil gagal diperbarui. Periksa kembali data yang kamu masukkan."
+    )
+    return render_profile(request, form=form)
 
 class PasswordResetView(auth_views.PasswordResetView):
     template_name = "profiles/password_reset_form.html"
