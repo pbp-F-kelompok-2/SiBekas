@@ -13,7 +13,7 @@ from django.core.cache import cache
 from django.urls import reverse
 
 PRODUCTS_PER_PAGE = 12
-CATEGORY_CACHE_SCONDS = 300
+CATEGORY_CACHE_SECONDS = 300
 
 def seller_required(view):
     def wrapper(request, slug):
@@ -26,7 +26,7 @@ def seller_required(view):
 
 def index(request):
     products = Product.objects.select_related("category")
-    categories = cache.get_or_set("product:categories", lambda: list(Category.objects.all()),CATEGORY_CACHE_SCONDS,)
+    categories = cache.get_or_set("product:categories", lambda: list(Category.objects.all()),CATEGORY_CACHE_SECONDS,)
     query = request.GET.get("q", "").strip()
     if query:
         products = products.filter(name__icontains=query)
