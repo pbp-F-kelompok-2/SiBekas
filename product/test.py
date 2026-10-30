@@ -93,7 +93,13 @@ class ProductTest(TestCase):
         Category.objects.create(name="Elektronik Langka")
         response = self.client.get(reverse("product:index"))
         self.assertNotContains(response, "Elektronik Langka")
-        
+
+    def test_broken_image_is_hidden(self):
+        self.product.thumbnail = "https://contoh.com/a.jpg"
+        self.product.save()
+        response = self.client.get(reverse("product:index"))
+        self.assertContains(response, 'onerror="this.remove()"')
+
 class ProductModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
