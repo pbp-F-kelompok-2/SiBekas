@@ -67,10 +67,12 @@
                     <span class="sb-profile-name">{{ user.username }}</span>
                 </a>
 
-                <a class="sb-logout-button sb-desktop-logout"
-                    href="{% url 'profile:logout' %}">
-                    Keluar
-                </a>
+                <form method="POST" action="{% url 'profile:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="sb-logout-button sb-desktop-logout">
+                        Keluar
+                    </button>
+                </form>
             {% else %}
                 <a class="sb-cart-button" href="{% url 'profile:login' %}"
                     aria-label="Masuk untuk membuka keranjang">
@@ -112,10 +114,13 @@
             {% if user.is_authenticated %}
                 <a href="{% url 'profile:index' %}">Profil</a>
 
-                <a class="sb-mobile-logout" href="{% url 'profile:logout' %}">
-                    <i data-lucide="log-out"></i>
-                    Keluar
-                </a>
+                <form method="POST" action="{% url 'profile:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="sb-mobile-logout">
+                        <i data-lucide="log-out"></i>
+                        Keluar
+                    </button>
+                </form>
             {% else %}
                 <a class="sb-mobile-login-button"
                     href="{% url 'profile:login' %}">

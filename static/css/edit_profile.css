@@ -1,38 +1,26 @@
-
-/* Overlay */
+/* ========================================
+   EDIT PROFILE OVERLAY
+======================================== */
 
 .edit-profile-overlay {
     display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
 
-    align-items: center;
-    justify-content: center;
-
-    padding: 24px;
-    box-sizing: border-box;
-    overflow-y: auto;
-
-    background: color-mix(in srgb, var(--forest-900) 62%, transparent);
+    background: color-mix(
+        in srgb,
+        var(--forest-900) 62%,
+        transparent
+    );
 }
 
 .edit-profile-overlay.is-open {
     display: flex;
 }
 
-/* Modal */
+/* ========================================
+   MODAL
+======================================== */
 
 .edit-profile-modal {
-    position: relative;
-    width: 100%;
-    max-width: 560px;
-    max-height: calc(100vh - 48px);
-
-    padding: 28px 30px;
-    box-sizing: border-box;
-    overflow-y: auto;
-
     background: var(--cream-0);
     border: 2px solid var(--forest-500);
     border-radius: var(--radius-lg);
@@ -53,16 +41,9 @@
     }
 }
 
-/* Header */
-
-.edit-profile-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-
-    margin-bottom: 22px;
-}
+/* ========================================
+   HEADER
+======================================== */
 
 .edit-profile-header h2 {
     margin: 0;
@@ -72,39 +53,21 @@
 }
 
 .edit-profile-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-
     color: var(--color-text-primary);
     font-size: 30px;
     line-height: 1;
     text-decoration: none;
     border-radius: var(--radius-sm);
+    cursor: pointer;
 }
 
 .edit-profile-close:hover {
     background: var(--cream-300);
 }
 
-/* Form */
-
-.edit-profile-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.edit-profile-field {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    min-width: 0;
-}
+/* ========================================
+   FORM
+======================================== */
 
 .edit-profile-field label {
     color: var(--forest-500);
@@ -140,7 +103,11 @@
 .edit-profile-field input:focus,
 .edit-profile-field textarea:focus,
 .edit-profile-field select:focus {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--forest-500) 13%, transparent);
+    box-shadow: 0 0 0 3px color-mix(
+        in srgb,
+        var(--forest-500) 13%,
+        transparent
+    );
 }
 
 .edit-profile-field small {
@@ -155,7 +122,9 @@
     font-size: 14px;
 }
 
-/* Submit */
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
 
 .edit-profile-submit {
     width: 100%;
@@ -173,6 +142,7 @@
     font-weight: 700;
     cursor: pointer;
 
+    box-shadow: var(--shadow-pop-sm);
     transition: background 0.2s;
 }
 
@@ -180,44 +150,32 @@
     background: var(--forest-700);
 }
 
-/* Mobile */
+/* ========================================
+   SHARED DESIGN TOKENS & FOCUS
+======================================== */
 
-@media (max-width: 600px) {
-    .edit-profile-overlay {
-        align-items: center;
-        padding: 16px;
-    }
-
-    .edit-profile-modal {
-        max-width: 100%;
-        max-height: calc(100dvh - 32px);
-        padding: 24px 20px;
-        border-radius: var(--radius-base);
-    }
-
-    .edit-profile-header h2 {
-        font-size: 23px;
-    }
-
-    .edit-profile-form {
-        gap: 17px;
-    }
-
-    .edit-profile-field input,
-    .edit-profile-field textarea,
-    .edit-profile-field select {
-        font-size: 15px;
-    }
+.edit-profile-modal,
+.edit-profile-form,
+.edit-profile-field {
+    font-family: var(--font-body);
 }
 
-/* Shared design tokens and keyboard focus */
-.edit-profile-modal, .edit-profile-form, .edit-profile-field { font-family: var(--font-body); }
-.edit-profile-modal h2 { font-family: var(--font-heading); }
-.edit-profile-field input:focus-visible, .edit-profile-field textarea:focus-visible, .edit-profile-field select:focus-visible { outline: 3px solid var(--kiwi-300); outline-offset: 1px; border-color: var(--forest-500); }
-.edit-profile-submit { box-shadow: var(--shadow-pop-sm); }
+.edit-profile-modal h2 {
+    font-family: var(--font-heading);
+}
 
+.edit-profile-field input:focus-visible,
+.edit-profile-field textarea:focus-visible,
+.edit-profile-field select:focus-visible {
+    outline: 3px solid var(--kiwi-300);
+    outline-offset: 1px;
+    border-color: var(--forest-500);
+}
 
-/* EDIT PROFILE MODAL - DARK MODE */
+/* ========================================
+   DARK MODE
+======================================== */
+
 html[data-theme="dark"] .edit-profile-modal {
     background: #202B23;
     color: #F3F5EF;

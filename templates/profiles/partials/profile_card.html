@@ -1,0 +1,108 @@
+<section id="profile-card"
+         class="profile-card w-full min-w-0 flex flex-col items-center"
+         hx-swap-oob="outerHTML">
+
+    <div class="profile-avatar">
+        {{ profile.full_name|default:request.user.username|slice:":1"|upper }}
+    </div>
+
+    <h2>{{ profile.full_name|default:request.user.username }}</h2>
+
+    <p class="profile-faculty">
+        {{ profile.faculty|default:"Fakultas belum diisi" }}
+    </p>
+
+    <p class="profile-bio">
+        {{ profile.bio|default:"Belum ada deskripsi tentang saya." }}
+    </p>
+
+    <div class="profile-stats grid grid-cols-3 gap-2.5 w-full">
+        <div class="stat-item">
+            <strong>
+                <a href="{% url 'order:index' %}">{{ total_orders }}</a>
+            </strong>
+            <span>Pesanan</span>
+        </div>
+
+        <div class="stat-item">
+            <strong>
+                <a href="{% url 'order:seller_dashboard' %}">{{ total_listings|default:"0" }}</a>
+            </strong>
+            <span>Listing</span>
+        </div>
+
+        <div class="stat-item">
+            <strong>
+                <a href="{% url 'review:index' %}">{{ total_reviews }}</a>
+            </strong>
+            <span>Ulasan</span>
+        </div>
+    </div>
+
+    <div class="profile-information">
+        <div class="information-item">
+            <span>NPM</span>
+            <p>{{ profile.student_id|default:"Belum diisi" }}</p>
+        </div>
+
+        <div class="information-item">
+            <span>Email</span>
+            <p>{{ request.user.email|default:"Belum diisi" }}</p>
+        </div>
+
+        <div class="information-item">
+            <span>Telepon</span>
+            <p>{{ profile.phone_number|default:"Belum diisi" }}</p>
+        </div>
+
+        <div class="information-item">
+            <span>Alamat</span>
+            <p>{{ profile.address|default:"Belum diisi" }}</p>
+        </div>
+    </div>
+
+    <div class="profile-actions">
+        <a href="{% url 'order:seller_dashboard' %}"
+           class="profile-button profile-button-primary">
+            🏪 Toko Saya & Penjualan
+        </a>
+
+        <a href="{% url 'product:create' %}"
+           class="profile-button profile-button-outline">
+            + Jual / Tambah Produk
+        </a>
+
+        <button type="button"
+                id="openEditProfile"
+                class="profile-button profile-button-outline">
+            Ubah profil
+        </button>
+
+        <div class="delete-account-section">
+            <h3>Hapus Akun</h3>
+            <p>
+                Akun kamu akan dihapus secara permanen.
+                Akun yang memiliki riwayat pesanan tidak dapat dihapus agar catatan transaksi tetap tersedia.
+            </p>
+
+            <form method="POST"
+                  action="{% url 'profile:delete_account' %}"
+                  onsubmit="return confirm('Yakin ingin menghapus akun? Tindakan ini tidak dapat dibatalkan.');">
+                {% csrf_token %}
+                <button type="submit" class="delete-account-btn">
+                    Hapus Akun
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <form method="POST"
+        action="{% url 'profile:logout' %}"
+        class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="profile-button profile-button-outline">
+            ↪ &nbsp; Keluar
+        </button>
+    </form>
+
+</section>

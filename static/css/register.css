@@ -20,10 +20,6 @@ body:has(.auth-page) main {
 }
 
 .auth-page {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    min-height: 100vh;
     color: var(--color-text-primary);
     font-family: var(--font-body);
 }
@@ -33,22 +29,10 @@ body:has(.auth-page) main {
 ======================================== */
 
 .register-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    min-height: 100vh;
-    padding: 40px;
-
     background-color: var(--color-background);
 }
 
 .register-card {
-    width: 100%;
-    max-width: 600px;
-    margin: auto;
-    padding: 40px 48px;
-
     background-color: var(--color-background);
     border: 2px solid var(--color-primary);
     border-radius: var(--radius-lg);
@@ -282,64 +266,4 @@ body:has(.auth-page) main {
 
 .register-back-home:hover {
     color: var(--color-primary);
-}
-
-/* ========================================
-   RESPONSIVE
-======================================== */
-
-@media (max-width: 1000px) {
-    .register-content {
-        padding: 32px;
-    }
-
-    .register-card {
-        padding: 30px;
-    }
-
-    .register-form {
-        gap: 17px;
-    }
-}
-
-@media (max-width: 760px) {
-    .auth-page {
-        grid-template-columns: 1fr;
-    }
-
-    .register-content {
-        min-height: auto;
-        padding: 40px 24px;
-    }
-
-    .register-card {
-        max-width: 500px;
-        padding: 32px;
-    }
-}
-
-@media (max-width: 420px) {
-    .register-content {
-        padding: 30px 18px;
-    }
-
-    .register-card {
-        padding: 25px 20px;
-    }
-
-    .register-card h2 {
-        font-size: 29px;
-    }
-
-    .register-description {
-        font-size: 15px;
-    }
-
-    .register-form-group label {
-        font-size: 14px;
-    }
-
-    .register-form-group input {
-        font-size: 14px;
-    }
 }
