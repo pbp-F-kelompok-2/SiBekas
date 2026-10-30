@@ -89,7 +89,11 @@ class PurchaseIntegrationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("student_id", response.context["form"].errors)
         self.assertContains(response, "Catatan pengguna")
-        self.assertContains(response, 'class="edit-profile-overlay is-open"')
+        # Modal harus terbuka. Cek kelas `is-open` pada elemen overlay tanpa bergantung pada urutan/daftar kelas Tailwind.
+        self.assertRegex(
+            response.content.decode(),
+            r'class="[^"]*\bedit-profile-overlay\b[^"]*\bis-open\b[^"]*"',
+        )
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.full_name, "Pembeli UI")
 
