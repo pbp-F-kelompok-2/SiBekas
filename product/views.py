@@ -7,7 +7,8 @@ from django.views.decorators.http import require_POST
 from django.db.models import Avg
 from .models import Category, Product
 from .forms import ProductForm
-from profiles.models import Favorite
+from profiles.models import Favorite, Profile
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.urls import reverse
 
@@ -170,4 +171,11 @@ def bulk_delete(request):
         messages.success(request, f"{count} produk berhasil dihapus")
     return redirect(reverse("product:index") + "?mine=1")
 
-
+def seller_profile(request, username):
+    seller = get_object_or_404(get_user_model(), username=username)
+    products = Product.objects.filter(seller=seller).select_related("category")
+    return render(request, "product/seller.html", {
+        "seller": seller,
+        "profile": Profile.objects.filter(user=seller).first(),
+        "products": products,
+    })

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ seller.username }} | SiBekas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="profile-page">
+    <header class="profile-header">
+        <span class="profile-label">PENJUAL</span>
+        <h1>Profil penjual</h1>
+    </header>
+
+    <section class="profile-card">
+        <div class="profile-avatar">
+            {{ profile.full_name|default:seller.username|slice:":1"|upper }}
+        </div>
+        <h2>{{ profile.full_name|default:seller.username }}</h2>
+        <p class="profile-faculty">{{ profile.faculty|default:"Fakultas belum diisi" }}</p>
+        <p class="profile-bio">{{ profile.bio|default:"Belum ada deskripsi." }}</p>
+    </section>
+
+    <section class="my-listings">
+        <div class="my-listings-header">
+            <div>
+                <span class="profile-label">TOKO</span>
+                <h2>Produk yang dijual</h2>
+            </div>
+        </div>
+
+        {% if products %}
+        <div class="my-listings-grid">
+            {% for product in products %}
+            <article class="my-listing-card">
+                {% if product.thumbnail %}
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="my-listing-image">
+                {% else %}
+                <div class="my-listing-image my-listing-placeholder">Belum ada foto</div>
+                {% endif %}
+                <div class="my-listing-info">
+                    <span class="my-listing-condition">{{ product.get_condition_display }}</span>
+                    <h3>{{ product.name }}</h3>
+                    <p class="my-listing-price">{{ product.price_display }}</p>
+                    <a href="{{ product.get_absolute_url }}">Lihat produk →</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="my-listings-empty">
+            <h3>Belum ada produk yang dijual</h3>
+        </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

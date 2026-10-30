@@ -70,7 +70,7 @@
                 </tr>
                 <tr>
                     <td>Penjual</td>
-                    <td>{{ product.seller_name }}</td>
+                    <td>{% if product.seller %}<a href="{% url 'product:seller' product.seller.username %}">{{ product.seller_name }}</a>{% else %}{{ product.seller_name }}{% endif %}</td>
                 </tr>
             </table>
 

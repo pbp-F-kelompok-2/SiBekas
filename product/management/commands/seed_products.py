@@ -2,14 +2,12 @@ import json
 import random
 from urllib.error import URLError
 from urllib.request import Request, urlopen
-from django.contrib.auth import get_user_model
 
 from django.core.management.base import BaseCommand, CommandError
 
 from product.models import Category, Product, ProductImage
 
 DUMMYJSON_URL = "https://dummyjson.com/products?limit=60"
-DUMMYJSON_USERS_URL = "https://dummyjson.com/users?limit=60&select=username"
 DEFAULT_USD_RATE = 16_000
 
 CATEGORY_NAMES = {
@@ -50,8 +48,6 @@ class Command(BaseCommand):
         try:
             with urlopen(Request(DUMMYJSON_URL, headers={"User-Agent": "Mozilla/5.0"}), timeout=20) as response:
                 data = json.load(response)
-            with urlopen(Request(DUMMYJSON_USERS_URL, headers={"User-Agent": "Mozilla/5.0"}), timeout=20) as response:
-                users = json.load(response)["users"]
             if not isinstance(data, dict) or not isinstance(data.get("products"), list):
                 raise ValueError
         except (URLError, OSError, ValueError) as exc:
@@ -68,8 +64,7 @@ class Command(BaseCommand):
             category, _ = Category.objects.get_or_create(name=category_name)
 
             price = round(item["price"] * DEFAULT_USD_RATE, -3)
-            username = users[item["id"] % len(users)]["username"]
-            seller, _ = get_user_model().objects.get_or_create(username=username)
+
             product, created = Product.objects.update_or_create(
                 dummyjson_id=item["id"],
                 defaults={
@@ -81,7 +76,6 @@ class Command(BaseCommand):
                     "brand": item.get("brand") or "",
                     "thumbnail": item["thumbnail"],
                     "condition": random.choice(["like_new", "good", "fair"]),
-                    "seller": seller,
                 },
             )
 

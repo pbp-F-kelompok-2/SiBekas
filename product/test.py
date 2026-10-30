@@ -80,13 +80,13 @@ class ProductTest(TestCase):
         self.assertNotContains(response,"Hapus yang dipilih")
         self.assertNotContains(response, "Pilih semua")
 
-    def test_seed_products_get_seller_from_dummyjson(self):
-        products = {"products": [{"id": 1, "title": "Mascara", "description": "x", "category": "beauty", "price": 9.99, "stock": 5, "thumbnail": "https://cdn.dummyjson.com/a.png"}]}
-        users = {"users": [{"username": "emilys"}]}
-        responses = [BytesIO(json.dumps(products).encode()), BytesIO(json.dumps(users).encode())]
-        with patch("product.management.commands.seed_products.urlopen", side_effect = responses):
-            call_command("seed_products", stdout = StringIO())
-        self.assertEqual(Product.objects.get(dummyjson_id =1).seller.username, "emilys")
+    def test_seed_sellers_from_dummyjson(self):
+        product = Product.objects.create(name="Mascara", description="x", price=1000, dummyjson_id=1)
+        users = BytesIO(json.dumps({"users": [{"username": "emilys"}]}).encode())
+        with patch("product.management.commands.seed_sellers.urlopen", return_value=users):
+            call_command("seed_sellers")
+        product.refresh_from_db()
+        self.assertEqual(product.seller.username, "emilys")
 
 class ProductModelTests(TestCase):
     @classmethod
@@ -262,13 +262,13 @@ class ProductViewTests(TestCase):
         self.assertFalse(Product.objects.filter(pk=self.product.pk).exists())
 
     def test_seller_profile_is_public_without_private_data(self):
-        self.seller.email = "penjual@ui.ac.id"
-        self.seller.save()
-        response = self.client.get(reverse("profile:seller", args=[self.seller.username]))
-        self.assertContains(response, "Buku Kalkulus")
+        self.owner.email = "penjual@ui.ac.id"
+        self.owner.save()
+        response = self.client.get(reverse("product:seller", args=[self.owner.username]))
+        self.assertContains(response, "Kalkulator Saintifik")
         self.assertNotContains(response, "penjual@ui.ac.id")
         self.assertNotContains(response, "Hapus Akun")
 
     def test_detail_links_to_seller_profile(self):
         response = self.client.get(self.product.get_absolute_url())
-        self.assertContains(response, reverse("profile:seller", args = [self.seller.username]))
+        self.assertContains(response, reverse("product:seller", args = [self.owner.username]))
