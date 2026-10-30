@@ -98,11 +98,11 @@
         </div>
     </div>
 
-    <section class="my-8 p-6 border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]" aria-labelledby="product-reviews-heading">
+    <section class="w-full min-w-0 max-w-full box-border my-8 p-6 border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]" aria-labelledby="product-reviews-heading">
         <h2 id="product-reviews-heading" class="mt-0 mb-3 text-[var(--green)] text-[clamp(1.25rem,3vw,1.6rem)] leading-[1.25]">Ulasan pembeli</h2>
         {% if average_rating %}<p class="text-[var(--muted)] text-[0.875rem]">Rata-rata {{ average_rating|floatformat:1 }} / 5 · {{ reviews|length }} ulasan</p>{% endif %}
         {% for review in reviews %}
-        <article class="py-4 px-0 mt-3 border border-solid border-[var(--cream-500)] border-b-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-200)] [overflow-wrap:anywhere] [[data-theme=dark]_&]:bg-[#26372B] [[data-theme=dark]_&]:border-[#55745C] [[data-theme=dark]_&]:text-[#F3F5EF]">
+        <article class="w-full min-w-0 max-w-full box-border py-4 px-4 mt-3 border border-solid border-[var(--cream-500)] border-b-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-200)] [overflow-wrap:anywhere] [[data-theme=dark]_&]:bg-[#26372B] [[data-theme=dark]_&]:border-[#55745C] [[data-theme=dark]_&]:text-[#F3F5EF]">
             <p class="mb-2 text-[var(--green)] [[data-theme=dark]_&]:text-[#A8D5AE]"><strong>{{ review.user.username }}</strong> · {{ review.rating }} / 5</p>
             <p class="mb-2 [[data-theme=dark]_&]:text-[#F3F5EF]">{{ review.comment|linebreaksbr }}</p>
             <small class="text-[var(--muted)] text-[0.75rem] [[data-theme=dark]_&]:text-[#C1CBBF]">{{ review.created_at|date:"d M Y" }}{% if review.edited %} · Diedit{% endif %}</small>
