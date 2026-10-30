@@ -14,7 +14,7 @@
     </p>
 
     <section class="p-6 max-[600px]:p-4 border-2 border-solid border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]">
-        <form method="POST" hx-boost = "true">
+        <form method="POST">
             {% csrf_token %}
 
             {% if form.non_field_errors %}

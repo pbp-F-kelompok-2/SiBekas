@@ -8,7 +8,8 @@ from product.forms import ProductForm
 import json
 from io import BytesIO, StringIO
 from unittest.mock import patch
-from django.core.management import call_command
+from django.core.management import call_command, CommandError
+from urllib.error import URLError
 
 # from django.core.exceptions import PermissionDenied
 from django.test import TestCase
@@ -87,6 +88,29 @@ class ProductTest(TestCase):
             call_command("seed_sellers")
         product.refresh_from_db()
         self.assertEqual(product.seller.username, "emilys")
+
+    def test_category_list_is_cached(self):
+        self.client.get(reverse("product:index"))
+        Category.objects.create(name="Elektronik Langka")
+        response = self.client.get(reverse("product:index"))
+        self.assertNotContains(response, "Elektronik Langka")
+
+    def test_broken_image_is_hidden(self):
+        self.product.thumbnail = "https://contoh.com/a.jpg"
+        self.product.save()
+        response = self.client.get(reverse("product:index"))
+        self.assertContains(response, 'onerror="this.remove()"')
+
+    def test_seed_sellers_handles_dummyjson_down(self):
+        with patch("product.management.commands.seed_sellers.urlopen", side_effect=URLError("down")):
+            with self.assertRaises(CommandError):
+                call_command("seed_sellers")
+    
+    def test_product_forms_do_full_page_reload(self):
+        self.client.force_login(self.seller)
+        for url in [reverse("product:create"), reverse("product:update", args=[self.product.slug])]:
+            self.assertNotContains(self.client.get(url), "hx-boost")
+
 
 class ProductModelTests(TestCase):
     @classmethod
@@ -272,3 +296,5 @@ class ProductViewTests(TestCase):
     def test_detail_links_to_seller_profile(self):
         response = self.client.get(self.product.get_absolute_url())
         self.assertContains(response, reverse("product:seller", args = [self.owner.username]))
+
+    
