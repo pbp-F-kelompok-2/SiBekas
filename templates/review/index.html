@@ -1,533 +1,347 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}
-  Ulasan & Rating - SiBekas
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/review.css' %}" />
-{% endblock %}
+{% block title %}Ulasan & Rating - SiBekas{% endblock %}
 
 {% block content %}
 
-<div class="review-page">
+<div class="w-full max-w-[1120px] mx-auto py-10 pb-14 text-[var(--ink)]">
 
-  <!-- Header / Hero Section -->
-  <header class="review-hero">
-
-    <div class="review-hero__kicker">
-        ULASAN
-    </div>
-
-    <h1 class="review-hero__title">
-      Ulasan &amp; rating
-    </h1>
-
-    <p class="review-hero__subtitle">
-      Bagikan pengalamanmu agar komunitas SiBekas makin terpercaya.
-    </p>
-
-
-  </header>
-
-  <!-- Section 1: Menunggu Ulasanmu -->
-  <section
-    class="review-section"
-    aria-labelledby="heading-pending-reviews"
-  >
-
-    <div class="review-section__header">
-
-      <div class="review-section__title-row">
-
-        <h2
-          id="heading-pending-reviews"
-          class="review-section__title"
-        >
-          MENUNGGU ULASANMU
-        </h2>
-
-        <span class="review-section__count">
-          {{ products_to_review|length }}
+    <!-- Header -->
+    <header class="mb-6">
+        <span class="inline-flex items-center mb-3 px-3 py-1 rounded-md bg-[var(--sun-500)] text-[var(--forest-700)] text-xs font-extrabold tracking-wider uppercase -rotate-1">
+            ULASAN
         </span>
 
-      </div>
+        <h1 class="mb-3 text-3xl md:text-4xl font-extrabold tracking-tight leading-tight font-[var(--font-heading)] text-[var(--forest-500)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">
+            Ulasan &amp; rating
+        </h1>
 
-      <p class="review-section__subtitle">
-        Pesanan yang sudah kamu terima dan siap untuk dinilai.
-      </p>
-
-    </div>
-
-    <div class="review-grid">
-
-      {% for product in products_to_review %}
-
-      <article class="pending-card">
-
-        <div class="pending-card__top">
-
-          <div
-            class="pending-card__icon-box"
-            aria-hidden="true"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-            </svg>
-          </div>
-
-          <div class="pending-card__content">
-
-            <h3 class="pending-card__title">
-              {{ product.name }}
-            </h3>
-
-          </div>
-
-        </div>
-
-        <a
-          href="{% url 'review:create' product.id %}"
-          class="btn-write-review"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 20h9" />
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-          </svg>
-
-          <span>Tulis</span>
-        </a>
-
-      </article>
-
-      {% empty %}
-
-      <div class="empty-state">
-
-        <div
-          class="empty-state__icon"
-          aria-hidden="true"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
-            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-          </svg>
-        </div>
-
-        <h3 class="empty-state__title">
-          Tidak ada produk yang menunggu ulasan
-        </h3>
-
-        <p class="empty-state__text">
-          Produk dari pesanan yang selesai akan muncul di sini ketika sudah siap untuk dinilai.
+        <p class="max-w-[680px] text-sm leading-relaxed text-[var(--muted)] [[data-theme=dark]_&]:text-[var(--color-text-muted)]">
+            Bagikan pengalamanmu agar komunitas SiBekas makin terpercaya.
         </p>
+    </header>
 
-      </div>
+    <!-- Section: Pending Reviews -->
+    <section class="mb-5" aria-labelledby="heading-pending-reviews">
 
-      {% endfor %}
+        <div class="mb-4">
+            <div class="flex items-center gap-2 mb-1">
+                <h2 id="heading-pending-reviews"
+                    class="text-sm font-extrabold tracking-wide text-[var(--ink)] uppercase font-[var(--font-heading)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">
+                    MENUNGGU ULASANMU
+                </h2>
 
-    </div>
-  </section>
+                <span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1 rounded-full bg-[var(--kiwi-500)] text-[var(--forest-900)] text-xs font-extrabold">
+                    {{ products_to_review|length }}
+                </span>
+            </div>
 
-  <!-- Section 2: Ulasan yang Kutulis -->
-  <section
-    class="review-section"
-    aria-labelledby="heading-my-reviews"
-  >
-
-    <div class="review-section__header">
-
-      <div class="review-section__title-row">
-
-        <h2
-          id="heading-my-reviews"
-          class="review-section__title"
-        >
-          ULASAN YANG KUTULIS
-        </h2>
-
-        <span class="review-section__count">
-          {{ my_reviews|length }}
-        </span>
-
-      </div>
-
-      <p class="review-section__subtitle">
-        Ulasanmu akan tampil di sini dan di halaman produk terkait.
-      </p>
-
-    </div>
-
-    <div class="review-grid">
-
-      {% for review in my_reviews %}
-
-      <article class="review-card">
-
-        <div>
-
-          <div class="review-card__top">
-
-            <h3 class="review-card__product-name">
-              {{ review.product.name }}
-            </h3>
-
-            <span class="rating-badge">
-
-              <span
-                class="rating-badge__star"
-                aria-hidden="true"
-              >
-                &#9733;
-              </span>
-
-              <span>{{ review.rating }} / 5</span>
-
-            </span>
-
-          </div>
-
-          <div
-            class="rating-stars"
-            aria-label="Rating {{ review.rating }} dari 5"
-          >
-
-            <span
-              class="rating-stars__item {% if review.rating >= 1 %}rating-stars__item--filled{% endif %}"
-            >
-              &#9733;
-            </span>
-
-            <span
-              class="rating-stars__item {% if review.rating >= 2 %}rating-stars__item--filled{% endif %}"
-            >
-              &#9733;
-            </span>
-
-            <span
-              class="rating-stars__item {% if review.rating >= 3 %}rating-stars__item--filled{% endif %}"
-            >
-              &#9733;
-            </span>
-
-            <span
-              class="rating-stars__item {% if review.rating >= 4 %}rating-stars__item--filled{% endif %}"
-            >
-              &#9733;
-            </span>
-
-            <span
-              class="rating-stars__item {% if review.rating >= 5 %}rating-stars__item--filled{% endif %}"
-            >
-              &#9733;
-            </span>
-
-          </div>
-
-          <div class="review-card__quote-box">
-
-            <p class="review-card__comment">
-              "{{ review.comment }}"
+            <p class="text-xs leading-relaxed text-[var(--muted)] [[data-theme=dark]_&]:text-[var(--color-text-muted)]">
+                Pesanan yang sudah kamu terima dan siap untuk dinilai.
             </p>
+        </div>
 
-            {% if review.created_at %}
+        <div class="grid grid-cols-1 md:grid-cols-[minmax(0,560px)] gap-4">
 
-            <div class="review-card__date">
+            {% for product in products_to_review %}
 
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <rect
-                  x="3"
-                  y="4"
-                  width="18"
-                  height="18"
-                  rx="2"
-                  ry="2"
-                />
+            <article class="min-w-0 flex items-center gap-4 p-3 border-2 border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--sun-100)] shadow-[var(--shadow-pop-sm)] transition-all duration-150 hover:-translate-y-px hover:shadow-[var(--shadow-pop)] [[data-theme=dark]_&]:bg-[var(--color-surface)] [[data-theme=dark]_&]:border-[var(--color-border)]">
 
-                <line
-                  x1="16"
-                  y1="2"
-                  x2="16"
-                  y2="6"
-                />
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                    <div class="flex items-center justify-center w-11 h-11 shrink-0 border border-[var(--forest-400)] rounded-lg bg-[var(--kiwi-200)] text-[var(--green)] [[data-theme=dark]_&]:bg-[var(--color-primary-soft)] [[data-theme=dark]_&]:border-[var(--color-border)] [[data-theme=dark]_&]:text-[var(--color-primary)]"
+                         aria-hidden="true">
+                        <svg class="w-[21px] h-[21px]" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                        </svg>
+                    </div>
 
-                <line
-                  x1="8"
-                  y1="2"
-                  x2="8"
-                  y2="6"
-                />
+                    <div class="min-w-0">
+                        <h3 class="m-0 text-sm font-bold leading-relaxed break-words text-[var(--ink)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">
+                            {{ product.name }}
+                        </h3>
+                    </div>
+                </div>
 
-                <line
-                  x1="3"
-                  y1="10"
-                  x2="21"
-                  y2="10"
-                />
-              </svg>
+                <a href="{% url 'review:create' product.id %}"
+                   class="inline-flex items-center justify-center gap-2 shrink-0 min-h-[34px] px-3 rounded-full border-2 border-[var(--forest-500)] bg-[var(--kiwi-500)] text-[var(--forest-900)] text-xs font-extrabold no-underline whitespace-nowrap shadow-[var(--shadow-pop-sm)] transition-all duration-150 hover:bg-[var(--kiwi-400)] hover:-translate-y-px max-md:w-full">
+                    <svg class="w-[13px] h-[13px]" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
+                    <span>Tulis</span>
+                </a>
+            </article>
 
-              <span>
-                Diulas pada {{ review.created_at|date:"d M Y" }}
+            {% empty %}
 
-                {% if review.edited %}
-                    &bull;
-                    Diedit pada {{ review.updated_at|date:"d M Y" }}
-                {% endif %}
-              </span>
+            <div class="col-span-full min-h-[220px] flex flex-col items-center justify-center p-10 text-center border-2 border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)] [[data-theme=dark]_&]:border-[var(--color-border)]">
 
+                <div class="flex items-center justify-center w-[46px] h-[46px] mb-3 border border-[var(--forest-500)] rounded-xl bg-[var(--sun-300)] text-[var(--green)] -rotate-6"
+                     aria-hidden="true">
+                    <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                        <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                    </svg>
+                </div>
+
+                <h3 class="mb-1 text-base font-extrabold text-[var(--green)] font-[var(--font-heading)] [[data-theme=dark]_&]:text-[var(--color-primary)]">
+                    Tidak ada produk yang menunggu ulasan
+                </h3>
+
+                <p class="max-w-[440px] text-xs leading-relaxed text-[var(--muted)] [[data-theme=dark]_&]:text-[var(--color-text-muted)]">
+                    Produk dari pesanan yang selesai akan muncul di sini ketika sudah siap untuk dinilai.
+                </p>
             </div>
 
-            {% endif %}
-
-          </div>
-
+            {% endfor %}
         </div>
+    </section>
 
-        <div class="review-card__actions">
+    <!-- Section: My Reviews -->
+    <section class="mt-5" aria-labelledby="heading-my-reviews">
 
-          <button
-            type="button"
-            class="btn-edit-review"
-            popovertarget="edit-review-{{ review.id }}"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M12 20h9" />
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-            </svg>
+        <div class="mb-4">
+            <div class="flex items-center gap-2 mb-1">
+                <h2 id="heading-my-reviews"
+                    class="text-sm font-extrabold tracking-wide text-[var(--ink)] uppercase font-[var(--font-heading)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">
+                    ULASAN YANG KUTULIS
+                </h2>
 
-            <span>Edit Ulasan</span>
-          </button>
+                <span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1 rounded-full bg-[var(--kiwi-500)] text-[var(--forest-900)] text-xs font-extrabold">
+                    {{ my_reviews|length }}
+                </span>
+            </div>
 
-          <button
-            type="button"
-            class="btn-delete-review"
-            popovertarget="delete-review-{{ review.id }}"
-            >
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-            >
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-            </svg>
-
-            <span>Hapus</span>
-          </button>
-
-        </div>
-
-      </article>
-
-      <!-- Delete Review Modal -->
-        <div
-        id="delete-review-{{ review.id }}"
-        popover
-        class="review-modal"
-        >
-        <div class="review-modal__content">
-
-            <h2>Hapus Ulasan?</h2>
-
-            <p>
-            Kamu yakin ingin menghapus ulasan untuk
+            <p class="text-xs leading-relaxed text-[var(--muted)] [[data-theme=dark]_&]:text-[var(--color-text-muted)]">
+                Ulasanmu akan tampil di sini dan di halaman produk terkait.
             </p>
-
-            <strong class="review-modal__product-name">
-            {{ review.product.name }}
-            </strong>
-
-            <div class="review-modal__actions">
-
-            <button
-                type="button"
-                class="btn-cancel-review"
-                popovertarget="delete-review-{{ review.id }}"
-            >
-                Batal
-            </button>
-
-            <form
-                method="POST"
-                action="{% url 'review:delete' review.id %}"
-            >
-                {% csrf_token %}
-
-                <button
-                type="submit"
-                class="btn-delete-confirm"
-                >
-                Hapus Ulasan
-                </button>
-            </form>
-
-            </div>
-
-          </div>
         </div>
 
-      <!-- Edit Review Modal -->
-      <div
-        id="edit-review-{{ review.id }}"
-        popover
-        class="review-modal"
-      >
+        <div class="grid grid-cols-1 md:grid-cols-2 items-stretch gap-4">
 
-        <div class="review-modal__content">
+            {% for review in my_reviews %}
 
-          <h2>Edit Ulasan</h2>
+            <article class="min-w-0 flex flex-col justify-between gap-4 p-5 border-2 border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop-sm)] transition-all duration-150 hover:-translate-y-px hover:shadow-[var(--shadow-pop)] [[data-theme=dark]_&]:border-[var(--color-border)]">
 
-            <p>
-            Perbarui rating atau komentar untuk
-            </p>
+                <div>
+                    <div class="flex items-start justify-between gap-3 mb-1">
+                        <h3 class="min-w-0 text-base font-bold leading-relaxed break-words text-[var(--ink)] font-[var(--font-heading)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">
+                            {{ review.product.name }}
+                        </h3>
 
-            <strong class="review-modal__product-name">
-            {{ review.product.name }}
-            </strong>
+                        <span class="inline-flex items-center gap-1 shrink-0 px-2 py-1 border border-[var(--sun-300)] rounded-full bg-[var(--sun-100)] text-xs font-extrabold text-[var(--ink)] whitespace-nowrap [[data-theme=dark]_&]:bg-[var(--bg-surface-alt)] [[data-theme=dark]_&]:border-[var(--color-rating-border)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">
+                            <span class="text-[var(--sun-700)] [[data-theme=dark]_&]:text-[var(--color-star)]" aria-hidden="true">&#9733;</span>
+                            <span>{{ review.rating }} / 5</span>
+                        </span>
+                    </div>
 
-          <form
-            method="POST"
-            action="{% url 'review:update' review.id %}"
-          >
-            {% csrf_token %}
+                    <div class="inline-flex items-center gap-1 mb-3"
+                         aria-label="Rating {{ review.rating }} dari 5">
+                        {% for star in "12345" %}
+                        <span class="text-sm leading-none {% if forloop.counter <= review.rating %}text-[var(--sun-600)]{% else %}text-[var(--cream-600)]{% endif %}"
+                              aria-hidden="true">&#9733;</span>
+                        {% endfor %}
+                    </div>
 
-            <div class="review-modal__field">
+                    <div class="p-3 mb-3 rounded-lg bg-[var(--cream-200)] [[data-theme=dark]_&]:bg-[var(--bg-surface-alt)]">
+                        <p class="m-0 text-sm leading-relaxed break-words text-[var(--ink)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">
+                            "{{ review.comment }}"
+                        </p>
 
-              <label for="rating-{{ review.id }}">
-                Rating
-              </label>
+                        {% if review.created_at %}
+                        <div class="flex items-start gap-2 mt-3 text-xs leading-relaxed text-[var(--muted)] [[data-theme=dark]_&]:text-[var(--color-text-muted)]">
+                            <svg class="w-[13px] h-[13px] shrink-0 mt-px"
+                                 viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
 
-              <input
-                type="number"
-                id="rating-{{ review.id }}"
-                name="rating"
-                min="1"
-                max="5"
-                value="{{ review.rating }}"
-                required
-              >
+                            <span>
+                                Diulas pada {{ review.created_at|date:"d M Y" }}
+                                {% if review.edited %}
+                                    &bull; Diedit pada {{ review.updated_at|date:"d M Y" }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
 
+                <!-- Actions -->
+                <div class="flex items-center justify-end flex-wrap gap-2 pt-3 border-t border-[var(--cream-500)] [[data-theme=dark]_&]:border-[var(--border-subtle)]">
+
+                    <button type="button"
+                            popovertarget="edit-review-{{ review.id }}"
+                            class="inline-flex items-center justify-center gap-2 min-h-[34px] px-3 border border-[var(--line)] rounded-full bg-[var(--color-surface)] text-xs font-bold text-[var(--green)] cursor-pointer hover:bg-[var(--forest-50)] hover:border-[var(--forest-300)] [[data-theme=dark]_&]:text-[var(--color-primary)] [[data-theme=dark]_&]:border-[var(--color-border)]">
+                        <svg class="w-[14px] h-[14px]" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        </svg>
+                        <span>Edit Ulasan</span>
+                    </button>
+
+                    <button type="button"
+                            popovertarget="delete-review-{{ review.id }}"
+                            class="inline-flex items-center justify-center gap-2 min-h-[34px] px-3 border border-[var(--line)] rounded-full bg-[var(--color-surface)] text-xs font-bold text-[var(--color-error)] cursor-pointer hover:bg-[var(--tomato-50)] hover:border-[var(--tomato-200)] [[data-theme=dark]_&]:border-[var(--color-border)]">
+                        <svg class="w-[14px] h-[14px]" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             aria-hidden="true">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                        <span>Hapus</span>
+                    </button>
+                </div>
+            </article>
+
+            <!-- Delete Modal -->
+            <div id="delete-review-{{ review.id }}"
+                 popover
+                 class="w-[min(500px,calc(100%-28px))] max-h-[calc(100dvh-32px)] overflow-y-auto p-0 m-auto border-2 border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--color-surface)] text-[var(--ink)] shadow-[var(--shadow-pop-lg)] backdrop:bg-[rgba(4,21,10,0.55)] [[data-theme=dark]_&]:border-[var(--color-border)]">
+
+                <div class="p-6">
+                    <h2 class="mb-2 text-xl font-extrabold text-[var(--green)] font-[var(--font-heading)] [[data-theme=dark]_&]:text-[var(--color-primary)]">
+                        Hapus Ulasan?
+                    </h2>
+
+                    <p class="text-sm leading-relaxed text-[var(--muted)]">
+                        Kamu yakin ingin menghapus ulasan untuk
+                    </p>
+
+                    <strong class="block my-1 mb-5 text-base break-words text-[var(--ink)] [[data-theme=dark]_&]:text-[var(--color-text-primary)]">
+                        {{ review.product.name }}
+                    </strong>
+
+                    <div class="flex justify-end flex-wrap gap-3 mt-6 max-sm:flex-col-reverse">
+                        <button type="button"
+                                popovertarget="delete-review-{{ review.id }}"
+                                class="inline-flex items-center justify-center min-h-[40px] px-4 border-2 border-[var(--green)] rounded-full bg-transparent text-sm font-bold text-[var(--green)] hover:bg-[var(--forest-50)] max-sm:w-full">
+                            Batal
+                        </button>
+
+                        <form method="POST"
+                              action="{% url 'review:delete' review.id %}"
+                              class="max-sm:w-full">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="inline-flex items-center justify-center min-h-[40px] px-4 border-2 border-[var(--color-error)] rounded-full bg-[var(--color-error)] text-sm font-bold text-white hover:bg-[var(--tomato-600)] max-sm:w-full">
+                                Hapus Ulasan
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
 
-            <div class="review-modal__field">
+            <!-- Edit Modal -->
+            <div id="edit-review-{{ review.id }}"
+                 popover
+                 class="w-[min(500px,calc(100%-28px))] max-h-[calc(100dvh-32px)] overflow-y-auto p-0 m-auto border-2 border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--color-surface)] text-[var(--ink)] shadow-[var(--shadow-pop-lg)] backdrop:bg-[rgba(4,21,10,0.55)] [[data-theme=dark]_&]:border-[var(--color-border)]">
 
-              <label for="comment-{{ review.id }}">
-                Ulasan
-              </label>
+                <div class="p-6 max-sm:p-4">
+                    <h2 class="mb-2 text-xl font-extrabold text-[var(--green)] font-[var(--font-heading)] [[data-theme=dark]_&]:text-[var(--color-primary)]">
+                        Edit Ulasan
+                    </h2>
 
-              <textarea
-                id="comment-{{ review.id }}"
-                name="comment"
-                rows="5"
-                required
-              >{{ review.comment }}</textarea>
+                    <p class="text-sm leading-relaxed text-[var(--muted)]">
+                        Perbarui rating atau komentar untuk
+                    </p>
 
+                    <strong class="block my-1 mb-5 text-base break-words text-[var(--ink)]">
+                        {{ review.product.name }}
+                    </strong>
+
+                    <form method="POST"
+                          action="{% url 'review:update' review.id %}">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="rating-{{ review.id }}"
+                                   class="block mb-2 text-sm font-bold text-[var(--green)] [[data-theme=dark]_&]:text-[var(--color-primary)]">
+                                Rating
+                            </label>
+
+                            <input type="number"
+                                   id="rating-{{ review.id }}"
+                                   name="rating"
+                                   min="1"
+                                   max="5"
+                                   value="{{ review.rating }}"
+                                   required
+                                   class="w-full min-h-[44px] px-3 py-2 border border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-sm text-[var(--ink)] focus:outline-none focus:ring-[3px] focus:ring-[var(--kiwi-300)] focus:border-[var(--green)] [[data-theme=dark]_&]:bg-[var(--color-background)] [[data-theme=dark]_&]:text-[var(--color-text-primary)] [[data-theme=dark]_&]:border-[var(--color-border)]">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="comment-{{ review.id }}"
+                                   class="block mb-2 text-sm font-bold text-[var(--green)] [[data-theme=dark]_&]:text-[var(--color-primary)]">
+                                Ulasan
+                            </label>
+
+                            <textarea id="comment-{{ review.id }}"
+                                      name="comment"
+                                      rows="5"
+                                      required
+                                      class="w-full min-h-[120px] px-3 py-3 border border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--paper)] text-sm text-[var(--ink)] resize-y focus:outline-none focus:ring-[3px] focus:ring-[var(--kiwi-300)] focus:border-[var(--green)] [[data-theme=dark]_&]:bg-[var(--color-background)] [[data-theme=dark]_&]:text-[var(--color-text-primary)] [[data-theme=dark]_&]:border-[var(--color-border)]">{{ review.comment }}</textarea>
+                        </div>
+
+                        <div class="flex justify-end flex-wrap gap-3 mt-6 max-sm:flex-col-reverse">
+                            <button type="button"
+                                    popovertarget="edit-review-{{ review.id }}"
+                                    class="inline-flex items-center justify-center min-h-[40px] px-4 border-2 border-[var(--green)] rounded-full bg-transparent text-sm font-bold text-[var(--green)] hover:bg-[var(--forest-50)] max-sm:w-full">
+                                Batal
+                            </button>
+
+                            <button type="submit"
+                                    class="inline-flex items-center justify-center min-h-[40px] px-4 border-2 border-[var(--green)] rounded-full bg-[var(--green)] text-sm font-bold text-white shadow-[var(--shadow-pop-sm)] hover:bg-[var(--color-primary-hover)] max-sm:w-full">
+                                Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div class="review-modal__actions">
+            {% empty %}
 
-              <button
-                type="button"
-                class="btn-cancel-review"
-                popovertarget="edit-review-{{ review.id }}"
-              >
-                Batal
-              </button>
+            <div class="col-span-full min-h-[220px] flex flex-col items-center justify-center p-10 text-center border-2 border-[var(--forest-500)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)] [[data-theme=dark]_&]:border-[var(--color-border)]">
 
-              <button
-                type="submit"
-                class="btn-save-review"
-              >
-                Simpan Perubahan
-              </button>
+                <div class="flex items-center justify-center w-[46px] h-[46px] mb-3 border border-[var(--forest-500)] rounded-xl bg-[var(--sun-300)] text-[var(--green)] -rotate-6"
+                     aria-hidden="true">
+                    <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                </div>
 
+                <h3 class="mb-1 text-base font-extrabold text-[var(--green)] font-[var(--font-heading)] [[data-theme=dark]_&]:text-[var(--color-primary)]">
+                    Belum ada ulasan
+                </h3>
+
+                <p class="max-w-[440px] text-xs leading-relaxed text-[var(--muted)] [[data-theme=dark]_&]:text-[var(--color-text-muted)]">
+                    Ulasanmu akan tampil di sini dan di halaman produk terkait.
+                </p>
             </div>
 
-          </form>
-
+            {% endfor %}
         </div>
-
-      </div>
-
-      {% empty %}
-
-      <div class="empty-state">
-
-        <div
-          class="empty-state__icon"
-          aria-hidden="true"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-        </div>
-
-        <h3 class="empty-state__title">
-          Belum ada ulasan
-        </h3>
-
-        <p class="empty-state__text">
-          Ulasanmu akan tampil di sini dan di halaman produk terkait.
-        </p>
-
-      </div>
-
-      {% endfor %}
-
-    </div>
-  </section>
-
+    </section>
 </div>
 
 {% endblock %}
