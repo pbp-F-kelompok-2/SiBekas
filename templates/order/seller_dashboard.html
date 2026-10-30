@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+{% load static order_tags %}
+
+{% block title %}Toko Saya & Penjualan | SiBekas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<style>
+    .seller-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .seller-stat-card {
+        padding: 1.25rem;
+        border: 2px solid var(--line);
+        border-radius: var(--radius-base);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-pop-sm);
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .seller-stat-card span {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .seller-stat-card strong {
+        font-size: 1.5rem;
+        color: var(--forest-500);
+        font-weight: 800;
+    }
+    .seller-tabs {
+        display: flex;
+        gap: 0.75rem;
+        border-bottom: 2px solid var(--line);
+        margin-bottom: 1.75rem;
+        overflow-x: auto;
+    }
+    .seller-tab-btn {
+        padding: 0.75rem 1.25rem;
+        border: none;
+        background: transparent;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+    .seller-tab-btn.active {
+        color: var(--green);
+        border-bottom-color: var(--green);
+    }
+    .seller-tab-content {
+        display: none;
+    }
+    .seller-tab-content.active {
+        display: block;
+    }
+    .seller-order-card {
+        border: 2px solid var(--line);
+        border-radius: var(--radius-base);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-pop-sm);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    .seller-order-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        background: var(--cream);
+        border-bottom: 1px solid var(--line);
+    }
+    .seller-order-body {
+        padding: 1.25rem;
+    }
+    .seller-order-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .seller-order-item-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .seller-order-item-thumb {
+        width: 52px;
+        height: 52px;
+        border-radius: var(--radius-base);
+        object-fit: cover;
+        background: var(--cream);
+        border: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .seller-order-footer {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--line);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="order-page container">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+            <a class="order-back" href="{% url 'profile:index' %}">← Kembali ke profil akun</a>
+            <header class="order-heading" style="margin-bottom: 0;">
+                <p class="eyebrow">DASHBOARD PENJUAL SIBEKAS</p>
+                <h1>Toko Saya<span>.</span></h1>
+                <p>Pantau barang yang sedang ingin dijual, kelola pesanan pembeli yang sedang berjalan, dan tinjau riwayat penjualan selesai.</p>
+            </header>
+        </div>
+        <div>
+            <a href="{% url 'product:create' %}" class="order-button">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> + Tambah Produk Baru
+            </a>
+        </div>
+    </div>
+
+    <!-- Ringkasan Statistik Penjual -->
+    <div class="seller-stats-grid">
+        <div class="seller-stat-card">
+            <span>Barang Ingin Dijual</span>
+            <strong>{{ total_selling }}</strong>
+        </div>
+        <div class="seller-stat-card">
+            <span>Sedang Di-checkout Pembeli</span>
+            <strong style="color: var(--accent-500, #d97706);">{{ total_in_checkout }}</strong>
+        </div>
+        <div class="seller-stat-card">
+            <span>Berhasil Terjual (History)</span>
+            <strong style="color: var(--green);">{{ total_completed }}</strong>
+        </div>
+        <div class="seller-stat-card">
+            <span>Total Pendapatan Selesai</span>
+            <strong>{{ total_revenue|rupiah }}</strong>
+        </div>
+    </div>
+
+    <!-- Tabs Navigasi Penjual -->
+    <div class="seller-tabs">
+        <button type="button" class="seller-tab-btn active" data-tab="tab-selling">
+            <i data-lucide="tag" class="w-4 h-4"></i>
+            Barang Sedang Dijual ({{ total_selling }})
+        </button>
+        <button type="button" class="seller-tab-btn" data-tab="tab-in-checkout">
+            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            Sedang Di-checkout Pembeli ({{ total_in_checkout }})
+        </button>
+        <button type="button" class="seller-tab-btn" data-tab="tab-history">
+            <i data-lucide="archive" class="w-4 h-4"></i>
+            Riwayat Penjualan Selesai ({{ total_completed }})
+        </button>
+    </div>
+
+    <!-- TAB 1: Barang yang Sedang Ingin Dijual -->
+    <section id="tab-selling" class="seller-tab-content active">
+        <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--forest-500);">Katalog Barang Aktif</h2>
+            <p style="color: var(--muted); font-size: 0.85rem;">Barang preloved milikmu yang saat ini masih memiliki stok dan tersedia di etalase SiBekas.</p>
+        </div>
+
+        {% if selling_products %}
+        <div class="my-listings-grid">
+            {% for product in selling_products %}
+            <article class="my-listing-card">
+                {% if product.thumbnail %}
+                    <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="my-listing-image">
+                {% else %}
+                    <div class="my-listing-image my-listing-placeholder">Belum ada foto</div>
+                {% endif %}
+
+                <div class="my-listing-info">
+                    <span class="my-listing-condition">{{ product.get_condition_display }}</span>
+                    <h3>{{ product.name }}</h3>
+                    <p class="my-listing-price">{{ product.price_display }}</p>
+                    <p class="my-listing-stock" style="font-weight: 600; color: var(--green);">
+                        Tersedia: {{ product.stock }} unit
+                    </p>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;">
+                        <a href="{{ product.get_absolute_url }}" class="order-text-link" style="font-size: 0.75rem;">
+                            Lihat →
+                        </a>
+                        <span style="color: var(--line);">|</span>
+                        <a href="{% url 'product:update' product.slug %}" class="order-text-link" style="font-size: 0.75rem;">
+                            Ubah
+                        </a>
+                        <span style="color: var(--line);">|</span>
+                        <form method="post" action="{% url 'product:delete' product.slug %}" style="display: inline;" onsubmit="return confirm('Hapus barang ini dari katalog?');">
+                            {% csrf_token %}
+                            <button type="submit" style="background:none; border:none; padding:0; color: var(--color-error); font-size: 0.75rem; font-weight: 700; cursor: pointer;">
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="order-empty">
+            <span class="order-icon"><i data-lucide="tag"></i></span>
+            <h3>Belum ada barang yang sedang ingin dijual</h3>
+            <p style="color: var(--muted); font-size: 0.85rem; max-width: 450px; margin-bottom: 1.25rem;">
+                Kamu belum memiliki listing barang aktif atau semua barangmu telah habis terjual. Mulai tawarkan barang preloved kampusmu sekarang!
+            </p>
+            <a href="{% url 'product:create' %}" class="order-button">
+                + Tambah Barang Pertama
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- TAB 2: Barang yang Sedang di-Checkout Pembeli -->
+    <section id="tab-in-checkout" class="seller-tab-content">
+        <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--forest-500);">Pesanan Dalam Proses Transaksi</h2>
+            <p style="color: var(--muted); font-size: 0.85rem;">
+                Pembeli telah melakukan checkout untuk barang-barang ini. Siapkan barang dan kirim / serahkan kepada pembeli. Begitu pembeli mengonfirmasi penyelesaian, barang akan berpindah ke riwayat penjualan.
+            </p>
+        </div>
+
+        {% if in_checkout_orders %}
+            {% for order in in_checkout_orders %}
+            <article class="seller-order-card">
+                <div class="seller-order-header">
+                    <div>
+                        <strong class="order-number" style="font-size: 0.85rem;">{{ order.number }}</strong>
+                        <span style="color: var(--muted); font-size: 0.75rem; margin-left: 0.5rem;">
+                            {{ order.created_at|date:"d M Y, H:i" }} WIB
+                        </span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span class="order-badge order-badge-{{ order.status }}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="seller-order-body">
+                    <!-- Detail Pembeli & Pengiriman -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; padding: 0.75rem; background: var(--paper); border-radius: var(--radius-base);">
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600;">PEMBELI</span>
+                            <p style="margin: 0; font-weight: 700; font-size: 0.85rem;">{{ order.recipient_name }} (@{{ order.buyer.username }})</p>
+                            <p style="margin: 0; font-size: 0.8rem; color: var(--muted);">Telp: {{ order.phone_number }}</p>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600;">PENGIRIMAN & TUJUAN</span>
+                            <p style="margin: 0; font-weight: 700; font-size: 0.85rem;">{{ order.get_delivery_method_display }} ({{ order.shipping_service }})</p>
+                            <p style="margin: 0; font-size: 0.8rem; color: var(--muted);">{{ order.address }}</p>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600;">PEMBAYARAN</span>
+                            <p style="margin: 0; font-weight: 700; font-size: 0.85rem;">{{ order.get_payment_method_display }}</p>
+                            <span class="order-badge" style="font-size: 0.65rem;">{{ order.get_payment_status_display }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Barang Milik Penjual di Order Ini -->
+                    <div class="seller-order-items">
+                        {% for item in order.items.all %}
+                        {% if item.seller_id == request.user.pk %}
+                        <div class="seller-order-item-row">
+                            {% if item.thumbnail %}
+                            <img src="{{ item.thumbnail }}" alt="{{ item.product_name }}" class="seller-order-item-thumb">
+                            {% else %}
+                            <div class="seller-order-item-thumb"><i data-lucide="package"></i></div>
+                            {% endif %}
+                            <div style="flex: 1; min-width: 0;">
+                                <h4 style="margin: 0 0 0.2rem; font-size: 0.9rem; font-weight: 700;">{{ item.product_name }}</h4>
+                                <p style="margin: 0; font-size: 0.78rem; color: var(--muted);">
+                                    {{ item.condition }} · {{ item.quantity }} × {{ item.unit_price|rupiah }}
+                                </p>
+                            </div>
+                            <strong style="font-size: 0.9rem;">{{ item.line_total|rupiah }}</strong>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Footer & Aksi Penjual -->
+                    <div class="seller-order-footer">
+                        <div>
+                            <a href="{% url 'order:detail' order.id %}" class="order-button order-button-outline" style="min-height: 38px; padding: 0.4rem 0.9rem; font-size: 0.8rem;">
+                                Buka Detail Pesanan →
+                            </a>
+                        </div>
+                        <div>
+                            {% if order.status == 'processing' %}
+                            <form method="post" action="{% url 'order:update_status' order.id %}" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                                {% csrf_token %}
+                                {% if order.delivery_method == 'courier' %}
+                                <input name="tracking_number" placeholder="Nomor Resi Kurir" style="padding: 0.4rem 0.6rem; border: 1px solid var(--line); border-radius: var(--radius-base); font-size: 0.8rem; width: 170px;">
+                                {% endif %}
+                                <button type="submit" name="action" value="ship" class="order-button" style="min-height: 38px; padding: 0.4rem 0.9rem; font-size: 0.8rem;">
+                                    {% if order.delivery_method == 'courier' %}
+                                    <i data-lucide="truck" class="w-4 h-4"></i> Serahkan ke Kurir
+                                    {% else %}
+                                    <i data-lucide="check" class="w-4 h-4"></i> Siap Diserahterimakan
+                                    {% endif %}
+                                </button>
+                            </form>
+                            {% elif order.status == 'shipped' %}
+                            <span style="font-size: 0.8rem; color: var(--green); font-weight: 600;">
+                                <i data-lucide="clock" class="inline w-4 h-4 mr-1"></i> Menunggu pembeli menyelesaikan pesanan...
+                            </span>
+                            {% elif order.status == 'pending' %}
+                            <span style="font-size: 0.8rem; color: var(--muted);">
+                                Menunggu konfirmasi pembayaran oleh pembeli.
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+        <div class="order-empty">
+            <span class="order-icon"><i data-lucide="shopping-bag"></i></span>
+            <h3>Tidak ada barang yang sedang di-checkout</h3>
+            <p style="color: var(--muted); font-size: 0.85rem; max-width: 450px;">
+                Saat ada pembeli yang melakukan checkout pada produkmu, pesanan aktif akan tampil di sini untuk kamu siapkan dan kirimkan.
+            </p>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- TAB 3: Riwayat Penjualan (History Barang Terjual) -->
+    <section id="tab-history" class="seller-tab-content">
+        <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--forest-500);">Riwayat Transaksi Selesai</h2>
+            <p style="color: var(--muted); font-size: 0.85rem;">
+                Barang-barang yang telah berhasil ditransaksikan, diterima, dan diselesaikan oleh pembeli. Barang ini sudah otomatis terpotong dari stok aktif dan tercatat secara permanen di riwayat tokomu.
+            </p>
+        </div>
+
+        {% if completed_orders %}
+            {% for order in completed_orders %}
+            <article class="seller-order-card" style="border-left: 4px solid var(--green);">
+                <div class="seller-order-header">
+                    <div>
+                        <strong class="order-number">{{ order.number }}</strong>
+                        <span style="color: var(--muted); font-size: 0.75rem; margin-left: 0.5rem;">
+                            Selesai: {{ order.completed_at|default:order.updated_at|date:"d M Y, H:i" }} WIB
+                        </span>
+                    </div>
+                    <span class="order-badge order-badge-completed">
+                        <i data-lucide="check-circle" class="w-3 h-3 mr-1 inline"></i> Transaksi Selesai (Terjual)
+                    </span>
+                </div>
+
+                <div class="seller-order-body">
+                    <div class="seller-order-items">
+                        {% for item in order.items.all %}
+                        {% if item.seller_id == request.user.pk %}
+                        <div class="seller-order-item-row">
+                            {% if item.thumbnail %}
+                            <img src="{{ item.thumbnail }}" alt="{{ item.product_name }}" class="seller-order-item-thumb">
+                            {% else %}
+                            <div class="seller-order-item-thumb"><i data-lucide="package"></i></div>
+                            {% endif %}
+                            <div style="flex: 1; min-width: 0;">
+                                <h4 style="margin: 0 0 0.2rem; font-size: 0.9rem; font-weight: 700;">{{ item.product_name }}</h4>
+                                <p style="margin: 0; font-size: 0.78rem; color: var(--muted);">
+                                    Pembeli: <strong>@{{ order.buyer.username }}</strong> · {{ item.condition }} · {{ item.quantity }} × {{ item.unit_price|rupiah }}
+                                </p>
+                            </div>
+                            <strong style="color: var(--green); font-size: 0.95rem;">+ {{ item.line_total|rupiah }}</strong>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="seller-order-footer">
+                        <span style="font-size: 0.78rem; color: var(--muted);">
+                            Metode: {{ order.get_delivery_method_display }} ({{ order.shipping_service }}) · {{ order.get_payment_method_display }}
+                        </span>
+                        <a href="{% url 'order:detail' order.id %}" class="order-text-link">
+                            Lihat faktur pesanan →
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+        <div class="order-empty">
+            <span class="order-icon"><i data-lucide="archive"></i></span>
+            <h3>Belum ada riwayat transaksi selesai</h3>
+            <p style="color: var(--muted); font-size: 0.85rem; max-width: 450px;">
+                Saat transaksi berhasil diselesaikan oleh pembeli, catatan penjualan lengkap akan diarsipkan di sini.
+            </p>
+        </div>
+        {% endif %}
+    </section>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tabButtons = document.querySelectorAll(".seller-tab-btn");
+    const tabContents = document.querySelectorAll(".seller-tab-content");
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener("click", function () {
+            tabButtons.forEach(b => b.classList.remove("active"));
+            tabContents.forEach(c => c.classList.remove("active"));
+
+            this.classList.add("active");
+            const targetTab = document.getElementById(this.getAttribute("data-tab"));
+            if (targetTab) {
+                targetTab.classList.add("active");
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

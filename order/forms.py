@@ -1,3 +1,4 @@
+import json
 import re
 
 from django import forms
@@ -13,6 +14,11 @@ class PhoneNumberField(forms.CharField):
 
 
 class CheckoutForm(forms.Form):
+    DELIVERY_CHOICES = [
+        (Order.DeliveryMethod.PICKUP, "Ambil di Kampus UI / COD (Ongkir Rp 0)"),
+        (Order.DeliveryMethod.COURIER, "Kirim Lewat Sistem Kurir (Jasa Ongkir AgenWebsite API)"),
+    ]
+
     recipient_name = forms.CharField(
         label="Nama penerima",
         max_length=150,
@@ -26,16 +32,26 @@ class CheckoutForm(forms.Form):
     )
     delivery_method = forms.ChoiceField(
         label="Metode penerimaan",
-        choices=[(Order.DeliveryMethod.PICKUP, "Ambil di kampus UI (Gratis / Titik Temu)")],
+        choices=DELIVERY_CHOICES,
         initial=Order.DeliveryMethod.PICKUP,
     )
+    destination_postal_code = forms.CharField(
+        label="Kode pos / kota tujuan (khusus kurir)",
+        required=False,
+        max_length=20,
+        widget=forms.TextInput(attrs={
+            "placeholder": "Contoh: 16424 (Depok) atau 10110 (Jakarta)",
+            "autocomplete": "postal-code",
+            "id": "destination-postal-code",
+        }),
+    )
     address = forms.CharField(
-        label="Titik temu / alamat di kampus UI",
+        label="Titik temu kampus atau alamat tujuan lengkap",
         max_length=1000,
         widget=forms.Textarea(attrs={
             "rows": 3,
             "autocomplete": "street-address",
-            "placeholder": "Contoh: Kantin Fasilkom UI, Perpustakaan Pusat UI, atau Gedung Kuliah",
+            "placeholder": "Contoh: Kantin Fasilkom UI, Halte Bikun, atau Jl. Margonda Raya No. 100",
         }),
     )
     payment_method = forms.ChoiceField(label="Metode pembayaran", choices=Order.PaymentMethod.choices)
@@ -43,7 +59,7 @@ class CheckoutForm(forms.Form):
         label="Catatan pesanan (opsional)",
         required=False,
         max_length=500,
-        widget=forms.Textarea(attrs={"rows": 2, "placeholder": "Pesan untuk penjual atau kesepakatan waktu temu"}),
+        widget=forms.Textarea(attrs={"rows": 2, "placeholder": "Pesan untuk penjual atau instruksi kurir"}),
     )
     checkout_token = forms.CharField(widget=forms.HiddenInput)
     shipping_quote = forms.CharField(required=False, widget=forms.HiddenInput)
@@ -55,4 +71,13 @@ class CheckoutForm(forms.Form):
 
     def clean(self):
         cleaned = super().clean()
+        method = cleaned.get("delivery_method")
+        if method == Order.DeliveryMethod.COURIER:
+            postal_code = cleaned.get("destination_postal_code", "").strip()
+            quote_raw = cleaned.get("shipping_quote", "").strip()
+            if not postal_code and not quote_raw:
+                self.add_error(
+                    "destination_postal_code",
+                    "Masukkan kode pos atau pilih lokasi tujuan untuk menghitung ongkir kurir.",
+                )
         return cleaned
