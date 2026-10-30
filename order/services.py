@@ -197,9 +197,9 @@ def change_status(order_id, actor, action, *, tracking_number=""):
         else:
             description = "Barang siap diserahterimakan di titik temu kampus UI."
     elif action == "complete":
-        if not is_buyer or order.status not in {Order.Status.SHIPPED, Order.Status.PROCESSING}:
+        if not is_buyer or order.status != Order.Status.SHIPPED:
             raise OrderError(
-                "Konfirmasi penyelesaian hanya tersedia untuk pembeli setelah transaksi selesai atau barang diterima."
+                "Konfirmasi penerimaan hanya dapat dilakukan setelah akun pengirim (penjual/petugas) mengirimkan barang atau menandainya siap diambil."
             )
         order.status = Order.Status.COMPLETED
         order.completed_at = now

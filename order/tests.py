@@ -28,6 +28,8 @@ class OrderFlowTests(TestCase):
         cls.product = Product.objects.create(name="Buku PBP", category=cls.category, price=75000, stock=5, weight_grams=600, seller=cls.other)
 
     def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
         self.client.force_login(self.buyer)
         self.cart = Cart.objects.create(user=self.buyer)
         self.item = self.cart.items.create(product=self.product, quantity=2)
@@ -219,6 +221,12 @@ class OrderFlowTests(TestCase):
         self.assertEqual(order.status, "processing")
         self.assert_stock(0)
 
+        # Buyer CANNOT complete order while status is still 'processing'
+        with self.assertRaises(OrderError):
+            change_status(order.pk, self.buyer, "complete")
+        order.refresh_from_db()
+        self.assertEqual(order.status, "processing")
+
         # 2. Check seller dashboard for seller (self.other)
         self.client.force_login(self.other)
         seller_dash = self.client.get(reverse("order:seller_dashboard"))
@@ -237,7 +245,7 @@ class OrderFlowTests(TestCase):
         self.assertEqual(order.status, "shipped")
         self.assertEqual(order.tracking_number, "JNT-CAMPUS-999")
 
-        # 4. Buyer completes the order (Selesaikan Barang)
+        # 4. Buyer completes the order (Selesaikan Barang) now that status is shipped
         self.client.force_login(self.buyer)
         self.client.post(
             reverse("order:update_status", args=[order.pk]),
@@ -253,3 +261,33 @@ class OrderFlowTests(TestCase):
         self.assertNotIn(order, seller_dash_after.context["in_checkout_orders"])
         self.assertIn(order, seller_dash_after.context["completed_orders"])
         self.assertGreater(seller_dash_after.context["total_revenue"], 0)
+
+
+    def test_htmx_shipping_quotes_partial_rendered(self):
+        response = self.client.post(
+            reverse("order:shipping_quotes"),
+            {"postal_code": "16424"},
+            HTTP_HX_REQUEST="true",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'name="selected_courier_rate"')
+
+    def test_security_unauthorized_user_access_forbidden(self):
+        order = self.make_order()
+        stranger = get_user_model().objects.create_user(username="stranger_user")
+        self.client.force_login(stranger)
+        res_detail = self.client.get(order.get_absolute_url())
+        self.assertEqual(res_detail.status_code, 403)
+        res_update = self.client.post(
+            reverse("order:update_status", args=[order.pk]),
+            {"action": "complete"},
+        )
+        self.assertEqual(res_update.status_code, 403)
+
+    def test_security_rate_limit_on_checkout(self):
+        from django.core.cache import cache
+        cache.clear()
+        for _ in range(15):
+            self.client.post(reverse("order:checkout"), self.payload())
+        blocked = self.client.post(reverse("order:checkout"), self.payload())
+        self.assertRedirects(blocked, reverse("order:index"))

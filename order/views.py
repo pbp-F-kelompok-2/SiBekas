@@ -12,6 +12,7 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 from cart.services import cart_summary
 from product.models import Product
 from profiles.models import Profile
+from sibekas.utils import order_participant_required, rate_limit
 
 from .forms import CheckoutForm
 from .models import Order
@@ -70,6 +71,7 @@ def parse_selected_item_ids(values):
 
 
 @login_required
+@rate_limit(15, 60)
 @require_http_methods(["GET", "POST"])
 def checkout(request):
     selected_item_ids = None
@@ -162,6 +164,7 @@ def checkout(request):
 
 
 @login_required
+@order_participant_required
 @require_GET
 def detail(request, order_id):
     order = get_object_or_404(
@@ -184,6 +187,7 @@ def detail(request, order_id):
 
 @require_POST
 @login_required
+@order_participant_required
 def update_status(request, order_id):
     order = get_object_or_404(accessible_orders(request.user), pk=order_id)
     try:
@@ -212,16 +216,20 @@ def destinations(request):
 @login_required
 def shipping_quotes(request):
     summary = cart_summary(request.user)
-    postal_code = request.POST.get("postal_code", "").strip()
+    postal_code = (request.POST.get("postal_code") or request.POST.get("destination_postal_code") or "").strip()
     if not postal_code:
         try:
             body_data = json.loads(request.body.decode("utf-8"))
-            postal_code = str(body_data.get("postal_code", "")).strip()
+            postal_code = str(body_data.get("postal_code") or body_data.get("destination_postal_code") or "").strip()
         except Exception:
             pass
 
     postal_code = postal_code or "16424"
     quotes = get_shipping_quotes(postal_code, summary["weight_grams"])
+
+    if request.headers.get("HX-Request"):
+        return render(request, "order/_shipping_rates.html", {"quotes": quotes})
+
     return JsonResponse({
         "quotes": quotes,
         "subtotal": summary["subtotal"],

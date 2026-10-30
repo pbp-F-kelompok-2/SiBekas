@@ -49,7 +49,11 @@
                             <label for="destination-postal-code">Kode Pos / Area Tujuan Kurir <span>*</span></label>
                             <div class="order-search-row">
                                 {{ form.destination_postal_code }}
-                                <button type="button" class="order-button order-button-outline" id="btn-check-ongkir">
+                                <button type="button" class="order-button order-button-outline" id="btn-check-ongkir"
+                                        hx-post="{% url 'order:shipping_quotes' %}"
+                                        hx-target="#rates-container"
+                                        hx-include="#destination-postal-code"
+                                        hx-swap="innerHTML">
                                     <i data-lucide="refresh-cw" class="w-4 h-4"></i> Cek Ongkir API
                                 </button>
                             </div>
@@ -231,7 +235,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    if (btnCheckOngkir) {
+    // Event listener untuk HTMX: update total belanja otomatis saat ongkir selesai di-swap
+    document.body.addEventListener("htmx:afterSwap", function (evt) {
+        if (evt.detail.target && evt.detail.target.id === "rates-container") {
+            if (window.lucide) lucide.createIcons();
+            updateTotals();
+        }
+    });
+
+    // Fallback AJAX jika HTMX tidak dimuat
+    if (btnCheckOngkir && typeof window.htmx === "undefined") {
         btnCheckOngkir.addEventListener("click", function () {
             const postal = postalInput.value.trim() || "16424";
             btnCheckOngkir.disabled = true;
