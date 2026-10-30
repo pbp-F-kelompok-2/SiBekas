@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block extra_css %}
-<link rel = "stylesheet" href = "{% static 'css/product.css' %}">
-{% endblock %}
+
 {% block content %}
-<section class = "product-page">
-    <h1>{{ title }}</h1>
-    <form method = "post" enctype="multipart/form-data" class = "product-form" hx-boost = "true">
+<section class="pt-10 pb-16 max-[700px]:pt-8 max-[700px]:pb-12">
+    <h1 class="max-w-full mt-0 mb-3 text-[var(--forest-500)] text-[clamp(2rem,5vw,2.5rem)] font-extrabold leading-[1.1] tracking-[-0.03em] [overflow-wrap:anywhere]">{{ title }}</h1>
+    <form method="post" enctype="multipart/form-data" hx-boost="true" class="w-full max-w-[760px] p-6 max-[420px]:p-4 border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)] [&_p]:mt-0 [&_p]:mb-5 [&_label]:block [&_label]:mb-[0.45rem] [&_label]:text-[var(--green)] [&_label]:text-[0.85rem] [&_label]:font-bold [&_.helptext]:block [&_.helptext]:mt-[0.35rem] [&_.helptext]:text-[var(--muted)] [&_.helptext]:text-[0.8rem] [&_.errorlist]:text-[var(--color-error)] [&_.errorlist]:text-[0.8rem]">
         {% csrf_token %}
         {{ form.as_p }}
         <button type = "submit" class = "button">Simpan</button>
