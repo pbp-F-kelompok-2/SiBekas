@@ -12,13 +12,13 @@
     <div class="grid grid-cols-2 items-start gap-8 max-[850px]:grid-cols-1 max-[850px]:gap-5">
         <div class="min-w-0">
             {% if product.thumbnail %}
-            <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="block w-full max-h-[620px] border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-300)] object-contain">
+            <img src="{{ product.thumbnail }}" alt="{{ product.name }}" onerror="this.remove()" class="block w-full max-h-[620px] border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-300)] object-contain">
             {% endif %}
 
             {% if images %}
             <div class="flex gap-[0.6rem] mt-3 overflow-x-auto">
                 {% for image in images %}
-                <img src="{{ image.image_url }}" alt="{{ product.name }}" loading="lazy" class="w-[76px] h-[76px] flex-none border border-solid border-[var(--line)] rounded-[10px] bg-[var(--cream-300)] object-cover">
+                <img src="{{ image.image_url }}" alt="{{ product.name }}" loading="lazy" onerror="this.remove()" class="w-[76px] h-[76px] flex-none border border-solid border-[var(--line)] rounded-[10px] bg-[var(--cream-300)] object-cover">
                 {% endfor %}
             </div>
             {% endif %}
@@ -118,7 +118,7 @@
             <a href="{{ item.get_absolute_url }}" class="min-w-0 flex flex-col overflow-hidden border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop-sm)] text-[var(--ink)] no-underline transition hover:-translate-y-0.5 hover:border-[var(--green)] hover:shadow-[var(--shadow-pop)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--sun-500)] focus-visible:outline-offset-[3px]">
                 <div class="relative grid place-items-center overflow-hidden aspect-square bg-[var(--cream-300)] text-[var(--green)] max-[420px]:aspect-[4/3]">
                     {% if item.thumbnail %}
-                    <img src="{{ item.thumbnail }}" alt="{{ item.name }}" loading="lazy" class="block w-full h-full object-cover">
+                    <img src="{{ item.thumbnail }}" alt="{{ item.name }}" loading="lazy" onerror="this.remove()" class="block w-full h-full object-cover">
                     {% endif %}
                 </div>
                 <div class="flex-1 p-4 max-[700px]:p-[0.8rem]">
