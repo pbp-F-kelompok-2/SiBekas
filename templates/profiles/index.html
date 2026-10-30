@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% load static %}
 
@@ -16,10 +17,10 @@
         <h1>Profil saya</h1>
     </header>
 
-    <div class="profile-layout">
+    <div class="profile-layout grid grid-cols-1 lg:grid-cols-[440px_minmax(0,1fr)] gap-8 items-start">
 
         <!-- Kartu Profil -->
-        <section class="profile-card">
+        <section class="profile-card w-full min-w-0 flex flex-col items-center">
 
             <div class="profile-avatar">
                 {{ profile.full_name|default:request.user.username|slice:":1"|upper }}
@@ -35,7 +36,7 @@
                 {{ profile.bio|default:"Belum ada deskripsi tentang saya." }}
             </p>
 
-            <div class="profile-stats">
+            <div class="profile-stats grid grid-cols-3 gap-2.5 w-full">
                 <div class="stat-item">
                     <strong><a href="{% url 'order:index' %}">{{ total_orders }}</a></strong>
                     <span>Pesanan</span>
@@ -75,19 +76,22 @@
             </div>
 
             <div class="profile-actions">
-                <a href="{% url 'order:seller_dashboard' %}" class="profile-button profile-button-primary" style="background: var(--forest-500); border-color: var(--forest-500);">
+                <a href="{% url 'order:seller_dashboard' %}"
+                   class="profile-button profile-button-primary">
                     🏪 Toko Saya & Penjualan
                 </a>
 
-                <a href="{% url 'product:create' %}" class="profile-button profile-button-outline">
+                <a href="{% url 'product:create' %}"
+                   class="profile-button profile-button-outline">
                     + Jual / Tambah Produk
                 </a>
-                
+
                 <button type="button"
                         id="openEditProfile"
                         class="profile-button profile-button-outline">
                     Ubah profil
                 </button>
+
                 <div class="delete-account-section">
                     <h3>Hapus Akun</h3>
                     <p>
@@ -116,7 +120,7 @@
         </section>
 
         <!-- Konten Samping -->
-        <section class="profile-activity">
+        <section class="profile-activity w-full min-w-0">
 
             <div class="profile-tabs">
                 <button type="button" class="profile-tab active">
@@ -129,76 +133,79 @@
             </div>
 
             {% if favorites %}
-            <div class="my-listings-grid">
-                {% for product in favorites %}
-                    <article class="my-listing-card">
-                        {% if product.thumbnail %}
-                            <img src="{{ product.thumbnail }}"
-                                alt="{{ product.name }}"
-                                class="my-listing-image">
-                        {% else %}
-                            <div class="my-listing-image my-listing-placeholder">
-                                Belum ada foto
-                            </div>
-                        {% endif %}
+                <div class="my-listings-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                    {% for product in favorites %}
+                        <article class="my-listing-card min-w-0">
+                            {% if product.thumbnail %}
+                                <img src="{{ product.thumbnail }}"
+                                     alt="{{ product.name }}"
+                                     class="my-listing-image">
+                            {% else %}
+                                <div class="my-listing-image my-listing-placeholder">
+                                    Belum ada foto
+                                </div>
+                            {% endif %}
 
-                        <div class="my-listing-info">
-                            <h3>{{ product.name }}</h3>
-                            <p class="my-listing-price">
-                                {{ product.price_display }}
-                            </p>
-                            <a href="{{ product.get_absolute_url }}">
-                                Lihat produk →
-                            </a>
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="profile-empty-state">
-                <div class="empty-state-icon">♡</div>
-                <h3>Belum ada barang favorit</h3>
-                <p>
-                    Barang yang kamu simpan sebagai favorit
-                    akan muncul di sini.
-                </p>
-                <a href="{% url 'product:index' %}">
-                    Jelajahi produk
-                </a>
-            </div>
-        {% endif %}
+                            <div class="my-listing-info">
+                                <h3>{{ product.name }}</h3>
+                                <p class="my-listing-price">
+                                    {{ product.price_display }}
+                                </p>
+                                <a href="{{ product.get_absolute_url }}">
+                                    Lihat produk →
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="profile-empty-state">
+                    <div class="empty-state-icon">♡</div>
+                    <h3>Belum ada barang favorit</h3>
+                    <p>
+                        Barang yang kamu simpan sebagai favorit
+                        akan muncul di sini.
+                    </p>
+                    <a href="{% url 'product:index' %}">
+                        Jelajahi produk
+                    </a>
+                </div>
+            {% endif %}
 
         </section>
 
     </div>
 
+    <!-- Produk yang Dijual -->
     <section class="my-listings">
-        <div class="my-listings-header">
+        <div class="my-listings-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
             <div>
                 <span class="profile-label">TOKO SAYA</span>
                 <h2>Produk yang saya jual</h2>
                 <p>Kelola barang yang kamu tawarkan di SiBekas.</p>
             </div>
 
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <a href="{% url 'order:seller_dashboard' %}" class="profile-button profile-button-outline">
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'order:seller_dashboard' %}"
+                   class="profile-button profile-button-outline">
                     Buka Dashboard Toko & Pesanan Masuk →
                 </a>
+
                 <a href="{% url 'product:create' %}"
-                class="profile-button profile-button-primary">
+                   class="profile-button profile-button-primary">
                     + Tambah produk
                 </a>
             </div>
         </div>
 
         {% if my_products %}
-            <div class="my-listings-grid">
+            <div class="my-listings-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                 {% for product in my_products %}
-                    <article class="my-listing-card">
+                    <article class="my-listing-card min-w-0">
                         {% if product.thumbnail %}
                             <img src="{{ product.thumbnail }}"
-                                alt="{{ product.name }}"
-                                class="my-listing-image">
+                                 alt="{{ product.name }}"
+                                 class="my-listing-image">
                         {% else %}
                             <div class="my-listing-image my-listing-placeholder">
                                 Belum ada foto
@@ -233,7 +240,7 @@
                 <h3>Belum ada produk yang dijual</h3>
                 <p>Mulai jual barang preloved kamu di SiBekas!</p>
                 <a href="{% url 'product:create' %}"
-                class="profile-button profile-button-primary">
+                   class="profile-button profile-button-primary">
                     Jual produk pertama
                 </a>
             </div>
@@ -243,7 +250,9 @@
 </main>
 
 <!-- Modal Edit Profil -->
-<div class="edit-profile-overlay{% if form.errors %} is-open{% endif %}" id="editProfileModal">
+<div class="edit-profile-overlay{% if form.errors %} is-open{% endif %}"
+     id="editProfileModal">
+
     <section class="edit-profile-modal"
              role="dialog"
              aria-modal="true"

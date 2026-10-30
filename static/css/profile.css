@@ -7,6 +7,7 @@
     width: min(100% - 48px, 1376px);
     margin: 20px auto 60px;
     color: var(--color-text-primary);
+    font-family: var(--font-body);
 }
 
 /* Header */
@@ -21,27 +22,28 @@
     border-radius: 8px;
     background: var(--sun-500);
     color: var(--forest-700);
-    font-size: 14px;
+    font-size: 0.75rem;
     font-weight: 700;
+    letter-spacing: 0.06em;
 }
 
 .profile-header h1 {
     margin: 8px 0 0;
     color: var(--forest-500);
-    font-size: 42px;
-    line-height: 1.2;
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    line-height: 1.1;
     font-weight: 800;
+    letter-spacing: -0.03em;
 }
 
 /* =========================
    MAIN LAYOUT
+   Responsive layout handled by Tailwind
 ========================= */
 
 .profile-layout {
-    display: grid;
-    grid-template-columns: 440px minmax(0, 1fr);
-    align-items: start;
-    gap: 34px;
+    width: 100%;
 }
 
 /* =========================
@@ -115,10 +117,6 @@
 /* Statistics */
 
 .profile-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-
     width: 100%;
     margin-bottom: 24px;
 }
@@ -196,6 +194,7 @@
     border-radius: var(--radius-pill);
     box-shadow: 2px 3px 0 var(--forest-500);
 
+    font-family: var(--font-body);
     font-size: 17px;
     font-weight: 700;
     text-decoration: none;
@@ -205,8 +204,13 @@
 }
 
 .profile-button-primary {
+    position: relative;
+    z-index: 2;
     background: var(--forest-500);
+    border-color: var(--forest-500);
     color: var(--cream-0);
+    cursor: pointer;
+    pointer-events: auto;
 }
 
 .profile-button-primary:hover {
@@ -221,6 +225,20 @@
 
 .profile-button-outline:hover {
     background: var(--forest-50);
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.profile-actions .profile-button {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
 }
 
 /* =========================
@@ -240,7 +258,6 @@
 }
 
 .profile-tab {
-    text-decoration: none;
     display: inline-flex;
     align-items: center;
     min-height: 43px;
@@ -254,6 +271,7 @@
     font-family: inherit;
     font-size: 16px;
     font-weight: 600;
+    text-decoration: none;
     cursor: pointer;
 }
 
@@ -323,112 +341,8 @@
 }
 
 /* =========================
-   RESPONSIVE
+   MY LISTINGS
 ========================= */
-
-@media (max-width: 900px) {
-    .profile-page {
-        width: min(100% - 32px, 600px);
-        margin-top: 20px;
-    }
-
-    .profile-header h1 {
-        font-size: 34px;
-    }
-
-    .profile-layout {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 30px;
-    }
-
-    .profile-card {
-        max-width: 100%;
-    }
-
-    .profile-activity {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .profile-page {
-        width: calc(100% - 28px);
-        margin-top: 16px;
-    }
-
-    .profile-header {
-        margin-bottom: 22px;
-    }
-
-    .profile-header h1 {
-        font-size: 30px;
-    }
-
-    .profile-card {
-        padding: 24px 20px 26px;
-        border-radius: var(--radius-base);
-    }
-
-    .profile-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 25px;
-        font-size: 36px;
-    }
-
-    .profile-card h2 {
-        font-size: 24px;
-    }
-
-    .profile-faculty,
-    .profile-bio {
-        font-size: 15px;
-    }
-
-    .profile-stats {
-        gap: 8px;
-    }
-
-    .stat-item {
-        min-height: 70px;
-        border-radius: var(--radius-sm);
-    }
-
-    .stat-item strong {
-        font-size: 23px;
-    }
-
-    .stat-item span {
-        font-size: 13px;
-    }
-
-    .information-item p {
-        font-size: 16px;
-    }
-
-    .profile-button {
-        min-height: 54px;
-        font-size: 16px;
-    }
-
-    .profile-tabs {
-        gap: 8px;
-        margin-bottom: 22px;
-    }
-
-    .profile-tab {
-        padding: 9px 13px;
-        font-size: 14px;
-    }
-}
-
-.profile-button-primary {
-    position: relative;
-    z-index: 2;
-    cursor: pointer;
-    pointer-events: auto;
-}
-
 
 .my-listings {
     margin-top: 40px;
@@ -436,30 +350,27 @@
 }
 
 .my-listings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
     margin-bottom: 24px;
 }
 
 .my-listings-header h2 {
-    color: var(--forest-500);
     margin: 14px 0 6px;
+    color: var(--forest-500);
 }
 
 .my-listings-header p {
-    color: var(--color-text-muted);
     margin-top: 0;
+    color: var(--color-text-muted);
 }
 
+/* Grid columns handled by Tailwind */
+
 .my-listings-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 20px;
+    width: 100%;
 }
 
 .my-listing-card {
+    min-width: 0;
     overflow: hidden;
     background: white;
     border: 1px solid var(--forest-500);
@@ -497,9 +408,9 @@
 }
 
 .my-listing-price {
-    font-weight: 700;
-    font-size: 18px;
     margin: 8px 0;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 .my-listing-stock {
@@ -515,42 +426,16 @@
 
 .my-listings-empty {
     padding: 40px 20px;
-    text-align: center;
     background: white;
     border: 1px solid var(--forest-500);
     border-radius: var(--radius-base);
     box-shadow: var(--shadow-pop);
+    text-align: center;
 }
 
-.profile-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.profile-actions .profile-button {
-    width: 100%;
-    box-sizing: border-box;
-    justify-content: center;
-}
-
-@media (max-width: 900px) {
-    .my-listings-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 520px) {
-    .my-listings-header {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .my-listings-grid {
-        grid-template-columns: 1fr;
-    }
-}
+/* =========================
+   DELETE ACCOUNT
+========================= */
 
 .delete-account-section {
     margin-top: 24px;
@@ -572,12 +457,16 @@
 .delete-account-btn {
     width: 100%;
     padding: 14px 20px;
+
     border: 1px solid var(--color-error);
     border-radius: var(--radius-pill);
     background-color: var(--cream-0);
     color: var(--color-error);
+
+    font-family: var(--font-body);
     font-size: 14px;
     font-weight: 600;
+
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -587,18 +476,89 @@
     color: var(--cream-0);
 }
 
+/* =========================
+   RESPONSIVE DETAILS
+   Tailwind handles main layout and grids
+========================= */
 
-/* Shared typography and responsive polish */
-.profile-page { font-family: var(--font-body); }
-.profile-header h1 { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 2.5rem); line-height: 1.1; letter-spacing: -0.03em; }
-.profile-label { background: var(--sun-500); color: var(--forest-700); font-size: 0.75rem; letter-spacing: 0.06em; }
-.profile-card, .profile-empty-state, .my-listing-card, .my-listings-empty { box-shadow: var(--shadow-pop); }
-.profile-button, .delete-account-btn { font-family: var(--font-body); }
+@media (max-width: 900px) {
+    .profile-page {
+        width: min(100% - 32px, 600px);
+        margin-top: 20px;
+    }
 
+    .profile-activity {
+        width: 100%;
+    }
+}
 
-/* =========================================
-   PROFILE - DARK MODE FIX
-   ========================================= */
+@media (max-width: 480px) {
+    .profile-page {
+        width: calc(100% - 28px);
+        margin-top: 16px;
+    }
+
+    .profile-header {
+        margin-bottom: 22px;
+    }
+
+    .profile-card {
+        padding: 24px 20px 26px;
+        border-radius: var(--radius-base);
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 25px;
+        font-size: 36px;
+    }
+
+    .profile-card h2 {
+        font-size: 24px;
+    }
+
+    .profile-faculty,
+    .profile-bio {
+        font-size: 15px;
+    }
+
+    .stat-item {
+        min-height: 70px;
+        border-radius: var(--radius-sm);
+    }
+
+    .stat-item strong {
+        font-size: 23px;
+    }
+
+    .stat-item span {
+        font-size: 13px;
+    }
+
+    .information-item p {
+        font-size: 16px;
+    }
+
+    .profile-button {
+        min-height: 54px;
+        font-size: 16px;
+    }
+
+    .profile-tabs {
+        gap: 8px;
+        margin-bottom: 22px;
+    }
+
+    .profile-tab {
+        padding: 9px 13px;
+        font-size: 14px;
+    }
+}
+
+/* =========================
+   DARK MODE
+========================= */
 
 html[data-theme="dark"] .profile-header h1,
 html[data-theme="dark"] .profile-card h2,

@@ -20,10 +20,6 @@ body:has(.auth-page) main {
 }
 
 .auth-page {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    min-height: 100vh;
     color: var(--color-text-primary);
     font-family: var(--font-body);
 }
@@ -33,21 +29,10 @@ body:has(.auth-page) main {
 ======================================== */
 
 .login-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    min-height: 100vh;
-    padding: 40px;
-
     background-color: var(--color-background);
 }
 
 .login-card {
-    width: 100%;
-    max-width: 600px;
-    padding: 46px 48px;
-
     background-color: var(--color-background);
     border: 2px solid var(--color-primary);
     border-radius: var(--radius-lg);
@@ -133,6 +118,27 @@ body:has(.auth-page) main {
 .form-group input:focus {
     border-color: var(--color-primary-hover);
     box-shadow: 0 0 0 3px rgba(21, 92, 59, 0.13);
+}
+
+/* ========================================
+   FORGOT PASSWORD
+======================================== */
+
+.forgot-password {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -14px;
+}
+
+.forgot-password a {
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
 }
 
 /* ========================================
@@ -235,61 +241,4 @@ body:has(.auth-page) main {
 
 body:has(.auth-page) .sb-footer {
     margin-top: 0;
-}
-/* ========================================
-   RESPONSIVE
-======================================== */
-
-@media (max-width: 1000px) {
-    .login-content {
-        padding: 32px;
-    }
-
-    .login-card {
-        padding: 34px;
-    }
-}
-
-@media (max-width: 760px) {
-    .auth-page {
-        grid-template-columns: 1fr;
-    }
-
-    .login-content {
-        min-height: auto;
-        padding: 40px 24px;
-    }
-
-    .login-card {
-        max-width: 500px;
-        padding: 32px;
-    }
-}
-
-
-
-@media (max-width: 420px) {
-    .login-content {
-        padding: 30px 18px;
-    }
-
-    .login-card {
-        padding: 25px 20px;
-    }
-
-    .login-card h2 {
-        font-size: 29px;
-    }
-
-    .login-description {
-        font-size: 15px;
-    }
-
-    .form-group label {
-        font-size: 14px;
-    }
-
-    .form-group input {
-        font-size: 14px;
-    }
 }
