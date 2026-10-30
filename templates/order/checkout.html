@@ -8,7 +8,7 @@
     <header class="order-heading">
         <p class="eyebrow">SELANGKAH MENUJU CERITA BARU</p>
         <h1>Checkout<span>.</span></h1>
-        <p>Periksa barangmu, tentukan titik temu di kampus UI, dan selesaikan pesanan.</p>
+        <p>Pilih metode serah terima (Ambil di Kampus atau Kirim Kurir via API) dan selesaikan pesananmu.</p>
     </header>
     <ol class="order-steps" aria-label="Tahap pembelian">
         <li class="is-done"><span>1</span>Keranjang</li>
@@ -32,8 +32,8 @@
                 <div class="order-panel-heading">
                     <span class="order-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span>
                     <div>
-                        <h2>Penerima & Titik Temu</h2>
-                        <p>Pastikan barang diserahterimakan di lingkungan kampus UI dengan aman.</p>
+                        <h2>Penerima & Metode Pengiriman</h2>
+                        <p>Pilih serah terima langsung di kampus UI (COD) atau pengiriman kurir domestik.</p>
                     </div>
                 </div>
                 <div class="order-panel-content">
@@ -42,10 +42,50 @@
                         {% include 'order/_field.html' with field=form.phone_number %}
                     </div>
                     {% include 'order/_field.html' with field=form.delivery_method %}
+
+                    <!-- Bagian Kurir via AgenWebsite Rate API -->
+                    <div id="courier-section" style="display: none; margin-bottom: 1.5rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-base); background: var(--cream);">
+                        <div class="order-field">
+                            <label for="destination-postal-code">Kode Pos / Area Tujuan Kurir <span>*</span></label>
+                            <div class="order-search-row">
+                                {{ form.destination_postal_code }}
+                                <button type="button" class="order-button order-button-outline" id="btn-check-ongkir">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Cek Ongkir API
+                                </button>
+                            </div>
+                            <p class="order-hint">
+                                Tarif ongkir real-time dihitung via <strong>AgenWebsite Rate API</strong> dari Kampus UI Depok (16424).
+                            </p>
+                        </div>
+
+                        <fieldset class="order-shipping-options" id="courier-rates-fieldset">
+                            <legend>Pilih Layanan Kurir Tersedia:</legend>
+                            <div id="rates-container">
+                                {% for quote in initial_quotes %}
+                                <label class="order-shipping-choice">
+                                    <input type="radio" name="selected_courier_rate" value="{{ quote.id }}"
+                                           data-cost="{{ quote.cost }}"
+                                           data-service="{{ quote.courier }} - {{ quote.service }}"
+                                           data-etd="{{ quote.etd }}"
+                                           data-courier="{{ quote.courier }}"
+                                           {% if forloop.first %}checked{% endif %}>
+                                    <div>
+                                        <strong>{{ quote.courier }} — {{ quote.service }}</strong>
+                                        <p style="margin: 0; font-size: 0.75rem; color: var(--muted);">
+                                            Estimasi: {{ quote.etd }} · <strong>{{ quote.cost_formatted }}</strong>
+                                        </p>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </fieldset>
+                    </div>
+
                     {% include 'order/_field.html' with field=form.address %}
+
                     <p class="order-hint" id="pickup-hint">
                         <i data-lucide="info" class="inline w-4 h-4 mr-1"></i>
-                        Pengambilan di kampus UI tanpa biaya ongkos kirim. Tuliskan gedung atau titik temu yang spesifik (misal: Kantin Fasilkom, Perpustakaan Pusat UI, atau Halte Bikun) dan sepakati waktunya dengan penjual atau petugas.
+                        <strong>Ambil di Kampus UI (COD):</strong> Gratis tanpa ongkos kirim. Tuliskan titik temu di kampus (misal: Kantin Fasilkom, Perpustakaan Pusat UI, atau Halte Bikun) dan sepakati waktu serah terima.
                     </p>
                 </div>
             </section>
@@ -80,13 +120,13 @@
                     <span class="order-icon"><i data-lucide="wallet" aria-hidden="true"></i></span>
                     <div>
                         <h2>Pembayaran</h2>
-                        <p>Pilih metode penyelesaian pesananmu.</p>
+                        <p>Pilih metode penyelesaian transaksi.</p>
                     </div>
                 </div>
                 <div class="order-panel-content">
                     {% include 'order/_field.html' with field=form.payment_method %}
                     <p class="order-hint">
-                        COD dibayarkan tunai saat serah terima di kampus UI.{% if demo_enabled %} Pembayaran simulasi untuk demonstrasi akademik proyek.{% endif %}
+                        <strong>COD:</strong> Dibayarkan tunai saat barang diserahterimakan di kampus atau kurir COD.{% if demo_enabled %} Pembayaran simulasi untuk demonstrasi akademik proyek.{% endif %}
                     </p>
                     {% include 'order/_field.html' with field=form.notes %}
                 </div>
@@ -98,10 +138,10 @@
             <dl class="order-totals">
                 <div>
                     <dt>Subtotal ({{ total_items }} barang)</dt>
-                    <dd>{{ subtotal|rupiah }}</dd>
+                    <dd id="subtotal-val" data-subtotal="{{ subtotal }}">{{ subtotal|rupiah }}</dd>
                 </div>
                 <div>
-                    <dt>Pengambilan Kampus</dt>
+                    <dt id="shipping-label">Ongkos Kirim</dt>
                     <dd id="shipping-cost">Gratis (Rp 0)</dd>
                 </div>
                 <div class="order-grand-total">
@@ -109,7 +149,7 @@
                     <dd id="checkout-total">{{ checkout_total|rupiah }}</dd>
                 </div>
             </dl>
-            <p class="order-hint" id="quote-note">Ambil langsung di titik temu kampus Universitas Indonesia.</p>
+            <p class="order-hint" id="quote-note">Ambil langsung di titik temu kampus Universitas Indonesia (COD).</p>
             <button class="order-button order-button-wide" type="submit" id="place-order">
                 Buat pesanan
                 <i data-lucide="arrow-right" aria-hidden="true"></i>
@@ -121,4 +161,135 @@
         </aside>
     </form>
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const deliverySelect = document.getElementById("id_delivery_method");
+    const courierSection = document.getElementById("courier-section");
+    const pickupHint = document.getElementById("pickup-hint");
+    const postalInput = document.getElementById("destination-postal-code");
+    const btnCheckOngkir = document.getElementById("btn-check-ongkir");
+    const ratesContainer = document.getElementById("rates-container");
+    const shippingCostElem = document.getElementById("shipping-cost");
+    const shippingLabel = document.getElementById("shipping-label");
+    const checkoutTotalElem = document.getElementById("checkout-total");
+    const quoteNoteElem = document.getElementById("quote-note");
+    const shippingQuoteInput = document.getElementById("id_shipping_quote");
+    const subtotal = parseInt(document.getElementById("subtotal-val").getAttribute("data-subtotal"), 10) || 0;
+
+    function formatRupiah(number) {
+        return "Rp " + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function updateTotals() {
+        const isCourier = deliverySelect && deliverySelect.value === "courier";
+        if (isCourier) {
+            courierSection.style.display = "block";
+            pickupHint.style.display = "none";
+            shippingLabel.textContent = "Ongkir Kurir (AgenWebsite)";
+
+            const checkedRadio = document.querySelector('input[name="selected_courier_rate"]:checked');
+            if (checkedRadio) {
+                const cost = parseInt(checkedRadio.getAttribute("data-cost"), 10) || 0;
+                const service = checkedRadio.getAttribute("data-service") || "Kurir Reguler";
+                const etd = checkedRadio.getAttribute("data-etd") || "1-3 hari";
+                const courier = checkedRadio.getAttribute("data-courier") || "Kurir";
+
+                shippingCostElem.textContent = formatRupiah(cost);
+                checkoutTotalElem.textContent = formatRupiah(subtotal + cost);
+                quoteNoteElem.textContent = "Pengiriman kurir: " + service + " (Estimasi " + etd + ")";
+
+                shippingQuoteInput.value = JSON.stringify({
+                    cost: cost,
+                    service: service,
+                    etd: etd,
+                    courier: courier,
+                    destination: postalInput ? postalInput.value : ""
+                });
+            } else {
+                shippingCostElem.textContent = "Pilih layanan";
+                checkoutTotalElem.textContent = formatRupiah(subtotal);
+            }
+        } else {
+            courierSection.style.display = "none";
+            pickupHint.style.display = "block";
+            shippingLabel.textContent = "Pengambilan Kampus";
+            shippingCostElem.textContent = "Gratis (Rp 0)";
+            checkoutTotalElem.textContent = formatRupiah(subtotal);
+            quoteNoteElem.textContent = "Ambil langsung di titik temu kampus Universitas Indonesia (COD).";
+            shippingQuoteInput.value = "";
+        }
+    }
+
+    if (deliverySelect) {
+        deliverySelect.addEventListener("change", updateTotals);
+    }
+
+    ratesContainer.addEventListener("change", function (e) {
+        if (e.target && e.target.name === "selected_courier_rate") {
+            updateTotals();
+        }
+    });
+
+    if (btnCheckOngkir) {
+        btnCheckOngkir.addEventListener("click", function () {
+            const postal = postalInput.value.trim() || "16424";
+            btnCheckOngkir.disabled = true;
+            btnCheckOngkir.innerHTML = "Memuat...";
+
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+            fetch("{% url 'order:shipping_quotes' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrfToken
+                },
+                body: "postal_code=" + encodeURIComponent(postal)
+            })
+            .then(res => res.json())
+            .then(data => {
+                btnCheckOngkir.disabled = false;
+                btnCheckOngkir.innerHTML = '<i data-lucide="refresh-cw" class="w-4 h-4"></i> Cek Ongkir API';
+                if (window.lucide) lucide.createIcons();
+
+                if (data.quotes && data.quotes.length > 0) {
+                    let html = "";
+                    data.quotes.forEach((q, idx) => {
+                        const checked = idx === 0 ? "checked" : "";
+                        html += `
+                            <label class="order-shipping-choice">
+                                <input type="radio" name="selected_courier_rate" value="${q.id}"
+                                       data-cost="${q.cost}"
+                                       data-service="${q.courier} - ${q.service}"
+                                       data-etd="${q.etd}"
+                                       data-courier="${q.courier}"
+                                       ${checked}>
+                                <div>
+                                    <strong>${q.courier} — ${q.service}</strong>
+                                    <p style="margin: 0; font-size: 0.75rem; color: var(--muted);">
+                                        Estimasi: ${q.etd} · <strong>${q.cost_formatted}</strong>
+                                    </p>
+                                </div>
+                            </label>
+                        `;
+                    });
+                    ratesContainer.innerHTML = html;
+                    updateTotals();
+                } else {
+                    alert("Tidak ada layanan kurir yang tersedia untuk kode pos tersebut.");
+                }
+            })
+            .catch(err => {
+                btnCheckOngkir.disabled = false;
+                btnCheckOngkir.innerHTML = '<i data-lucide="refresh-cw" class="w-4 h-4"></i> Cek Ongkir API';
+                if (window.lucide) lucide.createIcons();
+                console.error("Gagal mengambil quotes:", err);
+            });
+        });
+    }
+
+    updateTotals();
+});
+</script>
 {% endblock %}

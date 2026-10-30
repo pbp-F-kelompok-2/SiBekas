@@ -153,6 +153,11 @@ ORDER_STAFF_USERNAME = os.getenv("ORDER_STAFF_USERNAME", "").strip()
 ORDER_STAFF_EMAIL = os.getenv("ORDER_STAFF_EMAIL", "").strip()
 ORDER_STAFF_PASSWORD = os.getenv("ORDER_STAFF_PASSWORD", "")
 
+# AgenWebsite Rate API configuration (Shipping & Ongkos Kirim)
+AGENWEBSITE_API_KEY = os.getenv("AGENWEBSITE_API_KEY", "awk_live_e6e09877d20c7e20409c3c486a979577")
+AGENWEBSITE_BASE_URL = os.getenv("AGENWEBSITE_BASE_URL", "https://api.agenwebsite.com/v1")
+AGENWEBSITE_ORIGIN_POSTAL_CODE = os.getenv("AGENWEBSITE_ORIGIN_POSTAL_CODE", "16424")
+
 # Secure defaults are enabled automatically outside local development.
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
