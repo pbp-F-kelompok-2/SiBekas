@@ -12,13 +12,13 @@
     <div class="grid grid-cols-2 items-start gap-8 max-[850px]:grid-cols-1 max-[850px]:gap-5">
         <div class="min-w-0">
             {% if product.thumbnail %}
-            <img src="{{ product.thumbnail }}" alt="{{ product.name }}" onerror="this.remove()" class="block w-full max-h-[620px] border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-300)] object-contain">
+            <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="block w-full max-h-[620px] border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-300)] object-contain">
             {% endif %}
 
             {% if images %}
             <div class="flex gap-[0.6rem] mt-3 overflow-x-auto">
                 {% for image in images %}
-                <img src="{{ image.image_url }}" alt="{{ product.name }}" loading="lazy" onerror="this.remove()" class="w-[76px] h-[76px] flex-none border border-solid border-[var(--line)] rounded-[10px] bg-[var(--cream-300)] object-cover">
+                <img src="{{ image.image_url }}" alt="{{ product.name }}" loading="lazy" class="w-[76px] h-[76px] flex-none border border-solid border-[var(--line)] rounded-[10px] bg-[var(--cream-300)] object-cover">
                 {% endfor %}
             </div>
             {% endif %}
@@ -98,12 +98,22 @@
         </div>
     </div>
 
-    <section class="w-full min-w-0 max-w-full box-border my-8 p-6 border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]" aria-labelledby="product-reviews-heading">
+    <section class="my-8 p-6 border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop)]" aria-labelledby="product-reviews-heading">
         <h2 id="product-reviews-heading" class="mt-0 mb-3 text-[var(--green)] text-[clamp(1.25rem,3vw,1.6rem)] leading-[1.25]">Ulasan pembeli</h2>
         {% if average_rating %}<p class="text-[var(--muted)] text-[0.875rem]">Rata-rata {{ average_rating|floatformat:1 }} / 5 · {{ reviews|length }} ulasan</p>{% endif %}
         {% for review in reviews %}
-        <article class="w-full min-w-0 max-w-full box-border py-4 px-4 mt-3 border border-solid border-[var(--cream-500)] border-b-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-200)] [overflow-wrap:anywhere] [[data-theme=dark]_&]:bg-[#26372B] [[data-theme=dark]_&]:border-[#55745C] [[data-theme=dark]_&]:text-[#F3F5EF]">
-            <p class="mb-2 text-[var(--green)] [[data-theme=dark]_&]:text-[#A8D5AE]"><strong>{{ review.user.username }}</strong> · {{ review.rating }} / 5</p>
+        <article
+            style="padding: 16px 20px;"
+            class="w-full min-w-0 max-w-full box-border mt-3 border border-solid border-[var(--cream-500)] border-b-[var(--line)] rounded-[var(--radius-base)] bg-[var(--cream-200)] [overflow-wrap:anywhere] [[data-theme=dark]_&]:bg-[#26372B] [[data-theme=dark]_&]:border-[#55745C] [[data-theme=dark]_&]:text-[#F3F5EF]">
+            <p class="mb-2 text-[var(--green)] [[data-theme=dark]_&]:text-[#A8D5AE]">
+                <strong>{{ review.user.username }}</strong>
+                ·
+                <span class="text-[#D99B18] tracking-[0.12em]" aria-label="Rating {{ review.rating }} dari 5">
+                    {% for star in "12345" %}
+                        {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                    {% endfor %}
+                </span>
+            </p>
             <p class="mb-2 [[data-theme=dark]_&]:text-[#F3F5EF]">{{ review.comment|linebreaksbr }}</p>
             <small class="text-[var(--muted)] text-[0.75rem] [[data-theme=dark]_&]:text-[#C1CBBF]">{{ review.created_at|date:"d M Y" }}{% if review.edited %} · Diedit{% endif %}</small>
         </article>
@@ -118,7 +128,7 @@
             <a href="{{ item.get_absolute_url }}" class="min-w-0 flex flex-col overflow-hidden border-2 border-solid border-[var(--line)] rounded-[var(--radius-base)] bg-[var(--color-surface)] shadow-[var(--shadow-pop-sm)] text-[var(--ink)] no-underline transition hover:-translate-y-0.5 hover:border-[var(--green)] hover:shadow-[var(--shadow-pop)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[var(--sun-500)] focus-visible:outline-offset-[3px]">
                 <div class="relative grid place-items-center overflow-hidden aspect-square bg-[var(--cream-300)] text-[var(--green)] max-[420px]:aspect-[4/3]">
                     {% if item.thumbnail %}
-                    <img src="{{ item.thumbnail }}" alt="{{ item.name }}" loading="lazy" onerror="this.remove()" class="block w-full h-full object-cover">
+                    <img src="{{ item.thumbnail }}" alt="{{ item.name }}" loading="lazy" class="block w-full h-full object-cover">
                     {% endif %}
                 </div>
                 <div class="flex-1 p-4 max-[700px]:p-[0.8rem]">
