@@ -260,3 +260,15 @@ class ProductViewTests(TestCase):
         response = self.client.post(reverse("product:delete", args=[self.product.slug]))
         self.assertRedirects(response, reverse("product:index"))
         self.assertFalse(Product.objects.filter(pk=self.product.pk).exists())
+
+    def test_seller_profile_is_public_without_private_data(self):
+        self.seller.email = "penjual@ui.ac.id"
+        self.seller.save()
+        response = self.client.get(reverse("profile:seller", args=[self.seller.username]))
+        self.assertContains(response, "Buku Kalkulus")
+        self.assertNotContains(response, "penjual@ui.ac.id")
+        self.assertNotContains(response, "Hapus Akun")
+
+    def test_detail_links_to_seller_profile(self):
+        response = self.client.get(self.product.get_absolute_url())
+        self.assertContains(response, reverse("profile:seller", args = [self.seller.username]))
