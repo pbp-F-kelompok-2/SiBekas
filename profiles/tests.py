@@ -363,12 +363,52 @@ class ProfileViewTest(TestCase):
             User.objects.filter(email="newstudent@ui.ac.id").exists()
         )
 
-    def test_get_edit_profile_redirects_to_profile_index(self):
+    def test_get_edit_profile_returns_method_not_allowed(self):
         self.client.force_login(self.user)
 
         response = self.client.get(reverse("profile:edit"))
 
-        self.assertRedirects(response, reverse("profile:index"))
+        self.assertEqual(response.status_code, 405)
+
+    def test_login_with_unregistered_email(self):
+        response = self.client.post(
+            reverse("profile:login"),
+            {
+                "email": "tidakada@ui.ac.id",
+                "password": "testpassword123",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "profiles/login.html")
+        self.assertEqual(
+            response.context["error"],
+            "Email atau password salah.",
+        )
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+
+    def test_invalid_profile_data_with_htmx_returns_422(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("profile:edit"),
+            {
+                "full_name": "   ",
+                "faculty": "Fasilkom",
+                "student_id": "123456789",
+                "phone_number": "+628123456789",
+                "address": "Depok, Jawa Barat",
+                "bio": "",
+            },
+            HTTP_HX_REQUEST="true",
+        )
+
+        self.assertEqual(response.status_code, 422)
+        self.assertTemplateUsed(
+            response,
+            "profiles/partials/edit_profile_form.html",
+        )
+        self.assertIn("full_name", response.context["form"].errors)
 
 
 class ProfileActionViewTest(TestCase):

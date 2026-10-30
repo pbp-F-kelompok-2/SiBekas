@@ -398,11 +398,52 @@
 }
 
 
-.sb-mobile-logout {
-    color: var(--tomato-600) !important;
+/* Mobile logout button */
+.sb-mobile-menu form {
+    width: 100%;
+    margin-top: 8px;
 }
 
+.sb-mobile-logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
 
+    padding: 12px 14px;
+    border: 1.5px solid rgba(220, 38, 38, 0.2);
+    border-radius: 12px;
+
+    background: rgba(220, 38, 38, 0.07);
+    color: var(--tomato-600) !important;
+
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sb-mobile-logout:hover {
+    background: rgba(220, 38, 38, 0.14);
+    border-color: var(--tomato-600);
+    transform: translateY(-1px);
+}
+
+.sb-mobile-logout i,
+.sb-mobile-logout svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+    .sb-nav-actions > form:has(.sb-desktop-logout) {
+        display: none;
+    }
+}
 /* =========================
    BOTTOM MOBILE NAV
    ========================= */
