@@ -9,6 +9,7 @@ from django.views.static import serve
 from .views import health_check
 
 urlpatterns = [
+    path("api/v1/", include("sibekas.api_urls")),
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("health/", health_check, name="health-check"),
     path("admin/", admin.site.urls),
